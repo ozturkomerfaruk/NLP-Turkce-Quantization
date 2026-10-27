@@ -1,6 +1,6 @@
 # Projenin Tüm Süreci
 
-**Son güncelleme:** 25 Ekim 2026  
+**Son güncelleme:** 27 Ekim 2026  
 **Proje:** Bir Çok Dilli Dil Modelinde Nicemlemenin Türkçe Morfosentaktik Yeterliliğe Etkisinin Deneysel İncelenmesi
 
 ## 1. Amaç ve çalışma kapsamı
@@ -65,17 +65,70 @@ Yerel kontrolde her ham dosyada 1.000 kayıt bulundu. Kategori içi tekrarlar ç
 bcb2c7f25475f8290d1511d742e1e9f8f515fd29df11dd3e3f64f2f53bcb4835
 ```
 
-**Kalan belgeleme:** `manifest.json` henüz oluşturulmamış. Kaynak commit, seed, kategori sırası/sayıları, temizleme istatistikleri ve ham/işlenmiş dosya hash değerleri bu dosyada bir araya getirilmeli. Kod mevcut ham dosyayı yeniden indirmeden kullandığından, kaynak revizyonunun kodda yazması tek başına önceden indirilmiş dosyanın kökenini kanıtlamaz; hash kayıtları bu nedenle değerlidir. Manifest eksikliği mevcut veri setinin puanlanmasına engel değil.
+**Manifest ve pilot hazırlığı tamamlandı.** `scripts/finalize_pilot_dataset.py`, ana veri setinin beklenen hash değerini, 1.000 kayıt/benzersiz kimlik koşulunu ve kategori başına 250 çift bulunduğunu kontrol ediyor. `pilot_seed=42` ile her kategoriden 5 çift seçerek `data/processed/turblimp_pilot_20.jsonl` ve `data/processed/manifest.json` dosyalarını oluşturuyor; ana veri setini değiştirmiyor.
 
-## 5. Cümle puanlama ve 20 çiftlik pilot — sıradaki aşama
+Manifest kaynak revizyonunu, ana veri ve pilot seed değerlerini, kategori sırasını/sayılarını, ham dosya hash değerlerini ve ana/pilot veri dosyalarının kayıt sayısı ile hash değerlerini içeriyor. Temizleme istatistikleri önceki bölümde belgelenmiş; manifestte ayrı alan olarak yer almıyor. Kaynak revizyonu kaydı tek başına önceden indirilmiş ham dosyanın kökenini kanıtlamaz; hash kayıtları kullanılan dosyaları tanımlar.
 
-Amaç, ana deneye geçmeden puanlama yönteminin doğru çalıştığını ve bilgisayardaki süre/bellek maliyetini görmek. Önerilen pilot, hazırlanmış örneklemden kategori başına 5 çift seçilerek oluşturulacak; aynı 20 çift üç modelde kullanılacak. Henüz pilot seçimi, değerlendirme betiği veya sonuç dosyası yok.
+Pilot dosyasının bu güncellemede yeniden doğrulanan SHA-256 değeri:
 
-Planlanan ölçümde model metin üretmeyecek. Cümlenin her token'ının önceki token'lar verildiğindeki koşullu log-olasılığı hesaplanacak. Ana puan **token başına ortalama log-olasılık**; uzunluk etkisini ayrıca incelemek için toplam log-olasılık ve puanlanan token sayısı da saklanacak. Doğru cümle daha yüksek ana puan alırsa çift doğru değerlendirilmiş sayılacak.
+```text
+420407b129d0e997680a50ab11ff49319e933c1b82b07068042b5d1249239f27
+```
 
-Pilot sırasında şu kararlar netleştirilmeli: BOS/EOS ve özel token kullanımı, ilk token'ın nasıl ele alınacağı, tokenizer davranışı, puanlanan token sayısı, eşit puan kuralı ve sayısal doğrulama yöntemi. Bu kurallar üç modelde aynı uygulanmalı ve ana deneyden önce sabitlenmeli.
+## 5. Cümle puanlama ve 20 çiftlik pilot — FP16 tamamlandı, Q8/Q4 bekliyor
 
-Pilot iş yükü **20 çift × 2 cümle × 3 model = 120 cümle puanlaması**. Sonuç kayıtları en az çift kimliği, kategori, model, iki cümlenin toplam/ortalama puanları, token sayıları, karar ve puan farkını içermeli. Süre ve tepe bellek ölçümünün kapsamı da açıkça kaydedilmeli. Bunlar henüz uygulanmış özellikler değil, yapılacak işlerin tanımıdır.
+Amaç, ana deneye geçmeden puanlama yönteminin doğru çalıştığını ve bilgisayardaki süre/bellek maliyetini görmek. Pilot veri seti kategori başına 5 çiftle hazırlandı; aynı 20 çift üç modelde kullanılacak. FP16 değerlendirmesi tamamlandı. Sonuçlar paylaşılan terminal çıktısı ve yerel sonuç dosyalarından doğrulandı; bu dokümantasyon güncellemesinde model yeniden çalıştırılmadı.
+
+### Uygulanan FP16 puanlama yöntemi
+
+Model metin üretmiyor; her cümle token’ının önceki token’lar verildiğindeki koşullu log-olasılığı hesaplanıyor. `scripts/score_pilot.py` içindeki mevcut kurallar:
+
+- `add_special_tokens=False`; BOS (`<s>`, ID `1`) elle başa ekleniyor. BOS puanlanmıyor, EOS eklenmiyor.
+- Input dizisi son token hariç, target dizisi BOS hariç tutuluyor; ilk cümle token’ı BOS koşuluyla puanlanıyor. Batch boyutu `1`.
+- FP16 model logits çıktısı FP32’ye çevrilerek log-softmax hesaplanıyor ve target token olasılıkları seçiliyor.
+- Toplam log-olasılık ile token sayısına bölünmüş ortalama hesaplanıyor. Ana karar puanı **tüm cümlenin token başına ortalama log-olasılığı**; yalnızca kritik bölge puanlanmıyor.
+- `delta = good_score - bad_score`: pozitif fark doğru, negatif fark yanlış karar. Tam sıfır fark eşitlik sayılıyor; başarıya dahil edilmiyor. FP16 pilotunda eşitlik yok.
+- Token sayıları farklıysa konumsal karşılaştırma atlanıyor. Sayılar eşit olsa da konumsal tablo dilbilimsel token hizalaması sayılmıyor.
+
+İlk çiftte input/target boyutları `(1, 11)`, FP16 logits boyutu `(1, 11, 128000)`, log-olasılık veri tipi FP32. Ayrı hesaplanan ilk çift puanları ile `score_sentence` fonksiyonu `1e-4` toleransında uyuşmuş; fonksiyon doğrulaması terminalde başarılı.
+
+### FP16 pilot sonuçları
+
+| Kategori | Doğru / Toplam | Doğruluk |
+| --- | ---: | ---: |
+| Subject Agreement | 2/5 | %40 |
+| Argument Structure Transitive | 3/5 | %60 |
+| Nominalization | 5/5 | %100 |
+| Irregular Forms | 5/5 | %100 |
+| **Genel** | **15/20** | **%75** |
+
+Toplam 15 doğru, 5 yanlış, 0 eşit puan. İlk çift `subject_agreement:0066` için “Ah sen ne kadar güzel resim yapıyorsun.” doğru cümlesinin toplam puanı `-50.842498779296875`, ortalaması `-4.622045516967773`; “Ah o ne kadar güzel resim yapıyorsun.” hatalı cümlesinin toplamı `-50.2364387512207`, ortalaması `-4.566948890686035`. İki cümle de 11 token; ortalama farkı `-0.055097` ve modelin kararı yanlış.
+
+Kaydedilmiş çıktılar:
+
+- `results/pilot/fp16_pilot_20.jsonl`: pilot veriyle kimlik ve sıra bakımından eşleşen 20 kayıt. Her kayıtta çift kimliği, kategori, model, veri hash değeri, puanlama yöntemi, iki ortalama puan, token sayıları, fark ve karar var. Toplam log-olasılıklar terminalde hesaplanıyor; mevcut JSONL bunları içermiyor.
+- `results/pilot/fp16_summary.json`: model/veri yolları, veri hash değeri, puanlama ve tokenlaştırma kuralları, ortam sürümleri, toplam/doğru/başarısız/eşit sayıları ve doğruluk. Ortam Python 3.12.15, MLX 0.32.4, MLX-LM 0.32.2 olarak kayıtlı. Süre ve bellek ölçümleri yok.
+
+**%75 yalnızca 20 çiftlik FP16 pilotunun doğruluğudur.** Ana deney sonucu veya nicemlemenin etkisine ilişkin bulgu olarak yorumlanmayacak.
+
+### Kalan pilot işleri ve komutların mevcut durumu
+
+1. Mevcut FP16 sonuçlarını koruyarak aynı 20 çifti Q8 ile değerlendirmek.
+2. Aynı veri ve puanlama kurallarıyla Q4 pilotunu tamamlamak.
+3. Üç model arasında tokenlaştırma tutarlılığını, genel/kategori doğruluğunu ve FP16’ya göre karar değişimlerini karşılaştırmak.
+4. Yükleme, ısınma ve puanlama süreleri ile bellek ölçümlerinin kapsamını belirleyip ölçümleri doğrulamak; ardından ana deneye geçmek.
+
+Mevcut FP16 çalıştırma komutu:
+
+```bash
+python scripts/score_pilot.py
+```
+
+Betikte model yolu FP16’ya sabit. Paylaşılan sonraki aşama planındaki `--model fp16`, `--model q8` ve `--model q4` seçenekleri henüz uygulanmamış; bu seçenekler mevcut betikte model seçmez. `scripts/summarize_pilot.py` de henüz bulunmuyor. Otomatik ısınma/ölçüm akışı ve kesinti sonrası devam desteği planlanan işlerdir. Mevcut betik 20 çiftin sonucunu bellekte topladıktan sonra dosyalara yazar; her çiftte diske yazma veya tamamlananları atlama yapmaz. Yeniden çalıştırma mevcut FP16 sonuç dosyalarının üzerine yazar.
+
+Planlanan `fp16.jsonl`, `fp16.metrics.json`, `q8.jsonl`, `q8.metrics.json`, `q4.jsonl` ve `q4.metrics.json` adları mevcut çıktılar değildir. Doğrulanan FP16 çıktıları yukarıdaki `fp16_pilot_20.jsonl` ve `fp16_summary.json` dosyalarıdır. Bu güncellemede bu planı uygulayacak kod eklenmedi veya değiştirilmedi.
+
+Pilot iş yükü üç modelde **20 çift × 2 cümle × 3 model = 120 cümle puanlaması**. Tamamlanan FP16 pilotu 40 cümlelik değerlendirmedir; betiğin ilk çift için yaptığı ek tanılama hesapları bu sayıya dahil değildir.
 
 ## 6. Ana deney — bekliyor
 
@@ -85,7 +138,7 @@ Pilot doğrulandıktan sonra sabit 1.000 çiftin tamamı aynı puanlama kurallar
 
 Planlanan çalışma düzeni aynı anda tek model yüklemek, `batch_size=1` kullanmak ve model değiştirirken önceki süreci kapatmak. Ana değerlendirme 50 çiftlik parçalarda kaydedilerek kesinti sonrasında devam edebilir olmalı. Isınma, bellek baskısı ve arka plan yükünün ölçümlere etkisi gözetilmeli; yükleme, ısınma ve puanlama sürelerinin sınırları önceden belirlenmeli.
 
-Üç model için ayrı veri seti oluşturulmayacak. Puanlama süresi ve tepe bellek bu deneyde ayrıca ölçülecek. Pilot süreleri, ana deneyin yaklaşık süresini öngörmek için kullanılabilir; şu anda toplam süreye ilişkin doğrulanmış bir tahmin yok.
+Üç model için ayrı veri seti oluşturulmayacak. Puanlama süresi ve tepe bellek bu deneyde ayrıca ölçülecek. Pilot süreleri, ana deneyin yaklaşık süresini öngörmek için kullanılabilir; şu anda toplam süreye ilişkin doğrulanmış bir tahmin yok. Mevcut FP16 pilot çıktıları süre/bellek ölçümü içermediğinden bu tahmin için henüz kullanılabilir ölçüm bulunmuyor.
 
 ## 7. İstatistiksel analiz ve raporlama — bekliyor
 
@@ -106,16 +159,24 @@ turkce-quantization/
 │   ├── eurollm-q8/
 │   └── eurollm-q4/
 ├── scripts/
-│   └── prepare_dataset.py
+│   ├── prepare_dataset.py
+│   ├── finalize_pilot_dataset.py
+│   └── score_pilot.py
 ├── data/
 │   ├── raw/                         # Dört kaynak CSV
 │   └── processed/
-│       └── turblimp_1000.jsonl
+│       ├── turblimp_1000.jsonl
+│       ├── turblimp_pilot_20.jsonl
+│       └── manifest.json
+├── results/
+│   └── pilot/
+│       ├── fp16_pilot_20.jsonl
+│       └── fp16_summary.json
 └── ProjeMarkdown/
     ├── MEVCUT_DURUM.md               # Güncel durum ve kontroller
     └── TUM_SUREC.md                  # Tamamlanan ve planlanan süreç
 ```
 
-Model hazırlığı ve veri hazırlığı tamamlandı. Öncelik tekrarlanabilirlik kaydını tamamlamak ve pilot puanlamayı doğrulamak; ardından ana deney ve analiz gelecek. Bu dokümantasyon güncellemesi kapsamında yalnızca `ProjeMarkdown/` altındaki iki Markdown dosyası oluşturuldu; deney kodu, veri ve modeller değiştirilmedi.
+Model hazırlığı, veri hazırlığı, manifest ve FP16 pilotu tamamlandı. Sıradaki adım Q8 pilotu; ardından Q4, üç modelin karşılaştırılması, süre/bellek doğrulaması, ana deney ve analiz gelecek. Bu dokümantasyon güncellemesi kapsamında yalnızca `ProjeMarkdown/` altındaki mevcut iki Markdown dosyası düzenlendi; klasör yapısı, deney kodu, veri, sonuçlar ve modeller değiştirilmedi.
 
 Güncel durumun kısa ve somut kaydı: [MEVCUT_DURUM.md](MEVCUT_DURUM.md).
