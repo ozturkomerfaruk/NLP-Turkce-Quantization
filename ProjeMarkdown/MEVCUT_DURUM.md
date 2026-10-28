@@ -261,3 +261,225 @@ Terminaldeki PyTorch bulunamadı mesajı bu tokenizer ve kayıtlı sonuç karş�
 **Sıradaki adım:** Süre/bellek ölçüm kapsamını belirlemek ve kaynak tüketimini doğrulamak; ardından ana deneyin aynı puanlama kuralları ve veri bütünlüğü kontrolleriyle yürütülmesine geçmek. Pilotun puanlama ve karşılaştırma kontrolleri tamamlandı; kaynak ölçümleri henüz kaydedilmiş değil.
 
 Bu güncellemede yalnızca `ProjeMarkdown/MEVCUT_DURUM.md` sonuna bu kayıt eklendi. Önceki kayıtlar korundu; kod, veri, sonuç ve model dosyaları değiştirilmedi, deney veya karşılaştırma betikleri çalıştırılmadı.
+
+
+## Kayıt 005 — 27 Ekim 2026 — Üç modelde 1.000 çiftlik ana deney tamamlandı
+
+**Önceki kayda göre ilerleme:** Kullanıcı `scripts/score_main.py` ve `scripts/summarize_main.py` betiklerini ekleyip çalıştırdı. FP16, Q8 ve Q4 aynı 1.000 çift üzerinde, model başına 20 adet 50 çiftlik parça halinde değerlendirildi. Ana deney dosya ve token kontrolleri başarılı; `results/main/main_comparison.json` kaydedildi. Puanlama süreleri, yükleme/ısınma süreleri ve bellek ölçümleri artık kayıtlı. Bu belge güncellemesinde kod eklenmedi veya değiştirilmedi; önceki durum kayıtları korundu.
+
+### Bu kayıt içinde belgelenen ilerleme adımları
+
+Aşağıdaki ara durumlar kullanıcının paylaştığı terminal çıktılarından geriye dönük kaydedilmiştir; ayrı zamanlarda eklenmiş arşiv sürümleri değildir.
+
+1. **FP16 ilk parça:** `--max-chunks 1` ile 50 çift, 42 doğru (%84); puanlama 6,0393 sn, MLX tepe bellek 3,4055 GB. Yükleme 2,3746 sn, ısınma 0,5885 sn. Tamamlanan 1/20 parça.
+2. **FP16 devamı:** `--max-chunks 19` önceki 1 parçayı tanıyıp kalan 19 parçayı tamamladı; sonuç 912/1.000 (%91,2). İlk 50 çift tüm deneyin yalnızca bir alt kümesidir.
+3. **Q8 ilk parça ve devamı:** İlk 50 çiftte 43 doğru (%86); ardından kalan 19 parça tamamlandı. Sonuç 915/1.000 (%91,5).
+4. **Q4:** `--max-chunks 20` ile 20 parça tek oturumda tamamlandı. Sonuç 884/1.000 (%88,4).
+5. **Ana karşılaştırma:** `python scripts/summarize_main.py` dosya bütünlüğü ve token kontrollerini tamamlayıp genel/kategori sonuçları, karar geçişleri ve kaynak ölçümlerini kaydetti.
+
+### Ana deney sonuçları
+
+| Ölçüm | FP16 | Q8 | Q4 |
+| --- | ---: | ---: | ---: |
+| Tamamlanan parça | 20/20 | 20/20 | 20/20 |
+| Değerlendirilen çift | 1.000 | 1.000 | 1.000 |
+| Doğru karar | 912 | 915 | 884 |
+| Yanlış karar | 88 | 85 | 116 |
+| Eşit puan | 0 | 0 | 0 |
+| Doğruluk | %91,2 | %91,5 | %88,4 |
+| FP16’ya göre fark | — | +0,3 yüzde puan | −2,8 yüzde puan |
+| Toplam parça puanlama süresi | 123,0381 sn | 97,8844 sn | 95,2026 sn |
+| Ortalama puanlama süresi/çift | 0,1230 sn | 0,0979 sn | 0,0952 sn |
+| Parçalardaki en yüksek MLX ayırıcı tepe belleği | 3,4161 GB | 2,0682 GB | 1,2367 GB |
+| Kayıtlı en yüksek süreç RSS değeri | 1,2474 GB | 1,8393 GB | 1,5735 GB |
+| Puanlanan token sayısı | 26.879 | 26.879 | 26.879 |
+
+Süreler ham metrik dosyalarından toplanmıştır; paylaşılan FP16 özetindeki 123,03 sn yerine standart iki ondalık yuvarlama 123,04 sn’dir. Toplam iş yükü **1.000 çift × 2 cümle × 3 model = 6.000 cümle puanlaması**; ısınma hesapları bu sayıya dahil değil.
+
+### Kategori sonuçları
+
+| Kategori | FP16 | Q8 | Q4 |
+| --- | ---: | ---: | ---: |
+| Subject Agreement | 221/250 (%88,4) | 222/250 (%88,8) | 203/250 (%81,2) |
+| Argument Structure Transitive | 233/250 (%93,2) | 233/250 (%93,2) | 229/250 (%91,6) |
+| Nominalization | 210/250 (%84,0) | 212/250 (%84,8) | 203/250 (%81,2) |
+| Irregular Forms | 248/250 (%99,2) | 248/250 (%99,2) | 249/250 (%99,6) |
+
+Bu örneklemde Q8 doğruluğu FP16’dan 0,3 yüzde puan yüksek; bu gözlem bir üstünlük veya eşdeğerlik kanıtı olarak yorumlanmaz. Q4’te en büyük kategori düşüşü Subject Agreement: −7,2 yüzde puan. Diğer Q4 farkları sırasıyla −1,6, −2,8 ve +0,4 yüzde puan. Kategori düzeyinde anlamlılık testleri henüz yapılmadı.
+
+### Eşleşmiş karar geçişleri ve ilk istatistiksel hesaplar
+
+| FP16’ya göre geçiş | Q8 | Q4 |
+| --- | ---: | ---: |
+| Doğru → yanlış | 0 | 42 |
+| Yanlış → doğru | 3 | 14 |
+| Aynı karar | 997 | 944 |
+| Net doğru karar farkı | +3 | −28 |
+
+Q8’de düzelmiş çiftler `subject_agreement:0031`, `nominalization:0536` ve `nominalization:0857`. Q4’te değişen 56 çiftin kimlikleri karşılaştırma dosyasında kayıtlı.
+
+İki yönlü kesin McNemar hesabı, uyumsuz çiftlerin sayısı `n = aşağı + yukarı` için `min(1, 2 × Σ[k=0..min(aşağı,yukarı)] C(n,k) / 2^n)` ile bu belge güncellemesinde ayrıca doğrulandı:
+
+- **Q8:** 0 ve 3 geçiş için `p = 0,25`. %5 düzeyinde anlamlı fark saptanmıyor; bu sonuç eşdeğerlik veya nicemlemenin etkisizliği kanıtı değildir.
+- **Q4:** 42 ve 14 geçiş için `p = 0,00023444586091919684`. Düzeltme uygulanmamış bu genel karşılaştırmada %5 düzeyinde anlamlı doğruluk düşüşü görülüyor.
+
+Bunlar mevcut karar geçişlerinden doğrulanan **ilk hesaplar**. `main_comparison.json` p değerlerini içermiyor; güven aralıkları, çoklu karşılaştırma yaklaşımı ve ayrıntılı hata analizi henüz tamamlanmış değil. Önceki plan bu yöntemlerin analizden önce belirlenmesini öngörüyordu; bu ilk hesapların sonradan yapıldığı açıkça belgelenmeli. Bulgular bu model, yöntem ve seçilmiş dört kategorilik örneklemle sınırlı tutulmalı.
+
+### Veri, token ve puanlama doğrulaması
+
+Ana veri SHA-256 değeri değişmemiş:
+
+```text
+bcb2c7f25475f8290d1511d742e1e9f8f515fd29df11dd3e3f64f2f53bcb4835
+```
+
+Yöntem etiketi `mean_logp_float32_bos_context_no_eos_v1`: BOS bağlam olarak kullanılıyor, EOS eklenmiyor; tüm cümle token’larının FP32 log-olasılık ortalaması karar puanı. Toplam log-olasılık ve token sayısı da ana deney kayıtlarında mevcut. Eşitlik toleransı sıfır; yalnızca tam sıfır fark eşitlik.
+
+Bu dokümantasyon güncellemesinde model ağırlıkları yüklenmeden, deney betikleri yeniden çalıştırılmadan **60 JSONL parçası, 60 metrik dosyası ve 3.000 çift kaydı** okundu. Kayıtların veri sırası/kimlikleri, kategori/model/yöntem/hash etiketleri, ortalama puan farkları, karar ve eşitlik kuralları kontrol edildi. Genel/kategori sayıları, karar geçiş listeleri, puanlama süreleri, MLX tepe bellekleri ve token toplamları karşılaştırma dosyasıyla uyuşuyor. Her ana veri cümlesinin kayıtlı token ID SHA-256 değeri ve token sayısı üç model arasında eşleşiyor.
+
+### Kaynak ölçümlerinin kapsamı
+
+Puanlama süresi parça döngüsünü kapsıyor; tokenlaştırma, puanlama, kayıtların bellekte hazırlanması ve çiftler arası önbellek temizleme bu döngüde. Model yükleme, ısınma ve tamamlanan parçanın diske yazılması bu süreye dahil değil. Yükleme/ısınma süreleri metriklerde oturum bilgisi olarak her parçada tekrarlandığından 20 dosyadaki bu alanları toplamak aynı oturumu birden fazla sayar. FP16 ve Q8 iki, Q4 tek oturumda tamamlanmış; süre karşılaştırması bu çalışma koşullarıyla sınırlı.
+
+Bellek GB değerleri 10⁹ bayt üzerinden hesaplanıyor. MLX ayırıcı tepe belleği toplam sistem RAM’i değildir. Süreç RSS ölçümü süreç boyunca biriken üst sınırdır; MLX ölçümüyle toplanarak toplam RAM veya GPU belleği elde edilemez. Kullanıcının paylaştığı açıklamada swap ve yüksek bellek baskısından söz ediliyor; bu mesajda sistem bellek görüntüsü veya swap ölçümü bulunmadığından burada bağımsız doğrulanmış ölçüm olarak kaydedilmiyor. Performans bulguları mevcut koşullardaki tek deneyin betimsel ölçümleridir; kontrollü tekrarlı performans ölçümü henüz yapılmadı.
+
+### Kanıt dosyaları ve güncel aşamalar
+
+- `scripts/score_main.py`: model seçimi, 50 çiftlik parçalar, tamamlanan parçaları tanıyarak devam etme ve parça bazlı puan/metrik kaydı.
+- `scripts/summarize_main.py`: tamamlanan üç modelin dosya/token kontrolleri ve karşılaştırma özeti.
+- `results/main/{fp16,q8,q4}/chunk_00.jsonl` … `chunk_19.jsonl`: her modelde 1.000 çiftin puanları.
+- Aynı klasörlerde `chunk_00.metrics.json` … `chunk_19.metrics.json`: yükleme/ısınma ve parça kaynak ölçümleri, ortam ve yapılandırma bilgileri.
+- `results/main/main_comparison.json`: ana deney sonuçları, kategori doğrulukları, karar geçişleri ve kaynak özeti.
+
+| Aşama | Durum |
+| --- | --- |
+| Ortam, üç model ve ana/pilot veri hazırlığı | Tamamlandı |
+| Üç modelde pilot ve karşılaştırma kontrolleri | Tamamlandı |
+| Aşama 4 — Üç modelde 1.000 çiftlik ana deney | Tamamlandı |
+| Ana veri genelinde dosya/token tutarlılığı | Tamamlandı |
+| Süre ve bellek ölçümlerinin kaydı/özetlenmesi | Tamamlandı; ölçüm sınırları yukarıda |
+| Genel karşılaştırmalar için kesin McNemar hesabı | İlk hesaplar doğrulandı |
+| Güven aralıkları ve nihai istatistiksel raporlama | Bekliyor |
+| Ayrıntılı hata analizi ve makale bulguları | Bekliyor |
+
+**Sıradaki adım:** Eşleşmiş doğruluk farklarının güven aralıklarını ve çoklu karşılaştırma yaklaşımını belgelemek; istatistiksel raporu tamamlamak; karar değiştiren çiftlerde hata analizi yaparak bulguları makale düzenine taşımak. Ana deney puanlamasının tekrar çalıştırılması bu kayıt için gerekli olmadı.
+
+Bu güncellemede yalnızca `ProjeMarkdown/MEVCUT_DURUM.md` sonuna Kayıt 005 eklendi. Önceki kayıtlar korunmuş; kod, veri, sonuç ve model dosyaları değiştirilmemiştir.
+
+
+## Kayıt 006 — 28 Ekim 2026 — Ana deneyin ayrıntılı MLX peak ve süre dökümü
+
+**Bu kaydın amacı:** Yeni bir deney çalıştırılmadı. Kullanıcının ayrıntı kontrolü talebi üzerine Kayıt 005’te özetlenen ana deneyin parça ve oturum ölçümleri açık tablolarla eklendi. Kayıt 005’te MLX peak en yüksek değerleri zaten vardı; 60 parçanın tek tek dökümü ve tüm oturum yükleme/ısınma değerleri yoktu. “Tüm ayrıntılar var” ifadesi bu nedenle eksiksiz bir terminal dökümü olarak anlaşılmamalı. Önceki kayıtlar değiştirilmedi.
+
+### MLX peak — üç modelin açık karşılaştırması
+
+| Ölçüm | FP16 | Q8 | Q4 |
+| --- | ---: | ---: | ---: |
+| **MLX peak — en yüksek parça değeri (GB)** | 3.416117920 | 2.068173544 | 1.236718312 |
+| MLX peak — iki ondalık gösterim (GB) | 3.42 | 2.07 | 1.24 |
+| Toplam puanlama süresi (sn) | 123.038089 | 97.884444 | 95.202621 |
+
+Tablolarda nokta ondalık ayırıcıdır; terminalle doğrudan karşılaştırılabilir. MLX peak toplam sistem RAM’i değildir; MLX ayırıcısının raporladığı tepe değerdir. GB = 10⁹ bayt. Süreler yükleme ve ısınma hariç parça puanlama süreleridir; ayrıntılı ölçüm kapsamı Kayıt 005’te korunmuştur.
+
+### Oturumlar — model yükleme ve ısınma
+
+Terminaldeki çalışma sırası FP16 için 1 + 19, Q8 için 1 + 19, Q4 için 20 parçadır. Aşağıdaki değerler bu oturumların ilk parça metriklerinden alınmıştır; aynı oturuma ait tekrarlanan alanlar yeniden toplanmamıştır.
+
+| Model | Oturum | Terminaldeki komut | Parçalar | Yükleme (sn) | Isınma (sn) |
+| --- | ---: | --- | --- | ---: | ---: |
+| FP16 | 1 | `python scripts/score_main.py --model fp16 --max-chunks 1` | 01–01 | 2.374633 | 0.588512 |
+| FP16 | 2 | `python scripts/score_main.py --model fp16 --max-chunks 19` | 02–20 | 2.332323 | 0.451830 |
+| Q8 | 1 | `python scripts/score_main.py --model q8 --max-chunks 1` | 01–01 | 1.803497 | 0.323872 |
+| Q8 | 2 | `python scripts/score_main.py --model q8 --max-chunks 19` | 02–20 | 1.340210 | 0.308231 |
+| Q4 | 1 | `python scripts/score_main.py --model q4 --max-chunks 20` | 01–20 | 1.137677 | 0.083085 |
+
+Üç modelin yükleme mesajlarında BOS=1 ve yöntem `mean_logp_float32_bos_context_no_eos_v1` bildirildi. FP16/Q8’in ilk oturumundan sonra 19, son oturumlarından sonra 0 parça kaldı. Q4 oturumundan sonra 0 parça kaldı. FP16 ve Q8’in ikinci oturumları 1/20 parçanın önceden tamamlandığını tanıdı; tamamlanan ilk parça yeniden puanlanmadı.
+
+### FP16 — 20 parçanın tamamı
+
+| Parça (terminal sırası) | Çift | Doğru | Yanlış | Eşit | Puanlama (sn) | **MLX peak (GB)** |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| 01/20 | 50 | 42 | 8 | 0 | 6.039261 | 3.405533796 |
+| 02/20 | 50 | 46 | 4 | 0 | 6.014656 | 3.412038284 |
+| 03/20 | 50 | 44 | 6 | 0 | 6.107158 | 3.394507304 |
+| 04/20 | 50 | 45 | 5 | 0 | 6.109001 | 3.388297728 |
+| 05/20 | 50 | 44 | 6 | 0 | 6.001169 | 3.377713604 |
+| 06/20 | 50 | 46 | 4 | 0 | 5.962579 | 3.388297728 |
+| 07/20 | 50 | 49 | 1 | 0 | 6.061793 | 3.388297728 |
+| 08/20 | 50 | 44 | 6 | 0 | 6.272844 | 3.388297728 |
+| 09/20 | 50 | 47 | 3 | 0 | 6.180485 | 3.388297728 |
+| 10/20 | 50 | 47 | 3 | 0 | 6.141356 | 3.380957656 |
+| 11/20 | 50 | 46 | 4 | 0 | 6.599416 | 3.402568272 |
+| 12/20 | 50 | 40 | 10 | 0 | 6.320230 | 3.416117920 |
+| 13/20 | 50 | 40 | 10 | 0 | 6.239047 | 3.416117920 |
+| 14/20 | 50 | 42 | 8 | 0 | 6.224128 | 3.388297728 |
+| 15/20 | 50 | 42 | 8 | 0 | 6.356617 | 3.397751356 |
+| 16/20 | 50 | 49 | 1 | 0 | 6.022309 | 3.402568272 |
+| 17/20 | 50 | 50 | 0 | 0 | 6.075876 | 3.391541780 |
+| 18/20 | 50 | 50 | 0 | 0 | 6.091625 | 3.402568272 |
+| 19/20 | 50 | 50 | 0 | 0 | 6.140926 | 3.391541780 |
+| 20/20 | 50 | 49 | 1 | 0 | 6.077613 | 3.394507304 |
+
+**Toplam:** 912/1.000 doğru; puanlama 123.038089 sn; en yüksek MLX peak 3.416117920 GB.
+
+### Q8 — 20 parçanın tamamı
+
+| Parça (terminal sırası) | Çift | Doğru | Yanlış | Eşit | Puanlama (sn) | **MLX peak (GB)** |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| 01/20 | 50 | 43 | 7 | 0 | 4.934231 | 2.036552364 |
+| 02/20 | 50 | 46 | 4 | 0 | 4.822878 | 2.056393428 |
+| 03/20 | 50 | 44 | 6 | 0 | 4.950228 | 2.004046448 |
+| 04/20 | 50 | 45 | 5 | 0 | 4.965930 | 1.984205384 |
+| 05/20 | 50 | 44 | 6 | 0 | 4.911094 | 1.952584204 |
+| 06/20 | 50 | 46 | 4 | 0 | 4.843420 | 1.984205384 |
+| 07/20 | 50 | 49 | 1 | 0 | 4.877297 | 1.984205384 |
+| 08/20 | 50 | 44 | 6 | 0 | 4.898453 | 1.984205384 |
+| 09/20 | 50 | 47 | 3 | 0 | 4.847555 | 1.984205384 |
+| 10/20 | 50 | 47 | 3 | 0 | 4.953732 | 1.962807840 |
+| 11/20 | 50 | 46 | 4 | 0 | 4.886363 | 2.026934936 |
+| 12/20 | 50 | 41 | 9 | 0 | 4.874253 | 2.068173544 |
+| 13/20 | 50 | 40 | 10 | 0 | 4.868384 | 2.068173544 |
+| 14/20 | 50 | 43 | 7 | 0 | 4.891363 | 1.984205384 |
+| 15/20 | 50 | 42 | 8 | 0 | 4.725428 | 2.013647492 |
+| 16/20 | 50 | 49 | 1 | 0 | 4.938555 | 2.026934936 |
+| 17/20 | 50 | 50 | 0 | 0 | 4.943448 | 1.994429020 |
+| 18/20 | 50 | 50 | 0 | 0 | 4.895766 | 2.026934936 |
+| 19/20 | 50 | 50 | 0 | 0 | 4.881275 | 1.994429020 |
+| 20/20 | 50 | 49 | 1 | 0 | 4.974789 | 2.004046448 |
+
+**Toplam:** 915/1.000 doğru; puanlama 97.884444 sn; en yüksek MLX peak 2.068173544 GB.
+
+### Q4 — 20 parçanın tamamı
+
+| Parça (terminal sırası) | Çift | Doğru | Yanlış | Eşit | Puanlama (sn) | **MLX peak (GB)** |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| 01/20 | 50 | 37 | 13 | 0 | 4.488683 | 1.205408428 |
+| 02/20 | 50 | 41 | 9 | 0 | 4.784035 | 1.225052884 |
+| 03/20 | 50 | 41 | 9 | 0 | 4.684206 | 1.171346032 |
+| 04/20 | 50 | 44 | 6 | 0 | 4.826151 | 1.151865416 |
+| 05/20 | 50 | 40 | 10 | 0 | 4.781706 | 1.120801292 |
+| 06/20 | 50 | 45 | 5 | 0 | 4.732933 | 1.151865416 |
+| 07/20 | 50 | 47 | 3 | 0 | 4.745318 | 1.151865416 |
+| 08/20 | 50 | 45 | 5 | 0 | 4.763661 | 1.151865416 |
+| 09/20 | 50 | 46 | 4 | 0 | 4.809017 | 1.151865416 |
+| 10/20 | 50 | 46 | 4 | 0 | 4.760474 | 1.130828320 |
+| 11/20 | 50 | 45 | 5 | 0 | 4.793096 | 1.193841304 |
+| 12/20 | 50 | 38 | 12 | 0 | 4.810309 | 1.236718312 |
+| 13/20 | 50 | 37 | 13 | 0 | 4.741715 | 1.236718312 |
+| 14/20 | 50 | 42 | 8 | 0 | 4.848814 | 1.151865416 |
+| 15/20 | 50 | 41 | 9 | 0 | 4.798112 | 1.180783236 |
+| 16/20 | 50 | 50 | 0 | 0 | 4.639989 | 1.193841304 |
+| 17/20 | 50 | 50 | 0 | 0 | 4.822024 | 1.161892444 |
+| 18/20 | 50 | 50 | 0 | 0 | 4.814655 | 1.193841304 |
+| 19/20 | 50 | 50 | 0 | 0 | 4.804803 | 1.161892444 |
+| 20/20 | 50 | 49 | 1 | 0 | 4.752922 | 1.171346032 |
+
+**Toplam:** 884/1.000 doğru; puanlama 95.202621 sn; en yüksek MLX peak 1.236718312 GB.
+
+### Kapsam ve diğer karşılaştırmaların yeri
+
+Kayıt 005’te genel doğruluk/doğru/yanlış/eşit sayıları, FP16’ya göre farklar, dört kategorinin sonuçları, karar geçişleri, ilk kesin McNemar hesapları, token/dosya kontrolleri ve kaynak ölçümlerinin kapsamı bulunuyor. Bu ek kayıt, o sonuçları değiştirmeden ana deneyin **60 parça satırını ve 5 oturumun yükleme/ısınma değerlerini** tamamlıyor. Kaynaklar `results/main/{fp16,q8,q4}/chunk_00..19.jsonl`, bunlara karşılık gelen `.metrics.json` dosyaları ve `results/main/main_comparison.json`.
+
+Bu belge, gönderilen terminal metinlerinin birebir transkripti değildir: tekrarlanan komut istemleri/`clear` satırları ve önceki pilotların tüm token bazlı tanılama çıktıları burada tek tek yeniden basılmamıştır. Grafik eklenmemiştir. Swap/bellek baskısı açıklaması Kayıt 005’te kullanıcı gözlemi olarak, bağımsız ölçüm bulunmadığı belirtilerek kayıtlıdır.
+
+Bu güncellemede yalnızca `ProjeMarkdown/MEVCUT_DURUM.md` sonuna Kayıt 006 eklendi. Eski kayıtlar aynen korundu; kod, veri, model veya sonuç dosyaları değiştirilmedi; deneyler yeniden çalıştırılmadı.

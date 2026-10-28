@@ -4,7 +4,7 @@ EuroLLM-1.7B Base modelinde FP16, Q8 ve Q4 sürümlerinin Türkçe morfosentakti
 
 ## Mevcut durum
 
-27 Ekim 2026 itibarıyla veri hazırlığı ve FP16/Q8/Q4 için 20 çiftlik pilot puanlama ve karşılaştırma tamamlandı. Depo güncel betikleri, manifesti, pilot sonuçlarını ve tarihli proje belgelerini içerir. Pilot doğruluğu FP16 %75, Q8 %75, Q4 %70’tir; bunlar ana deney sonuçları değildir. Süre/bellek ölçümleri, 1.000 çiftlik ana deney ve istatistiksel analiz bekliyor. Deney devam ediyor. Güncel durum için [durum arşivinin son kaydına](ProjeMarkdown/MEVCUT_DURUM.md) bakın.
+28 Ekim 2026 kopyasında veri hazırlığı, üç modelin pilot ve 1.000 çiftlik ana deney kayıtları, ana karşılaştırma ve istatistiksel analiz çıktıları bulunur. Kaydedilmiş ana deney doğruluğu FP16 %91,2, Q8 %91,5, Q4 %88,4’tür. Bunlar bu kopyalama sırasında yeniden hesaplanmadı; mevcut sonuç dosyalarından aktarılmıştır. Projenin güncel aşaması ve kalan işler için [durum arşivinin son kaydına](ProjeMarkdown/MEVCUT_DURUM.md) bakın. Bu aktarım projenin tamamlandığı anlamına gelmez.
 
 ## Veri setini yeniden oluşturma
 
@@ -38,11 +38,14 @@ Kaynak model `utter-project/EuroLLM-1.7B`; kurulum notlarındaki indirme revizyo
 
 Pilot puanlama için hazırlanmış modellerin `models/eurollm-fp16`, `models/eurollm-q8` ve `models/eurollm-q4` konumlarında bulunması gerekir. `python scripts/score_pilot.py --model fp16` komutunda `fp16`, `q8` veya `q4` seçilir. `python scripts/summarize_pilot.py` mevcut pilot sonuçlarını ve yerel tokenizer’ları karşılaştırır. Puanlama betiğini yeniden çalıştırmak seçilen modelin pilot sonuç dosyalarının üzerine yazar. Bu kopyalama sırasında deneyler yeniden çalıştırılmadı.
 
-Tam deneyin tekrarlanabilmesi için model hazırlama adımları, ana deney komutları, sonuçları ve analiz kodları da yayımlanmalıdır. Süre ve bellek ölçümleri donanım ve sistem yüküne göre değişebilir.
+Ana deney betikleri (`score_main.py`, `summarize_main.py`), analiz betiği (`analyze_main.py`), kayıtlı ana deney/analiz çıktıları ve mevcut analiz testleri de bu depoya kopyalanmıştır. Tam yeniden üretim için model hazırlama adımları ve değişmez model sürüm kayıtları ayrıca tamamlanmalı, temiz ortamda çalışma doğrulanmalıdır. Betiklerin kullanım ayrıntıları proje belgelerinde yer alır. Süre ve bellek ölçümleri donanım ve sistem yüküne göre değişebilir.
 
 ## Dosyalar ve çalışma düzeni
 
-- `scripts/`: ana/pilot veri hazırlama, pilot puanlama ve karşılaştırma kodları.
+- `scripts/`: veri hazırlama, pilot/ana puanlama, karşılaştırma ve analiz kodları.
+- `tests/`: mevcut analiz doğrulama testleri; çalıştırmak için yeniden oluşturulmuş veri seti gerekir.
+- `results/main/`: üç modelin ana deney parçaları, metrikleri ve karşılaştırması.
+- `results/analysis/`: kaydedilmiş istatistik ve CSV çıktıları.
 - `results/pilot/`: üç modelin pilot kayıtları, özetleri ve karşılaştırma sonucu.
 - `ProjeMarkdown/`: tamamlanan ve planlanan aşamaların notları.
 - `data/processed/manifest.json`: yerel veri hash kayıtları.
