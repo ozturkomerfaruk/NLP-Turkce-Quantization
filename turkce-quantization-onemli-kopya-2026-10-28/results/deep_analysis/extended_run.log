@@ -1,0 +1,194 @@
+{
+  "audit": {
+    "raw_stats": {
+      "subject_agreement": {
+        "original_rows": 1000,
+        "invalid_rows": 0,
+        "duplicates_within_category": 66,
+        "duplicates_across_categories": 0,
+        "unique_available": 934
+      },
+      "argument_structure_transitive": {
+        "original_rows": 1000,
+        "invalid_rows": 0,
+        "duplicates_within_category": 165,
+        "duplicates_across_categories": 0,
+        "unique_available": 835
+      },
+      "nominalization": {
+        "original_rows": 1000,
+        "invalid_rows": 0,
+        "duplicates_within_category": 55,
+        "duplicates_across_categories": 0,
+        "unique_available": 945
+      },
+      "irregular_forms": {
+        "original_rows": 1000,
+        "invalid_rows": 0,
+        "duplicates_within_category": 52,
+        "duplicates_across_categories": 0,
+        "unique_available": 948
+      }
+    },
+    "exact_dataset_reconstruction": true,
+    "sentence_records_verified": 6000,
+    "max_mean_rounding_residual": 4.2385525134136515e-07,
+    "max_cp_error_vs_scipy": 1.2889689315898067e-13,
+    "original_statistics_exact_match": true,
+    "exact_sentence_pair_duplicates": 0,
+    "unique_good_sentences": 1000,
+    "unique_bad_sentences": 1000
+  },
+  "accuracy": {
+    "fp16": {
+      "correct": 912,
+      "accuracy_percent": 91.2,
+      "ci95_percent": [
+        89.27052349649914,
+        92.88248657147135
+      ],
+      "ties": 0
+    },
+    "q8": {
+      "correct": 915,
+      "accuracy_percent": 91.5,
+      "ci95_percent": [
+        89.59680142216227,
+        93.15427212290098
+      ],
+      "ties": 0
+    },
+    "q4": {
+      "correct": 884,
+      "accuracy_percent": 88.4,
+      "ci95_percent": [
+        86.25132494504362,
+        90.31940447302415
+      ],
+      "ties": 0
+    }
+  },
+  "primary": {
+    "q8": {
+      "n": 1000,
+      "reference_correct": 912,
+      "other_correct": 915,
+      "both_correct": 912,
+      "both_wrong": 85,
+      "down": 0,
+      "up": 3,
+      "delta_pp": 0.3,
+      "ci_pp": [
+        -0.3897978610217987,
+        0.9706463271407509
+      ],
+      "p": 0.25,
+      "p_holm": 0.25
+    },
+    "q4": {
+      "n": 1000,
+      "reference_correct": 912,
+      "other_correct": 884,
+      "both_correct": 870,
+      "both_wrong": 74,
+      "down": 42,
+      "up": 14,
+      "delta_pp": -2.8,
+      "ci_pp": [
+        -5.151443680032326,
+        -0.41629733018682497
+      ],
+      "p": 0.00023444586091919684,
+      "p_holm": 0.00046889172183839367
+    }
+  },
+  "cluster_sensitivity": {
+    "prefixes": [
+      "ama",
+      "ancak",
+      "ardından",
+      "artık",
+      "aslında",
+      "ayrıca",
+      "belki",
+      "bugün",
+      "burada",
+      "evet",
+      "fakat",
+      "hadi",
+      "hemen",
+      "işte",
+      "sadece",
+      "sonra",
+      "ve",
+      "yalnız",
+      "yani",
+      "yine",
+      "çünkü",
+      "öncelikle",
+      "özellikle",
+      "şimdi"
+    ],
+    "n_clusters": 776,
+    "per_category": {
+      "subject_agreement": {
+        "clusters": 160,
+        "singleton_clusters": 113,
+        "max_size": 5
+      },
+      "argument_structure_transitive": {
+        "clusters": 184,
+        "singleton_clusters": 143,
+        "max_size": 6
+      },
+      "nominalization": {
+        "clusters": 203,
+        "singleton_clusters": 168,
+        "max_size": 5
+      },
+      "irregular_forms": {
+        "clusters": 229,
+        "singleton_clusters": 213,
+        "max_size": 5
+      }
+    },
+    "equal_cluster_accuracy_percent": [
+      92.44546755152913,
+      92.73083547024834,
+      90.31514990029159
+    ],
+    "equal_cluster_delta_pp": [
+      0.0,
+      0.28536791871920375,
+      -2.1303176512375566
+    ],
+    "pair_weighted_cluster_bootstrap": {
+      "q8": {
+        "delta_ci_pp": [
+          0.0,
+          0.692893942858788
+        ]
+      },
+      "q4": {
+        "delta_ci_pp": [
+          -4.450949369231825,
+          -1.213124007279554
+        ]
+      }
+    }
+  },
+  "review": {
+    "n": 58,
+    "status_counts": {
+      "etiket_ayrimi_destekleniyor": 42,
+      "baglama_duyarli": 3,
+      "uzman_incelemesi_gerekli": 5,
+      "iki_cumle_de_kabul_edilebilir": 8
+    },
+    "selected20_status_counts": {
+      "etiket_ayrimi_destekleniyor": 16,
+      "iki_cumle_de_kabul_edilebilir": 3,
+      "uzman_incelemesi_gerekli": 1
+    }
+  }
+}

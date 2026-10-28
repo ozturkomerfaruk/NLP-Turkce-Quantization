@@ -1,0 +1,81 @@
+{
+  "dataset_sha256": "420407b129d0e997680a50ab11ff49319e933c1b82b07068042b5d1249239f27",
+  "total_pairs": 20,
+  "accuracy": {
+    "fp16": 0.75,
+    "q8": 0.75,
+    "q4": 0.7
+  },
+  "categories": {
+    "subject_agreement": {
+      "fp16": {
+        "correct": 2,
+        "total": 5
+      },
+      "q8": {
+        "correct": 2,
+        "total": 5
+      },
+      "q4": {
+        "correct": 2,
+        "total": 5
+      }
+    },
+    "argument_structure_transitive": {
+      "fp16": {
+        "correct": 3,
+        "total": 5
+      },
+      "q8": {
+        "correct": 3,
+        "total": 5
+      },
+      "q4": {
+        "correct": 3,
+        "total": 5
+      }
+    },
+    "nominalization": {
+      "fp16": {
+        "correct": 5,
+        "total": 5
+      },
+      "q8": {
+        "correct": 5,
+        "total": 5
+      },
+      "q4": {
+        "correct": 4,
+        "total": 5
+      }
+    },
+    "irregular_forms": {
+      "fp16": {
+        "correct": 5,
+        "total": 5
+      },
+      "q8": {
+        "correct": 5,
+        "total": 5
+      },
+      "q4": {
+        "correct": 5,
+        "total": 5
+      }
+    }
+  },
+  "decision_changes_from_fp16": {
+    "q8": [],
+    "q4": [
+      {
+        "pair_id": "nominalization:0577",
+        "category": "nominalization",
+        "fp16_correct": true,
+        "quantized_correct": false,
+        "fp16_delta": 0.06475830078125,
+        "quantized_delta": -0.0217742919921875
+      }
+    ]
+  },
+  "token_ids_equal_across_models": true
+}

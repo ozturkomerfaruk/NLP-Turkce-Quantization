@@ -1,0 +1,44 @@
+{
+    "model": "EuroLLM-1.7B Base",
+    "precision": "Q8",
+    "model_path": "/Users/omerfarukozturk/Desktop/turkce-quantization/models/eurollm-q8",
+    "dataset_path": "/Users/omerfarukozturk/Desktop/turkce-quantization/data/processed/turblimp_pilot_20.jsonl",
+    "dataset_sha256": "420407b129d0e997680a50ab11ff49319e933c1b82b07068042b5d1249239f27",
+    "scoring_method": "mean_token_log_probability",
+    "scoring_dtype": "float32",
+    "tokenization": {
+        "add_special_tokens": false,
+        "prepend_bos": true,
+        "score_bos": false,
+        "append_eos": false
+    },
+    "environment": {
+        "python_version": "3.12.15",
+        "mlx_version": "0.32.4",
+        "mlx_lm_version": "0.32.2",
+        "platform": "macOS-26.4.1-arm64-arm-64bit"
+    },
+    "total_pairs": 20,
+    "successful_pairs": 15,
+    "unsuccessful_pairs": 5,
+    "tie_count": 0,
+    "accuracy": 0.75,
+    "category_results": {
+        "subject_agreement": {
+            "total": 5,
+            "correct": 2
+        },
+        "argument_structure_transitive": {
+            "total": 5,
+            "correct": 3
+        },
+        "nominalization": {
+            "total": 5,
+            "correct": 5
+        },
+        "irregular_forms": {
+            "total": 5,
+            "correct": 5
+        }
+    }
+}
