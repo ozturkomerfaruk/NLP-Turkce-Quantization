@@ -1,0 +1,38 @@
+[
+  {
+    "before": "Effects of Weight Quantization on Turkish Morphosyntactic Performance in EuroLLM",
+    "after": "Weight Quantization and the Reliability of Turkish Linguistic Measurements in EuroLLM"
+  },
+  {
+    "before": "Weight quantization reduces the resource requirements of large language models, but the preservation of specific grammatical contrasts requires targeted evaluation. This study compares the local FP16 reference of the multilingual EuroLLM-1.7B base model with MLX affine 8-bit and 4-bit weight quantization, using a group size of 64. The evaluation comprises 1,000 deduplicated minimal pairs sampled equally from four TurBLiMP categories: subject agreement, argument structure, nominalization, and irregular forms. The primary score is mean token log probability, with a beginning-of-sequence context and no end-of-sequence token. FP16, Q8, and Q4 achieve accuracies of 91.2%, 91.5%, and 88.4%, respectively. The Q8 difference of +0.3 percentage points is not significant (two-sided exact McNemar test, Holm-adjusted p = .25). The Q4 difference of −2.8 percentage points is significant (adjusted p = .000469; conservative paired 95% confidence interval [−5.151, −0.416]). Q4 produces 42 correct-to-incorrect and 14 incorrect-to-correct transitions; 46 transitions occur in the lowest quartile of absolute FP16 margins. Exploratory fragmentation analyses do not support a monotonically increasing relationship between the token-to-word ratio and decision changes. Measured peak MLX allocator memory is 63.8% lower for Q4 than FP16. The results establish a model- and sample-specific accuracy–memory trade-off, without demonstrating Q8 equivalence, general Turkish proficiency, or a causal fragmentation effect.",
+    "after": "Computational research on Turkish texts requires transparent evidence about the stability of its linguistic instruments. This study audits how weight quantization changes grammatical preferences in EuroLLM-1.7B, treating minimal-pair performance as a bounded diagnostic rather than a validated measure of social meaning. The local FP16 reference is compared with MLX affine 8-bit and 4-bit configurations on 1,000 deduplicated TurBLiMP pairs across four categories. Mean token log probability defines the primary score. FP16, Q8, and Q4 achieve accuracies of 91.2%, 91.5%, and 88.4%. The Q8 difference of +0.3 percentage points is not significant and does not establish equivalence. Q4 loses 2.8 percentage points (Holm-adjusted p = .000469), with 42 correct-to-incorrect and 14 incorrect-to-correct transitions. Subject agreement accounts for 18 of the 28 net lost decisions. Summed scoring increases the Q4 deficit to 3.9 percentage points, showing sensitivity to operationalization. Exploratory analyses do not support monotonically increasing reversals with subword fragmentation. Measured peak MLX allocator memory is 63.8% lower for Q4. A measurement-oriented audit links these findings to requirements for validating local text-analysis instruments: explicit constructs, paired comparisons, disaggregated errors, label review, and task-specific validation. The experiment establishes a model-specific accuracy–memory trade-off; it does not establish the validity of downstream social-science coding, equitable access, or equivalence across precision settings."
+  },
+  {
+    "before": "Keywords: weight quantization, Turkish, morphosyntax, minimal pairs, subword fragmentation.",
+    "after": "Keywords: weight quantization, Turkish, measurement validity, computational social science, morphosyntax, reproducibility."
+  },
+  {
+    "before": "We evaluate three precision configurations of EuroLLM-1.7B (Martins et al., 2024) on the same Turkish minimal pairs from TurBLiMP (Başar et al., 2025). We ask how much 8-bit and 4-bit quantization change accuracy relative to FP16, where decision changes occur across categories and baseline margins, and whether the token-to-word ratio is associated with Q4 decision changes after accounting for category, sentence length, and baseline margin. Measurements of scoring time and memory use place the linguistic results in the context of local inference.",
+    "after": "We evaluate three precision configurations of EuroLLM-1.7B (Martins et al., 2024) on the same Turkish minimal pairs from TurBLiMP (Başar et al., 2025). Three empirical questions organize the audit. RQ1 asks how 8-bit and 4-bit quantization change benchmark accuracy and individual decisions relative to FP16. RQ2 asks whether the conclusions are stable across grammatical categories, sentence-scoring conventions, and sensitivity analyses for related or disputed pairs. RQ3 asks what accuracy–memory trade-off is observed under the measured local workload. An exploratory analysis examines associations between subword fragmentation and Q4 reversals. These questions delimit the evidence that this experiment can contribute to evaluating a linguistic instrument."
+  },
+  {
+    "before": "3. Theoretical Framework",
+    "after": "3. Measurement Framework"
+  },
+  {
+    "before": "8. Discussion",
+    "after": "8. Discussion"
+  },
+  {
+    "before": "Research Transparency",
+    "after": "11. Research Transparency"
+  },
+  {
+    "before": "Data and code availability. The original TurBLiMP data are available through the repository identified in the benchmark publication (Başar et al., 2025). Numerical summaries are recorded in main_statistics.json, extended_statistics.json, and fragmentation_statistics.json. The selected example reviews are recorded in manual_review_20_annotated.csv. This version provides no persistent public archive for the experimental code, selected sample, or conversion records.",
+    "after": "The original TurBLiMP benchmark is available at https://github.com/ezgibasar/TurBLiMP (Başar et al., 2025). The experiment uses revision 297de13fb7a0ce524fe32e8b175c6b5255d66960 and the sample digest reported in Section 4. A local replication package accompanies this manuscript preparation and includes the selected data, saved scores, analysis scripts, model configuration files, and an integrity inventory. It does not contain model weights. A persistent public repository link has not yet been assigned. The incomplete archive of model conversion commands limits reconstruction of the weight-conversion stage."
+  },
+  {
+    "before": "Use of artificial intelligence. AI tools assisted with manuscript preparation and preliminary linguistic review. The quantitative findings derive from experimental records. No new data were collected from human participants.",
+    "after": "AI tools assisted with earlier manuscript preparation and preliminary linguistic review, as reported in the experimental records. OpenAI Codex was used during the revision of 6 November 2026 for literature checking, manuscript restructuring, document preparation, and consistency checks against saved results. The exact model identifier for this revision and the tool names and versions used in earlier stages are not documented in the supplied records. AI-assisted linguistic comments are exploratory and are not independent human annotations. The tested EuroLLM configurations are described in Sections 5 and 6. Responsibility for the submitted manuscript, source accuracy, and interpretation remains with the human author."
+  }
+]

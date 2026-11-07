@@ -10,6 +10,7 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / 'scripts'))
 import score_main
 
+# Redirect checkpoints only; the original scorer, dataset and model paths stay intact.
 score_main.RESULTS = ROOT / 'results' / 'deep_analysis' / 'rerun'
 if __name__ == '__main__':
     score_main.main()

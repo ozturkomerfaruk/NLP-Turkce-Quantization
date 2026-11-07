@@ -21,25 +21,32 @@ from score_main import sha256, read_jsonl, token_hash
 NAMES=['fp16','q8','q4']; SEED=20261028; B=20000
 OUT.mkdir(exist_ok=True); (OUT/'figures').mkdir(exist_ok=True)
 
+# Write extended statistics separately from the original experiment outputs.
 def dump(name,data):
  (OUT/name).write_text(json.dumps(data,ensure_ascii=False,indent=2,allow_nan=False)+'\n')
+# Export audit and review rows without modifying benchmark labels.
 def csvout(name,rows):
  if not rows:return
  with (OUT/name).open('w',encoding='utf-8-sig',newline='') as f:
   w=csv.DictWriter(f,fieldnames=list(rows[0]));w.writeheader();w.writerows(rows)
+# Use SciPy beta quantiles as an independent exact-binomial interval implementation.
 def cp(k,n,alpha=.05):
  return [float(stats.beta.ppf(alpha/2,k,n-k+1)) if k else 0.,float(stats.beta.ppf(1-alpha/2,k+1,n-k)) if k<n else 1.]
+# Preserve matched outcomes when comparing two models and quantifying uncertainty.
 def paired(a,b):
  d=int(np.sum(a & ~b)); u=int(np.sum(~a & b)); n=len(a)
  dl,dh=cp(d,n,.025);ul,uh=cp(u,n,.025)
  return dict(n=n,reference_correct=int(a.sum()),other_correct=int(b.sum()),both_correct=int((a&b).sum()),both_wrong=int((~a&~b).sum()),down=d,up=u,delta_pp=100*(u-d)/n,ci_pp=[100*(ul-dh),100*(uh-dl)],p=float(stats.binomtest(min(d,u),d+u,.5).pvalue) if d+u else 1.)
+# Summarize distributions for diagnostics rather than treating every value as a new trial.
 def desc(x):
  x=np.asarray(x,float)
  return dict(n=len(x),mean=float(x.mean()),sd=float(x.std(ddof=1)) if len(x)>1 else 0.,min=float(x.min()),q25=float(np.quantile(x,.25)),median=float(np.median(x)),q75=float(np.quantile(x,.75)),max=float(x.max()))
+# Apply a separate Holm family to the comparisons supplied by each analysis.
 def holm(results):
  adjusted=old.holm_adjust({k:v['p'] for k,v in results.items()})
  for k,v in results.items(): v['p_holm']=adjusted[k]
  return results
+# Align all arrays to the same frozen pair order before comparing model outcomes.
 source,ids,cats,scores,metrics,data_sha=old.load_data()
 source_by={r['pair_id']:r for r in source}
 C=np.array([[scores[n][p]['correct'] for n in NAMES] for p in ids],bool)
@@ -94,6 +101,7 @@ original=json.loads((ROOT/'results/analysis/main_statistics.json').read_text())
 recomputed=json.loads((OUT/'recomputed/main_statistics.json').read_text())
 assert original==recomputed
 R=dict(seed=SEED,bootstrap_replicates=B,dataset_sha256=data_sha,versions=dict(python=platform.python_version(),numpy=np.__version__,scipy=scipy.__version__,matplotlib=matplotlib.__version__),audit=dict(raw_stats=raw_stats,exact_dataset_reconstruction=True,sentence_records_verified=checks,max_mean_rounding_residual=max_mean_residual,max_cp_error_vs_scipy=max_cp_error,original_statistics_exact_match=True,exact_sentence_pair_duplicates=1000-len(set((r['sentence_good'],r['sentence_bad']) for r in source)),unique_good_sentences=len(set(r['sentence_good'] for r in source)),unique_bad_sentences=len(set(r['sentence_bad'] for r in source))))
+# Keep the two primary FP16 comparisons distinct from exploratory test families.
 R['accuracy']={n:dict(correct=int(C[:,j].sum()),accuracy_percent=float(C[:,j].mean()*100),ci95_percent=[v*100 for v in cp(int(C[:,j].sum()),1000)],ties=int((M[:,j]==0).sum())) for j,n in enumerate(NAMES)}
 R['primary']=holm({n:paired(C[:,0],C[:,j]) for j,n in enumerate(NAMES) if j})
 R['all_pairwise_exploratory']=holm({NAMES[a]+'_to_'+NAMES[b]:paired(C[:,a],C[:,b]) for a,b in [(0,1),(0,2),(1,2)]})
@@ -101,6 +109,7 @@ R['category']={c:dict(n=250,accuracy={n:float(C[g,j].mean()*100) for j,n in enum
 cat_tests={c+'__'+n:R['category'][c]['comparisons'][n] for c in cats for n in ['q8','q4']};holm(cat_tests)
 R['patterns']={''.join(map(str,map(int,k))):v for k,v in Counter(map(tuple,C)).items()}
 R['total_scoring']=dict(accuracy={n:float((T[:,j]>0).mean()*100) for j,n in enumerate(NAMES)},disagreements={n:int(((T[:,j]>0)!=C[:,j]).sum()) for j,n in enumerate(NAMES)},comparisons=holm({n:paired(T[:,0]>0,T[:,j]>0) for j,n in enumerate(NAMES) if j}))
+# Diagnose length and score-margin effects without changing the primary mean-logp rule.
 R['length']=dict(good=desc(L[:,0]),bad=desc(L[:,1]),good_minus_bad=desc(L[:,0]-L[:,1]),equal=int((L[:,0]==L[:,1]).sum()),groups={})
 for label,mask in [('equal',L[:,0]==L[:,1]),('good_longer',L[:,0]>L[:,1]),('good_shorter',L[:,0]<L[:,1])]:
  R['length']['groups'][label]=dict(n=int(mask.sum()),accuracy={n:float(C[mask,j].mean()*100) for j,n in enumerate(NAMES)},mean_total_disagreements={n:int(((T[mask,j]>0)!=C[mask,j]).sum()) for j,n in enumerate(NAMES)},comparisons={n:paired(C[mask,0],C[mask,j]) for j,n in enumerate(NAMES) if j})
@@ -122,9 +131,13 @@ for g in groups:
   boot[start:start+len(ix)]+=C[ix].mean(axis=1)/4
 R['stratified_bootstrap']={n:dict(accuracy_ci_percent=(np.quantile(boot[:,j],[.025,.975])*100).tolist(),delta_ci_pp=(np.quantile(boot[:,j]-boot[:,0],[.025,.975])*100).tolist()) for j,n in enumerate(NAMES)}
 # Exploratory family proxy: strip only shared leading discourse/time adverbs, then exact string identity.
+# These Turkish words are analysis inputs, not interface text; translating them
+# would change which pairs are clustered. Preserve their exact spelling.
 PREFIXES=set('ama ve evet çünkü fakat yani ancak işte şimdi yalnız ayrıca sonra ardından artık bugün burada aslında belki öncelikle yine özellikle hadi sadece hemen'.split())
+# Normalize Turkish case-folded text for the exploratory shared-prefix clustering rule.
 def folded(text):
  return text.casefold().replace('\u0307','')
+# Remove only shared leading discourse words; preserve the target grammatical contrast.
 def clusterkey(r):
  a=r['sentence_good'].split();b=r['sentence_bad'].split()
  while len(a)>1 and len(b)>1 and folded(a[0])==folded(b[0]) and folded(a[0]) in PREFIXES:
@@ -149,35 +162,37 @@ R['cluster_sensitivity']=dict(prefixes=sorted(PREFIXES),n_clusters=len(family),p
 selected20=list(csv.DictReader((ROOT/'results/analysis/manual_review_20.csv').open(encoding='utf-8-sig')))
 reviewids={r['pair_id'] for r in selected20}
 changed=np.any(C[:,1:]!=C[:,[0]],axis=1)
+# Retain historical annotation identifiers because saved statistics and report
+# tables use them as keys. Explanatory prose is English; benchmark quotes stay Turkish.
 reviews=[]
 for i,r in enumerate(source):
  if not changed[i]:continue
  cat=r['category'];critical=r['critical_region']; status='etiket_ayrimi_destekleniyor';note=''
  if cat=='subject_agreement':
-  note=f"Özne değişimi ({r['good_cue']} → {r['bad_cue']}) ile yüklemin kişi/sayı biçimi ({critical}) arasındaki uyum hedefleniyor. Standart tek konuşucu okumasında iyi cümledeki uyum daha açık."
+  note=f"The subject change ({r['good_cue']} → {r['bad_cue']}) is evaluated against the predicate person/number form ({critical}). Agreement in the good sentence is clearer under a standard single-speaker reading."
   if r['pair_id'] in ['subject_agreement:0417','subject_agreement:0020','subject_agreement:0258']:
-   status='baglama_duyarli';note+=' Tekil ad/üçüncü kişi ile çoğul yüklem; saygı, topluluk ve söylem bağlamı bazı yargıları etkileyebilir. Bazı + tekil ad kullanımında ek doğallık sorunu da vardır.'
-  if r['pair_id']=='subject_agreement:0128':note+=' İç cümledeki yaptıklarınızı ikinci çoğul kişiye, ana cümledeki sen tekil kişiye gönderme yapabilir; bu tek başına iyi etiketi geçersiz kılmaz, fakat söylem gerektirir.'
-  if r['pair_id']=='subject_agreement:0068':note+=' Yanına aldığın iç cümlesi başka bir kişiye gönderme yapabilir; Işte yazımı ve karmaşık gönderimler ek gürültüdür.'
+   status='baglama_duyarli';note+=' A singular noun/third-person subject occurs with a plural predicate; honorific, collective and discourse readings may affect judgments. The use of bazı with a singular noun also raises a naturalness concern.'
+  if r['pair_id']=='subject_agreement:0128':note+=' The embedded yaptıklarınızı may refer to second-person plural while main-clause sen refers to a singular addressee; this alone does not invalidate the good label, but requires discourse context.'
+  if r['pair_id']=='subject_agreement:0068':note+=' The embedded yanına aldığın may refer to another person; the spelling Işte and complex references add noise.'
  elif cat=='argument_structure_transitive':
-  note=f"{critical} yükleminin istediği durum eki, {r['good_cue']} → {r['bad_cue']} değişimiyle karşılaştırılıyor. Bu okuma altında etiket ayrımı destekleniyor."
-  if r['pair_id']=='argument_structure_transitive:0938':note+=' 2 muhalefet partisi ve hala yazımı doğallığı etkileyebilir; hedef erken seçimde/erken seçimi karşıtlığıdır.'
- elif cat=='irregular_forms':note='Verir/verer karşıtlığında standart geniş zaman biçimi verir; verer standart biçim değildir.'
+  note=f"{critical} predicate case selection is examined through the {r['good_cue']} → {r['bad_cue']} contrast. The label distinction is supported under this reading."
+  if r['pair_id']=='argument_structure_transitive:0938':note+=' The phrases 2 muhalefet partisi and hala may affect naturalness; the target contrast is erken seçimde/erken seçimi.'
+ elif cat=='irregular_forms':note='In the verir/verer contrast, verir is the standard aorist form; verer is nonstandard.'
  else:
   if critical in ['şaşırdı','tepki gösterdi']:
-   status='iki_cumle_de_kabul_edilebilir';note='-mA olay adlaştırması ile -DIK olgu bildiren adlaştırma, bu yüklemle ayrı anlam vurgularında kabul edilebilir görünüyor. Anlamsal fark tek başına dilbilgisel yanlışlık kanıtı değildir; uzman yargısı gerekir.'
+   status='iki_cumle_de_kabul_edilebilir';note='The -mA event nominalization and -DIK fact nominalization appear acceptable with this predicate under different semantic emphases. A difference in meaning alone does not establish ungrammaticality; expert judgment is needed.'
   elif critical=='inanıyor':
-   status='iki_cumle_de_kabul_edilebilir';note='Doğruyu söylediğine inanmak olguya inanç; doğruyu söylemesine inanmak bağlama göre davranışa/güvenilirliğe inanç şeklinde okunabilir. Kesin yanlış olarak etiketlemek için bağlam ve uzman değerlendirmesi gerekir.'
+   status='iki_cumle_de_kabul_edilebilir';note='Doğruyu söylediğine inanmak expresses belief in a fact; doğruyu söylemesine inanmak may express belief in conduct or trustworthiness in context. A definitive incorrect label requires context and expert assessment.'
   elif critical=='destekledi':
-   status='uzman_incelemesi_gerekli';note='Uygulanmasını desteklemek doğal bir olay/istek tamamlayıcısıdır. Uygulandığını desteklemek bir iddia/kanıt bağlamında yorumlanabilir ancak bu cümlede daha az doğal; kesin iki-geçerli hükmü verilmedi.'
+   status='uzman_incelemesi_gerekli';note='Uygulanmasını desteklemek is a natural event/desiderative complement. Uygulandığını desteklemek may be interpretable in a claim/evidence context but is less natural here; no definitive both-valid judgment is made.'
   elif critical=='düşünmemiştim':
-   status='uzman_incelemesi_gerekli';note='Olduğunu düşünmek olgusal, olmasını düşünmek tasarlama/istemeyi değerlendirme okumasına açık olabilir. Verilen bağlam ve Benim başlangıcında gönderim ayrıca incelenmelidir.'
+   status='uzman_incelemesi_gerekli';note='Olduğunu düşünmek can express a factual reading, while olmasını düşünmek may concern planning or considering a wish. The given context and reference of initial Benim need further review.'
   else:
-   note=f"{critical} yüklemiyle {r['good_cue']} / {r['bad_cue']} tamamlayıcısının seçimi hedefleniyor. İyi biçim daha doğal; olgu/olay ayrımı bu tümcede etiket ayrımını destekliyor. Bu bir insan paneli kararı değildir."
- reviews.append(dict(pair_id=ids[i],category=cat,selected_in_original20=ids[i] in reviewids,sentence_good=r['sentence_good'],sentence_bad=r['sentence_bad'],critical_region=critical,fp16_correct=int(C[i,0]),q8_correct=int(C[i,1]),q4_correct=int(C[i,2]),fp16_margin=M[i,0],q8_margin=M[i,1],q4_margin=M[i,2],linguistic_validity=status,manual_review_note=note,reviewer='Codex; ön dilbilimsel değerlendirme; insan uzman onayı yok'))
+   note=f"{critical} with the predicate and {r['good_cue']} / {r['bad_cue']} complement selection is the target. The good form is more natural; the fact/event distinction supports the label contrast in this sentence. This is not a human-panel judgment."
+ reviews.append(dict(pair_id=ids[i],category=cat,selected_in_original20=ids[i] in reviewids,sentence_good=r['sentence_good'],sentence_bad=r['sentence_bad'],critical_region=critical,fp16_correct=int(C[i,0]),q8_correct=int(C[i,1]),q4_correct=int(C[i,2]),fp16_margin=M[i,0],q8_margin=M[i,1],q4_margin=M[i,2],linguistic_validity=status,manual_review_note=note,reviewer='Codex; preliminary linguistic assessment; not validated by a human expert'))
 csvout('linguistic_review_58.csv',reviews)
 byreview={r['pair_id']:r for r in reviews}
-review20=[{**r,'manual_review_note':byreview[r['pair_id']]['manual_review_note'],'linguistic_validity':byreview[r['pair_id']]['linguistic_validity'],'reviewer':'Codex ön değerlendirmesi'} for r in selected20]
+review20=[{**r,'manual_review_note':byreview[r['pair_id']]['manual_review_note'],'linguistic_validity':byreview[r['pair_id']]['linguistic_validity'],'reviewer':'Codex preliminary assessment'} for r in selected20]
 csvout('manual_review_20_annotated.csv',review20)
 R['review']=dict(n=len(reviews),status_counts=dict(Counter(r['linguistic_validity'] for r in reviews)),selected20_status_counts=dict(Counter(r['linguistic_validity'] for r in review20)))
 pilotids={r['pair_id'] for r in read_jsonl(ROOT/'data/processed/turblimp_pilot_20.jsonl')}
@@ -185,11 +200,12 @@ scenarios={'exclude_pilot20':np.array([p not in pilotids for p in ids]),'exclude
 # Uniform lexical trigger applied to the entire sample; does not condition on a decision flip.
 flag=np.array([r['category']=='nominalization' and r['critical_region'] in ['şaşırdı','tepki gösterdi','inanıyor'] for r in source])
 scenarios['exclude_uniform_predicate_screen']=~flag
-csvout('predicate_screen_all_pairs.csv',[dict(pair_id=ids[i],critical_region=source[i]['critical_region'],sentence_good=source[i]['sentence_good'],sentence_bad=source[i]['sentence_bad'],screen='yükleme dayalı duyarlılık bayrağı; kesin etiket düzeltmesi değildir') for i in np.where(flag)[0]])
+csvout('predicate_screen_all_pairs.csv',[dict(pair_id=ids[i],critical_region=source[i]['critical_region'],sentence_good=source[i]['sentence_good'],sentence_bad=source[i]['sentence_bad'],screen='predicate-based sensitivity flag; not a definitive label correction') for i in np.where(flag)[0]])
 for c in cats:scenarios['leave_out_'+c]=cat_array!=c
 R['sensitivity']={label:dict(n=int(mask.sum()),accuracy={n:float(C[mask,j].mean()*100) for j,n in enumerate(NAMES)},comparisons=holm({n:paired(C[mask,0],C[mask,j]) for j,n in enumerate(NAMES) if j})) for label,mask in scenarios.items()}
 # All possible reversals of just the screened labels, with fixed n and no exclusion.
 R['label_flip_bounds']={n:dict(screened_pairs=int(flag.sum()),delta_min_pp=float(((C[:,j].astype(int)-C[:,0]).sum()-2*np.maximum(C[flag,j].astype(int)-C[flag,0],0).sum())/10),delta_max_pp=float(((C[:,j].astype(int)-C[:,0]).sum()-2*np.minimum(C[flag,j].astype(int)-C[flag,0],0).sum())/10)) for j,n in [(1,'q8'),(2,'q4')]}
+# Keep allocator peaks, process RSS and disk size separate; they measure different things.
 R['resources']={}
 for name in NAMES:
  mets=metrics[name];times=np.array([m['score_seconds_chunk'] for m in mets]); tokens=sum(m['scored_tokens_chunk'] for m in mets)
@@ -206,30 +222,31 @@ csvout('pair_audit.csv',rows)
 # Publication-exportable PNG and SVG; plot uncertainty explicitly.
 plt.rcParams.update({'font.family':'DejaVu Sans','font.size':10,'axes.spines.top':False,'axes.spines.right':False,'figure.dpi':140})
 colors=['#375a7f','#2e8b76','#c96b38']
+# Export both raster and vector figures from the same plotted values.
 def save(fig,name):
  fig.tight_layout();fig.savefig(OUT/'figures'/f'{name}.png',dpi=180,bbox_inches='tight');fig.savefig(OUT/'figures'/f'{name}.svg',bbox_inches='tight');plt.close(fig)
 fig,ax=plt.subplots(figsize=(7,4));acc=np.array([R['accuracy'][n]['accuracy_percent'] for n in NAMES]);ci=np.array([R['accuracy'][n]['ci95_percent'] for n in NAMES]).T
 ax.bar([n.upper() for n in NAMES],acc,color=colors);ax.errorbar(range(3),acc,yerr=np.array([acc-ci[0],ci[1]-acc]),fmt='none',color='black',capsize=5)
 for i,v in enumerate(acc):ax.text(i,v+2.2,f'%{v:.1f}',ha='center')
-ax.set(ylim=(0,100),ylabel='Doğruluk (%)',title='1.000 çift: doğruluk ve %95 kesin binom aralığı');save(fig,'01_accuracy')
+ax.set(ylim=(0,100),ylabel='Accuracy (%)',title='1,000 pairs: accuracy and exact 95% binomial intervals');save(fig,'01_accuracy')
 fig,ax=plt.subplots(figsize=(9,4));x=np.arange(4)
 for j,n in enumerate(NAMES):ax.bar(x+(j-1)*.25,[R['category'][c]['accuracy'][n] for c in cats],width=.25,label=n.upper(),color=colors[j])
-ax.set_xticks(x,['Özne–yüklem','Argüman yapısı','Adlaştırma','Düzensiz biçimler']);ax.set(ylabel='Doğruluk (%)',ylim=(0,105),title='Her kategoride 250 çift');ax.legend(ncol=3);save(fig,'02_categories')
+ax.set_xticks(x,['Subject agreement','Argument structure','Nominalization','Irregular forms']);ax.set(ylabel='Accuracy (%)',ylim=(0,105),title='250 pairs per category');ax.legend(ncol=3);save(fig,'02_categories')
 fig,ax=plt.subplots(figsize=(7,4));x=np.arange(2)
-ax.bar(x-.18,[R['primary'][n]['down'] for n in ['q8','q4']],.36,label='Doğru → yanlış',color=colors[2]);ax.bar(x+.18,[R['primary'][n]['up'] for n in ['q8','q4']],.36,label='Yanlış → doğru',color=colors[1]);ax.set_xticks(x,['Q8','Q4']);ax.set(ylabel='Çift sayısı',title='FP16 kararına göre geçişler');ax.legend();save(fig,'03_transitions')
+ax.bar(x-.18,[R['primary'][n]['down'] for n in ['q8','q4']],.36,label='Correct → incorrect',color=colors[2]);ax.bar(x+.18,[R['primary'][n]['up'] for n in ['q8','q4']],.36,label='Incorrect → correct',color=colors[1]);ax.set_xticks(x,['Q8','Q4']);ax.set(ylabel='Pair count',title='Decision transitions from FP16');ax.legend();save(fig,'03_transitions')
 fig,axes=plt.subplots(1,2,figsize=(11,4))
-axes[0].scatter(M[:,0],M[:,2],s=10,alpha=.35,color=colors[2]);lo=min(M[:,0].min(),M[:,2].min());hi=max(M[:,0].max(),M[:,2].max());axes[0].plot([lo,hi],[lo,hi],c='gray',ls='--');axes[0].axhline(0,c='gray',lw=.5);axes[0].axvline(0,c='gray',lw=.5);axes[0].set(xlabel='FP16 puan farkı',ylabel='Q4 puan farkı',title='Karar sınırı ve puan hareketi')
-axes[1].bar(range(1,5),[r['flips'] for r in R['margin_quartiles']['q4']],color=colors[2]);axes[1].set(xlabel='FP16 mutlak fark çeyreği (küçük → büyük)',ylabel='Q4 karar değişimi',xticks=range(1,5),title='Her çeyrekte 250 çift');save(fig,'04_margins')
+axes[0].scatter(M[:,0],M[:,2],s=10,alpha=.35,color=colors[2]);lo=min(M[:,0].min(),M[:,2].min());hi=max(M[:,0].max(),M[:,2].max());axes[0].plot([lo,hi],[lo,hi],c='gray',ls='--');axes[0].axhline(0,c='gray',lw=.5);axes[0].axvline(0,c='gray',lw=.5);axes[0].set(xlabel='FP16 score margin',ylabel='Q4 score margin',title='Decision boundary and score changes')
+axes[1].bar(range(1,5),[r['flips'] for r in R['margin_quartiles']['q4']],color=colors[2]);axes[1].set(xlabel='FP16 absolute margin quartile (small to large)',ylabel='Q4 decision switches',xticks=range(1,5),title='250 pairs per quartile');save(fig,'04_margins')
 fig,axes=plt.subplots(1,3,figsize=(11,4))
-for ax,key,title in zip(axes,['seconds','mlx_peak_gb','weights_gb'],['Puanlama süresi (sn)','MLX tepe (GB)','Ağırlık dosyaları (GB)']):
+for ax,key,title in zip(axes,['seconds','mlx_peak_gb','weights_gb'],['Scoring time (s)','MLX peak (GB)','Weight files (GB)']):
  vals=[R['resources'][n][key] for n in NAMES];ax.bar([n.upper() for n in NAMES],vals,color=colors);ax.set_title(title)
  for i,v in enumerate(vals):ax.text(i,v,f'{v:.2f}',ha='center',va='bottom')
  ax.set_ylim(0,max(vals)*1.15)
-fig.suptitle('Özgün deney: tek yürütmenin tanımlayıcı kaynak ölçümleri');save(fig,'05_resources')
+fig.suptitle('Original experiment: descriptive resource measurements from one run');save(fig,'05_resources')
 fig,ax=plt.subplots(figsize=(8,4));labels=[];values=[];intervals=[]
 for j,n in [(1,'q8'),(2,'q4')]:
- for method,key in [('Kesin muhafazakâr','primary'),('Çift bootstrap','stratified_bootstrap'),('Küme bootstrap','cluster_sensitivity')]:
+ for method,key in [('Exact conservative','primary'),('Paired bootstrap','stratified_bootstrap'),('Cluster bootstrap','cluster_sensitivity')]:
   labels.append(n.upper()+' — '+method);values.append(R['primary'][n]['delta_pp']);intervals.append(R[key][n]['ci_pp'] if key=='primary' else R[key][n]['delta_ci_pp'] if key=='stratified_bootstrap' else R[key]['pair_weighted_cluster_bootstrap'][n]['delta_ci_pp'])
-v=np.array(values);it=np.array(intervals).T;ax.errorbar(v,np.arange(6),xerr=[v-it[0],it[1]-v],fmt='o',capsize=4,color=colors[0]);ax.axvline(0,c='gray',ls='--');ax.set_yticks(range(6),labels);ax.set(xlabel='FP16’ya göre doğruluk farkı (yüzde puan)',title='%95 aralıklar; küme tanımı keşifseldir');save(fig,'06_uncertainty')
+v=np.array(values);it=np.array(intervals).T;ax.errorbar(v,np.arange(6),xerr=[v-it[0],it[1]-v],fmt='o',capsize=4,color=colors[0]);ax.axvline(0,c='gray',ls='--');ax.set_yticks(range(6),labels);ax.set(xlabel='Accuracy difference from FP16 (percentage points)',title='95% intervals; cluster definition is exploratory');save(fig,'06_uncertainty')
 dump('extended_statistics.json',R)
 print(json.dumps({k:R[k] for k in ['audit','accuracy','primary','cluster_sensitivity','review']},ensure_ascii=False,indent=2))

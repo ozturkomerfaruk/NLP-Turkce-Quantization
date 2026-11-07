@@ -34,6 +34,7 @@ MODEL_ORDER = ('fp16', 'q8', 'q4')
 COMPARISONS = ('q8', 'q4')
 
 
+# Replace the analysis JSON atomically and reject non-finite serialized numbers.
 def write_json(path, obj):
     path.parent.mkdir(parents=True, exist_ok=True)
     temp = path.with_name(path.name + '.tmp')
@@ -41,6 +42,7 @@ def write_json(path, obj):
     temp.replace(path)
 
 
+# Export auditable tables with a UTF-8 BOM for spreadsheet compatibility.
 def write_csv(path, rows, columns):
     path.parent.mkdir(parents=True, exist_ok=True)
     temp = path.with_name(path.name + '.tmp')
@@ -51,6 +53,7 @@ def write_csv(path, rows, columns):
     temp.replace(path)
 
 
+# Accumulate the binomial tail by recurrence to avoid unnecessary large coefficients.
 def binom_cdf(k, n, prob):
     """P(X <= k) for X~Binomial(n,prob), robust for small k (discordances)."""
     if k < 0:
@@ -69,6 +72,7 @@ def binom_cdf(k, n, prob):
     return min(1.0, max(0.0, total))
 
 
+# Invert binomial tails with bounded bisection, including zero and all-success cases.
 def clopper_pearson(k, n, alpha):
     """Two-sided exact binomial CI with noncoverage <= alpha."""
     if not (0 <= k <= n and n > 0 and 0 < alpha < 1):
@@ -98,6 +102,7 @@ def clopper_pearson(k, n, alpha):
     return lower, upper
 
 
+# Bound improvement and degradation rates jointly before subtracting their intervals.
 def paired_difference_ci(down, up, n):
     """Conservative at-least-95% CI for delta=(up-down)/n.
 
@@ -122,6 +127,7 @@ def mcnemar_exact(down, up):
     return min(1.0, numerator / denominator)
 
 
+# Adjust the ordered primary p-values while preserving monotonicity.
 def holm_adjust(pvalues):
     """Holm family-wise error correction; each key is a primary comparison."""
     ordered = sorted(pvalues, key=pvalues.get)
@@ -134,20 +140,22 @@ def holm_adjust(pvalues):
     return adjusted
 
 
+# Verify saved identities, decisions, metrics and token hashes before any statistical analysis.
+# Align every precision by pair ID so all comparisons remain paired.
 def load_data():
     if not (DATASET.is_file() and MANIFEST.is_file()):
-        raise FileNotFoundError('Ana veri seti/manifest bulunamadı.')
+        raise FileNotFoundError('Main dataset or manifest not found.')
     manifest = json.loads(MANIFEST.read_text(encoding='utf-8'))
     data_sha = sha256(DATASET)
     if data_sha != manifest['main_dataset']['sha256']:
-        raise ValueError('Manifest ana veri SHA-256 uyumsuzluğu')
+        raise ValueError('Manifest and main dataset SHA-256 mismatch')
     source = read_jsonl(DATASET)
     ids = [r['pair_id'] for r in source]
     if len(ids) != EXPECTED_N or len(set(ids)) != EXPECTED_N:
-        raise ValueError('Ana veri: 1000 benzersiz çift bekleniyor')
+        raise ValueError('Main dataset: expected 1000 unique pairs')
     cats = manifest['category_order']
     if Counter(r['category'] for r in source) != Counter({c: 250 for c in cats}):
-        raise ValueError('Dört kategori için 250 çift bekleniyor')
+        raise ValueError('Expected 250 pairs in each of four categories')
     scores = {}
     metrics_by_model = {}
     for name in MODEL_ORDER:
@@ -156,31 +164,31 @@ def load_data():
             filename = RESULTS / name / f'chunk_{idx:02d}.jsonl'
             metric_file = RESULTS / name / f'chunk_{idx:02d}.metrics.json'
             if not filename.is_file() or not metric_file.is_file():
-                raise FileNotFoundError(f'{name}, {idx:02d}: eksik parça veya metrik dosyası')
+                raise FileNotFoundError(f'{name}, {idx:02d}: missing chunk or metrics file')
             part = read_jsonl(filename)
             if len(part) != 50:
-                raise ValueError(f'{filename}: 50 çift bekleniyor')
+                raise ValueError(f'{filename}: Expected 50 pairs')
             for original, item in zip(source[idx * 50:(idx + 1) * 50], part):
                 if (item['pair_id'] != original['pair_id'] or
                     item['category'] != original['category'] or
                     item['dataset_sha256'] != data_sha or
                     item['method'] != METHOD or item['model'] != name):
-                    raise ValueError(f'Çift / yöntem / veri kaynağı uyuşmazlığı: {filename}')
+                    raise ValueError(f'Pair, method or dataset identity mismatch: {filename}')
                 margin = item['good']['mean_logp'] - item['bad']['mean_logp']
                 if not (math.isfinite(margin) and math.isclose(margin, item['mean_logp_diff'], abs_tol=1e-9)):
-                    raise ValueError(f'Saklanan puan farkı tutarsız: {item["pair_id"]}')
+                    raise ValueError(f'Inconsistent saved score difference: {item["pair_id"]}')
                 expected_tie = abs(margin) <= TIE_TOLERANCE
                 if item['tie'] != expected_tie or item['correct'] != (margin > TIE_TOLERANCE):
-                    raise ValueError(f'Saklanan karar tutarsız: {item["pair_id"]}')
+                    raise ValueError(f'Inconsistent saved decision: {item["pair_id"]}')
             results.extend(part)
             met = json.loads(metric_file.read_text(encoding='utf-8'))
             if (met['model'] != name or met['chunk_index'] != idx or
                 met['dataset_sha256'] != data_sha or met['method'] != METHOD):
-                raise ValueError(f'Metrik uyuşmazlığı: {metric_file}')
+                raise ValueError(f'Metrics mismatch: {metric_file}')
             chunk_metrics.append(met)
         scores[name] = {r['pair_id']: r for r in results}
         if len(scores[name]) != EXPECTED_N:
-            raise ValueError(f'{name}: kayıt/ID tekrarları')
+            raise ValueError(f'{name}: duplicate records or IDs')
         metrics_by_model[name] = chunk_metrics
 
     for pid in ids:
@@ -190,20 +198,21 @@ def load_data():
             for side in ('good', 'bad'):
                 if (fp[side]['token_ids_sha256'] != comp[side]['token_ids_sha256'] or
                     fp[side]['n_tokens'] != comp[side]['n_tokens']):
-                    raise ValueError(f'{pid}: {name} token ID uyuşmazlığı')
+                    raise ValueError(f'{pid}: {name} token ID mismatch')
     summary_file = RESULTS / 'main_comparison.json'
     if not summary_file.is_file():
-        raise FileNotFoundError('Önce python scripts/summarize_main.py çalıştır.')
+        raise FileNotFoundError('Run python scripts/summarize_main.py first.')
     existing_summary = json.loads(summary_file.read_text(encoding='utf-8'))
     if existing_summary['dataset_sha256'] != data_sha or existing_summary['method'] != METHOD:
-        raise ValueError('main_comparison.json farklı veri veya yöntem kullanıyor')
+        raise ValueError('main_comparison.json uses a different dataset or method')
     for name in MODEL_ORDER:
         count = sum(int(scores[name][pid]['correct']) for pid in ids)
         if existing_summary['models'][name]['correct'] != count:
-            raise ValueError(f'{name} özet doğruluk uyuşmazlığı')
+            raise ValueError(f'{name} summary accuracy mismatch')
     return source, ids, cats, scores, metrics_by_model, data_sha
 
 
+# Count the two discordant directions on the same pairs and estimate their net difference.
 def comparison(pid_list, scores, model):
     n = len(pid_list)
     fp = scores['fp16']
@@ -223,14 +232,16 @@ def comparison(pid_list, scores, model):
     }
 
 
+# Select reproducible decision-switch strata without counting the same pair twice.
+# These cases support qualitative review, not a representative estimate of label quality.
 def review_selection(comps):
     rng = random.Random(SEED)
     picked = []
     used = set()
     strata = (
-        ('Q4 doğru->yanlış', comps['q4']['down_ids'], 12),
-        ('Q4 yanlış->doğru', comps['q4']['up_ids'], 5),
-        ('Q8 yanlış->doğru', comps['q8']['up_ids'], 3),
+        ('Q4 correct->incorrect', comps['q4']['down_ids'], 12),
+        ('Q4 incorrect->correct', comps['q4']['up_ids'], 5),
+        ('Q8 incorrect->correct', comps['q8']['up_ids'], 3),
     )
     for label, population, target in strata:
         candidates = [p for p in population if p not in used]
@@ -241,18 +252,19 @@ def review_selection(comps):
         remaining = [pid for pid in comps['q4']['down_ids'] + comps['q4']['up_ids'] +
                      comps['q8']['up_ids'] if pid not in used]
         for pid in rng.sample(remaining, min(20 - len(picked), len(remaining))):
-            picked.append((pid, 'Ek karar değişimi'))
+            picked.append((pid, 'Additional decision switch'))
             used.add(pid)
     return picked
 
 
+# Report the primary comparisons separately from descriptive sensitivity and resource summaries.
 def main():
     source, ids, categories, scores, metrics, data_sha = load_data()
     source_by_id = {r['pair_id']: r for r in source}
     comps = {name: comparison(ids, scores, name) for name in COMPARISONS}
     corrected = holm_adjust({name: comps[name]['mcnemar_exact_p_unadjusted'] for name in COMPARISONS})
     counts = {name: sum(int(scores[name][pid]['correct']) for pid in ids) for name in MODEL_ORDER}
-    print('ANA DENEY İSTATİSTİKSEL ANALİZİ | 1000 eşleştirilmiş çift')
+    print('MAIN EXPERIMENT STATISTICAL ANALYSIS | 1000 paired observations')
     print('FP16: {}/1000 | Q8: {}/1000 | Q4: {}/1000'.format(*(counts[n] for n in MODEL_ORDER)))
 
     report = {
@@ -277,8 +289,8 @@ def main():
         }
         report['primary_comparisons'][name]['mcnemar_p_holm'] = corrected[name]
         ci = c['paired_ci95_conservative']
-        print(f'{name.upper()} vs FP16 | fark {100*c["delta_accuracy"]:+.2f} yp | '
-              f'95% eşleşmiş GA [{100*ci[0]:+.2f}, {100*ci[1]:+.2f}] yp | '
+        print(f'{name.upper()} vs FP16 | difference {100*c["delta_accuracy"]:+.2f} pp | '
+              f'95% paired CI [{100*ci[0]:+.2f}, {100*ci[1]:+.2f}] pp | '
               f'↓{c["correct_to_wrong"]} ↑{c["wrong_to_correct"]} | '
               f'McNemar p={c["mcnemar_exact_p_unadjusted"]:.7f}, Holm={corrected[name]:.7f}')
 
@@ -315,6 +327,7 @@ def main():
             'total_vs_mean_decision_disagreements': disagreement,
         }
 
+    # Test whether decision switches concentrate near the FP16 decision boundary.
     all_abs = sorted((abs(scores['fp16'][pid]['mean_logp_diff']), pid) for pid in ids)
     quartiles = [all_abs[i * 250:(i + 1) * 250] for i in range(4)]
     for name in COMPARISONS:
@@ -338,6 +351,7 @@ def main():
             })
         report['margin_diagnostics'][name] = diag
 
+    # Aggregate measured scoring time only; loading, warmup and pauses are excluded.
     for name in MODEL_ORDER:
         items = metrics[name]
         model_dir = ROOT / 'models' / MODELS[name]
@@ -352,6 +366,8 @@ def main():
             'note': 'MLX allocator and process RSS are distinct. Time excludes model loading, warmup, pauses and file writing.',
         }
 
+    # Write selected examples for qualitative review without altering benchmark labels.
+    # Review-note fields are blank on each run; keep human annotations in a separate file.
     review_rows = []
     for pid, stratum in review_selection(comps):
         original = source_by_id[pid]
@@ -386,11 +402,11 @@ def main():
     write_csv(OUTPUT / 'per_pair_scores.csv', detail_rows, list(detail_rows[0]))
 
     write_json(OUTPUT / 'main_statistics.json', report)
-    print('\nDosyalar:')
+    print('\nFiles:')
     for filename in ('main_statistics.json', 'category_results.csv', 'manual_review_20.csv', 'per_pair_scores.csv'):
         print('  ' + str((OUTPUT / filename).relative_to(ROOT)))
-    print('BİTTİ: yalnızca kayıtlı puanlar kullanıldı; model yüklenmedi.')
-    print('UYARI: 20 örnek amaçlı/katmanlı seçilmiştir; temsilî rastgele örneklem değildir.')
+    print('DONE: used saved scores only; no model loaded.')
+    print('WARNING: The 20 examples are purposively stratified and are not a representative random sample.')
 
 
 if __name__ == '__main__':

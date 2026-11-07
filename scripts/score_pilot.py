@@ -1,3 +1,9 @@
+"""Evaluate a 20-pair pilot for one EuroLLM precision and explain its scoring path.
+
+Inspect the first pair at token level, verify the shared scoring function, then
+score all pilot pairs and save their results and summary. Positive mean-logp
+margins count as correct; exact ties do not. Turkish text remains benchmark data."""
+
 import argparse
 import hashlib
 import json
@@ -9,8 +15,8 @@ import mlx.core as mx
 import mlx.nn as nn
 from mlx_lm import load
 
-# Model seçimini komut satırından al: --model fp16 / q8 / q4
-parser = argparse.ArgumentParser(description="TurBLiMP 20 çiftlik pilot değerlendirmesi")
+# Evaluate one precision per process, using the same pilot pairs for every model.
+parser = argparse.ArgumentParser(description="TurBLiMP 20-pair pilot evaluation")
 parser.add_argument("--model", required=True, choices=["fp16", "q8", "q4"])
 args = parser.parse_args()
 MODEL_KEY = args.model
@@ -24,25 +30,26 @@ EXPECTED_SHA256 = (
     "420407b129d0e997680a50ab11ff49319e933c1b82b07068042b5d1249239f27"
 )
 
-print(f"{PRECISION} model mevcut:", (MODEL_PATH / "config.json").is_file())
-print("Pilot veri seti mevcut:", PILOT_PATH.is_file())
+print(f"{PRECISION} model exists:", (MODEL_PATH / "config.json").is_file())
+print("Pilot dataset exists:", PILOT_PATH.is_file())
 
 if not (MODEL_PATH / "config.json").is_file():
-    raise FileNotFoundError(f"Model yapılandırması bulunamadı: {MODEL_PATH / 'config.json'}")
+    raise FileNotFoundError(f"Model configuration not found: {MODEL_PATH / 'config.json'}")
 if not PILOT_PATH.is_file():
-    raise FileNotFoundError(f"Pilot veri seti bulunamadı: {PILOT_PATH}")
+    raise FileNotFoundError(f"Pilot dataset not found: {PILOT_PATH}")
 
 
+# Use the first nonempty record as a worked example of the scoring protocol.
 def load_first_pair():
     with PILOT_PATH.open("r", encoding="utf-8") as file:
         for line in file:
             if line.strip():
                 return json.loads(line)
 
-    raise ValueError("Pilot veri dosyası boş.")
+    raise ValueError("The pilot dataset file is empty.")
 
 
-# ADIM 10 — Yeni puanlama fonksiyonu
+# Score every sentence token with BOS context, without adding or scoring EOS.
 def score_sentence(model, tokenizer, sentence):
     token_ids = tokenizer.encode(
         sentence,
@@ -50,12 +57,12 @@ def score_sentence(model, tokenizer, sentence):
     )
 
     if not token_ids:
-        raise ValueError("Cümle boş veya tokenize edilemedi.")
+        raise ValueError("The sentence is empty or could not be tokenized.")
 
     bos_id = tokenizer.bos_token_id
 
     if bos_id is None:
-        raise ValueError("BOS token bulunamadı.")
+        raise ValueError("BOS token not found.")
 
     sequence = [bos_id] + token_ids
 
@@ -94,27 +101,27 @@ def score_sentence(model, tokenizer, sentence):
     }
 
 
-# ADIM 11 — Pilot dosyasının bütünlüğünü doğrula
-print("\n--- VERİ SETİ BÜTÜNLÜK KONTROLÜ ---")
+# Check the frozen pilot hash before interpreting any scores as comparable.
+print("\n--- DATASET INTEGRITY CHECK ---")
 
 dataset_sha256 = hashlib.sha256(
     PILOT_PATH.read_bytes()
 ).hexdigest()
 
-print("Beklenen SHA-256:", EXPECTED_SHA256)
-print("Hesaplanan SHA-256:", dataset_sha256)
+print("Expected SHA-256:", EXPECTED_SHA256)
+print("Computed SHA-256:", dataset_sha256)
 
 if dataset_sha256 != EXPECTED_SHA256:
-    raise ValueError("Pilot veri setinin SHA-256 değeri uyuşmuyor!")
+    raise ValueError("Pilot dataset SHA-256 mismatch!")
 
-print("SHA-256 doğrulaması başarılı.")
+print("SHA-256 verification passed.")
 
 
 pair = load_first_pair()
 
-print("\nİlk cümle çifti:")
+print("\nFirst sentence pair:")
 print(pair)
-print("Veri tipi:", type(pair))
+print("Data type:", type(pair))
 
 good = pair["sentence_good"]
 bad = pair["sentence_bad"]
@@ -122,34 +129,35 @@ pair_id = pair["pair_id"]
 category = pair["category"]
 critical_region = pair["critical_region"]
 
-print("\n--- İLK DENEY ÇİFTİ ---")
-print("Çift ID:", pair_id)
-print("Kategori:", category)
-print("Kritik bölge:", critical_region)
+print("\n--- FIRST EXPERIMENT PAIR ---")
+print("Pair ID:", pair_id)
+print("Category:", category)
+print("Critical region:", critical_region)
 
-print("\nDoğru cümle:", good)
-print("Hatalı cümle:", bad)
+print("\nGood sentence:", good)
+print("Bad sentence:", bad)
 
-print(f"\n{PRECISION} modeli yükleniyor...")
+print(f"\n{PRECISION} model loading...")
 
 model, tokenizer = load(str(MODEL_PATH))
 
-model.eval()  # Modeli değerlendirme moduna alır.
+model.eval()  # Use inference mode consistently across model precisions.
 
-print(f"{PRECISION} modeli başarıyla yüklendi.")
+print(f"{PRECISION} model loaded successfully.")
 
+# Inspect one worked example to expose subword boundaries before scoring the pilot.
 token_ids = tokenizer.encode(
     good,
     add_special_tokens=False
 )
 
-print("\nDoğru cümle:", good)
-print("Token ID'leri:", token_ids)
-print("Token sayısı:", len(token_ids))
+print("\nGood sentence:", good)
+print("Token IDs:", token_ids)
+print("Token count:", len(token_ids))
 
 tokens = tokenizer.convert_ids_to_tokens(token_ids)
 
-print("\n--- TOKEN ANALİZİ ---")
+print("\n--- TOKEN ANALYSIS ---")
 
 for index, (token_id, token) in enumerate(
     zip(token_ids, tokens), start=1
@@ -159,20 +167,21 @@ for index, (token_id, token) in enumerate(
 bos_id = tokenizer.bos_token_id
 
 if bos_id is None:
-    raise ValueError("Tokenizer BOS token içermiyor.")
+    raise ValueError("Tokenizer has no BOS token.")
 
 print("\nBOS Token:", tokenizer.bos_token)
 print("BOS ID:", bos_id)
 
+# Shift inputs and targets by one position: BOS predicts the first sentence token.
 sequence = [bos_id] + token_ids
 
 print("\nSequence:", sequence)
-print("Sequence uzunluğu:", len(sequence))
+print("Sequence length:", len(sequence))
 
 inputs = sequence[:-1]
 targets = sequence[1:]
 
-print("\n--- INPUT / TARGET EŞLEŞMESİ ---")
+print("\n--- INPUT / TARGET ALIGNMENT ---")
 
 for index, (input_id, target_id) in enumerate(
     zip(inputs, targets), start=1
@@ -195,17 +204,17 @@ target_tensor = mx.array(
     dtype=mx.int32
 )
 
-print("\n--- TENSOR KONTROLÜ ---")
+print("\n--- TENSOR CHECK ---")
 
 print("Input Shape:", input_tensor.shape)
 print("Target Shape:", target_tensor.shape)
 print("Input Dtype:", input_tensor.dtype)
 
-print(f"\n{PRECISION} Forward Pass başlıyor...")
+print(f"\n{PRECISION} forward pass starting...")
 logits = model(input_tensor)
 mx.eval(logits)
 
-print("\n--- FORWARD PASS SONUCU ---")
+print("\n--- FORWARD PASS RESULT ---")
 
 print("Logits Shape:", logits.shape)
 print("Logits Dtype:", logits.dtype)
@@ -214,6 +223,7 @@ print("Batch Size:", logits.shape[0])
 print("Sequence Length:", logits.shape[1])
 print("Vocabulary Size:", logits.shape[2])
 
+# Convert logits to float32 log-probabilities and gather only observed target tokens.
 log_probs = nn.log_softmax(
     logits.astype(mx.float32),
     axis=-1
@@ -234,29 +244,30 @@ total_score = mx.sum(token_log_probs)
 average_score = total_score / len(targets)
 mx.eval(total_score, average_score)
 
-print(f"\n--- {PRECISION} TOKEN PUANLARI ---")
+print(f"\n--- {PRECISION} TOKEN SCORES ---")
 
 scores = token_log_probs[0].tolist()
 
 for token, score in zip(tokens, scores):
     print(f"{repr(token):15} {score:.4f}")
 
-print(f"\n--- {PRECISION} CÜMLE PUANI ---")
+print(f"\n--- {PRECISION} SENTENCE SCORE ---")
 
-print("Token sayısı:", len(targets))
-print("Toplam log-olasılık:", total_score.item())
-print("Ortalama log-olasılık:", average_score.item())
+print("Token count:", len(targets))
+print("Total log-probability:", total_score.item())
+print("Mean log-probability:", average_score.item())
 
 
+# Score the bad sentence independently so different token lengths remain valid.
 bad_token_ids = tokenizer.encode(
     bad,
     add_special_tokens=False
 )
 
-print("\n--- HATALI CÜMLE ---")
-print("Cümle:", bad)
-print("Token ID'leri:", bad_token_ids)
-print("Token sayısı:", len(bad_token_ids))
+print("\n--- BAD SENTENCE ---")
+print("Sentence:", bad)
+print("Token IDs:", bad_token_ids)
+print("Token count:", len(bad_token_ids))
 
 bad_sequence = [bos_id] + bad_token_ids
 
@@ -302,18 +313,18 @@ bad_score = bad_average_score.item()
 
 difference = good_score - bad_score
 
-print(f"\n--- {PRECISION} KARŞILAŞTIRMA ---")
+print(f"\n--- {PRECISION} COMPARISON ---")
 
-print(f"Doğru cümle: {good_score:.6f}")
-print(f"Hatalı cümle: {bad_score:.6f}")
-print(f"Puan farkı: {difference:.6f}")
+print(f"Good sentence: {good_score:.6f}")
+print(f"Bad sentence: {bad_score:.6f}")
+print(f"Score difference: {difference:.6f}")
 
 if difference > 0:
-    print("Karar: DOĞRU")
+    print("Decision: CORRECT")
 elif difference < 0:
-    print("Karar: HATALI")
+    print("Decision: INCORRECT")
 else:
-    print("Karar: EŞİTLİK")
+    print("Decision: TIE")
 
 
 bad_tokens = tokenizer.convert_ids_to_tokens(
@@ -323,21 +334,20 @@ bad_tokens = tokenizer.convert_ids_to_tokens(
 good_scores = token_log_probs[0].tolist()
 bad_scores = bad_token_scores[0].tolist()
 
-print("\n--- TOKEN BAZLI KARŞILAŞTIRMA ---")
+print("\n--- TOKEN-LEVEL COMPARISON ---")
 
-# Önceki konumsal tabloyu koruyoruz. Token sayıları farklıysa
-# zip ile yanlış hizalama yapmıyoruz. Sayılar eşit olsa bile
-# bu tablo dilbilimsel eşleştirme değil, yalnızca pozisyon analizidir.
+# Compare positions only when token counts match. Even equal counts do not
+# establish linguistic alignment: subword boundaries may differ between sentences.
 if len(tokens) == len(bad_tokens):
-    print("Not: Karşılaştırma yalnızca aynı token konumları arasındadır;")
-    print("farklı token sınırları dilbilimsel olarak hizalanmış sayılmaz.")
+    print("Note: Only tokens at the same positions are compared;")
+    print("different token boundaries do not imply linguistic alignment.")
     print(
         f"{'No':<4}"
-        f"{'Doğru Token':<15}"
-        f"{'Hatalı Token':<15}"
+        f"{'Good token':<15}"
+        f"{'Bad token':<15}"
         f"{'Good':>10}"
         f"{'Bad':>10}"
-        f"{'Fark':>10}"
+        f"{'Difference':>10}"
     )
 
     for i, (good_token, bad_token, good_log, bad_log) in enumerate(
@@ -355,11 +365,11 @@ if len(tokens) == len(bad_tokens):
             f"{token_difference:>+10.4f}"
         )
 else:
-    print("Token sayıları farklı: konumsal karşılaştırma atlandı.")
+    print("Token counts differ: positional comparison skipped.")
 
-print("\n--- TOKEN BAZLI BAĞIMSIZ ANALİZ ---")
+print("\n--- INDEPENDENT TOKEN-LEVEL ANALYSIS ---")
 
-print("\nDOĞRU CÜMLE TOKENLARI")
+print("\nGOOD SENTENCE TOKENS")
 print(f"{'No':<5}{'Token':<20}{'Log P':>12}")
 
 for i, (token, score) in enumerate(
@@ -367,7 +377,7 @@ for i, (token, score) in enumerate(
 ):
     print(f"{i:<5}{token:<20}{score:>12.4f}")
 
-print("\nHATALI CÜMLE TOKENLARI")
+print("\nBAD SENTENCE TOKENS")
 print(f"{'No':<5}{'Token':<20}{'Log P':>12}")
 
 for i, (token, score) in enumerate(
@@ -375,33 +385,33 @@ for i, (token, score) in enumerate(
 ):
     print(f"{i:<5}{token:<20}{score:>12.4f}")
 
-print("\n--- TOKEN SAYISI KONTROLÜ ---")
-print("Doğru cümle token sayısı:", len(tokens))
-print("Hatalı cümle token sayısı:", len(bad_tokens))
+print("\n--- TOKEN COUNT CHECK ---")
+print("Good sentence token count:", len(tokens))
+print("Bad sentence token count:", len(bad_tokens))
 
 if len(tokens) != len(bad_tokens):
     print(
-        "Token sayıları farklı. "
-        "Konumsal token karşılaştırması yapılmıyor."
+        "Token counts differ. "
+        "Positional token comparison is skipped."
     )
 
 
-# ADIM 10 — Fonksiyon doğrulama testi
+# Cross-check the reusable scorer against the explicit first-pair calculation.
 
-print("\n--- FONKSİYON TESTİ ---")
+print("\n--- FUNCTION TEST ---")
 
 good_result = score_sentence(model, tokenizer, good)
 bad_result = score_sentence(model, tokenizer, bad)
 
-print("Doğru cümle:", good_result)
-print("Hatalı cümle:", bad_result)
+print("Good sentence:", good_result)
+print("Bad sentence:", bad_result)
 
 assert abs(good_result["average"] - good_score) < 1e-4
 assert abs(bad_result["average"] - bad_score) < 1e-4
 
-print("Fonksiyon doğrulaması başarılı.")
+print("Function verification passed.")
 
-print(f"\n--- {PRECISION}: 20 ÇİFTLİK PİLOT DEĞERLENDİRME ---")
+print(f"\n--- {PRECISION}: 20-PAIR PILOT EVALUATION ---")
 
 with PILOT_PATH.open("r", encoding="utf-8") as file:
     pilot_pairs = [
@@ -412,9 +422,10 @@ with PILOT_PATH.open("r", encoding="utf-8") as file:
 
 if len(pilot_pairs) != 20:
     raise ValueError(
-        f"20 çift bekleniyordu, {len(pilot_pairs)} bulundu."
+        f"Expected 20 pairs; {len(pilot_pairs)} found."
     )
 
+# Apply the verified scorer to every pilot pair; mean logp is the primary decision score.
 pilot_results = []
 
 for index, current_pair in enumerate(pilot_pairs, start=1):
@@ -456,10 +467,11 @@ for index, current_pair in enumerate(pilot_pairs, start=1):
     print(
         f"{index:02d}/20 | "
         f"{current_pair['pair_id']} | "
-        f"Fark: {delta:+.6f} | "
-        f"{'DOĞRU' if correct else 'HATALI'}"
+        f"Difference: {delta:+.6f} | "
+        f"{'CORRECT' if correct else 'INCORRECT'}"
     )
 
+# Summarize exact ties separately while retaining them among unsuccessful pairs.
 success_count = sum(
     result["correct"]
     for result in pilot_results
@@ -472,12 +484,12 @@ tie_count = sum(
 
 accuracy = success_count / len(pilot_results)
 
-print(f"\n--- {PRECISION} PİLOT ÖZETİ ---")
-print("Toplam çift:", len(pilot_results))
-print("Başarılı çift:", success_count)
-print("Başarısız çift:", len(pilot_results) - success_count)
-print("Eşit puan:", tie_count)
-print(f"Başarı oranı: %{accuracy * 100:.2f}")
+print(f"\n--- {PRECISION} PILOT SUMMARY ---")
+print("Total pairs:", len(pilot_results))
+print("Correct pairs:", success_count)
+print("Incorrect pairs:", len(pilot_results) - success_count)
+print("Ties:", tie_count)
+print(f"Accuracy: %{accuracy * 100:.2f}")
 
 category_results = {}
 for result in pilot_results:
@@ -487,7 +499,7 @@ for result in pilot_results:
     category_results[key]["total"] += 1
     category_results[key]["correct"] += int(result["correct"])
 
-print("\n--- KATEGORİ BAZLI SONUÇLAR ---")
+print("\n--- RESULTS BY CATEGORY ---")
 for category_name, values in category_results.items():
     category_accuracy = 100 * values["correct"] / values["total"]
     print(f"{category_name}: {values['correct']}/{values['total']} (%{category_accuracy:.2f})")
@@ -507,12 +519,13 @@ with RESULTS_PATH.open("w", encoding="utf-8") as file:
             json.dumps(result, ensure_ascii=False) + "\n"
         )
 
-print("\n--- SONUÇLAR KAYDEDİLDİ ---")
-print("Dosya:", RESULTS_PATH)
-print("Kaydedilen kayıt sayısı:", len(pilot_results))
+print("\n--- RESULTS SAVED ---")
+print("File:", RESULTS_PATH)
+print("Saved record count:", len(pilot_results))
 
 SUMMARY_PATH = RESULTS_DIR / f"{MODEL_KEY}_summary.json"
 
+# Save provenance and tokenization rules alongside accuracy to make comparisons auditable.
 summary = {
     "model": "EuroLLM-1.7B Base",
     "precision": PRECISION,
@@ -549,4 +562,4 @@ with SUMMARY_PATH.open("w", encoding="utf-8") as file:
         indent=4
     )
 
-print("Özet dosyası:", SUMMARY_PATH)
+print("Summary file:", SUMMARY_PATH)

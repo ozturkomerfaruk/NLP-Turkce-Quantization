@@ -1,8 +1,8 @@
 
-"""FP16, Q8 ve Q4 TurBLiMP pilot sonuçlarını doğrular ve karşılaştırır.
+"""Validate and compare the saved FP16, Q8 and Q4 TurBLiMP pilot results.
 
-Modelleri yüklemez; yalnızca yerel tokenizer'ları ve kayıtlı JSONL/JSON
-sonuçlarını okur. Ana veri setine veya mevcut pilot sonuçlarına dokunmaz.
+Load local tokenizers, never model weights, to check that the same 40 sentences
+use identical token IDs. Write the comparison separately from the pilot scores.
 """
 
 import hashlib
@@ -24,6 +24,7 @@ EXPECTED_SHA256 = (
 )
 
 
+# Read saved pair records in their original order for identity checks.
 def read_jsonl(path: Path) -> list[dict]:
     with path.open("r", encoding="utf-8") as stream:
         return [
@@ -33,16 +34,18 @@ def read_jsonl(path: Path) -> list[dict]:
         ]
 
 
+# Fail explicitly when a saved artifact violates the comparison protocol.
 def assert_condition(condition: bool, message: str) -> None:
     if not condition:
         raise ValueError(message)
 
 
+# Check provenance and numeric consistency before trusting saved pilot decisions.
 def validate_results(
     model_key: str,
     expected_pairs: list[dict]
 ) -> dict[str, dict]:
-    """20 satırı, kayıtların kimliklerini, puanları ve özet dosyasını doğrular."""
+    """Validate all 20 records, pair identities, scores and the matching summary."""
 
     results_path = RESULTS_DIR / f"{model_key}_pilot_20.jsonl"
     summary_path = RESULTS_DIR / f"{model_key}_summary.json"
@@ -55,17 +58,17 @@ def validate_results(
 
     assert_condition(
         len(rows) == 20,
-        f"{model_key}: 20 sonuç bekleniyor."
+        f"{model_key}: Expected 20 results."
     )
 
     assert_condition(
         observed_ids == expected_ids,
-        f"{model_key}: Çift ID'leri veya sıraları farklı."
+        f"{model_key}: Pair IDs or order differ."
     )
 
     assert_condition(
         len(set(observed_ids)) == 20,
-        f"{model_key}: Tekrar eden çift ID'si var."
+        f"{model_key}: Duplicate pair ID."
     )
 
     successes = 0
@@ -74,22 +77,22 @@ def validate_results(
     for pair, row in zip(expected_pairs, rows):
         assert_condition(
             row["category"] == pair["category"],
-            f"{model_key}: kategori hatası."
+            f"{model_key}: Category mismatch."
         )
 
         assert_condition(
             row["model"].lower() == model_key,
-            f"{model_key}: model etiketi yanlış."
+            f"{model_key}: Incorrect model label."
         )
 
         assert_condition(
             row["dataset_sha256"] == EXPECTED_SHA256,
-            f"{model_key}: veri hash'i farklı."
+            f"{model_key}: Dataset hash mismatch."
         )
 
         assert_condition(
             row["scoring_method"] == "mean_token_log_probability",
-            f"{model_key}: yöntem farklı."
+            f"{model_key}: Scoring method mismatch."
         )
 
         good = float(row["good_score"])
@@ -98,18 +101,18 @@ def validate_results(
 
         assert_condition(
             all(map(math.isfinite, (good, bad, delta))),
-            f"{model_key}: geçersiz sayı."
+            f"{model_key}: Non-finite number."
         )
 
         assert_condition(
             math.isclose(delta, good - bad, abs_tol=1e-5),
-            f"{model_key}: puan farkı yanlış."
+            f"{model_key}: Incorrect score difference."
         )
 
         assert_condition(
             type(row["correct"]) is bool
             and row["correct"] == (delta > 0),
-            f"{model_key}: doğru/yanlış kararı hatalı."
+            f"{model_key}: Incorrect correctness decision."
         )
 
         for prefix, average in (("good", good), ("bad", bad)):
@@ -117,7 +120,7 @@ def validate_results(
 
             assert_condition(
                 type(count) is int and count > 0,
-                f"{model_key}: token sayısı hatalı."
+                f"{model_key}: Incorrect token count."
             )
 
             total_field = f"{prefix}_total_score"
@@ -129,7 +132,7 @@ def validate_results(
                         average * count,
                         abs_tol=0.001
                     ),
-                    f"{model_key}: toplam/ortalama puan tutarsız."
+                    f"{model_key}: Inconsistent total and mean scores."
                 )
 
         successes += int(row["correct"])
@@ -137,32 +140,32 @@ def validate_results(
 
     assert_condition(
         summary["precision"].lower() == model_key,
-        f"{model_key}: özet precision yanlış."
+        f"{model_key}: Incorrect summary precision."
     )
 
     assert_condition(
         summary["dataset_sha256"] == EXPECTED_SHA256,
-        f"{model_key}: özet hash'i farklı."
+        f"{model_key}: Summary hash mismatch."
     )
 
     assert_condition(
         summary["total_pairs"] == 20,
-        f"{model_key}: özet çift sayısı yanlış."
+        f"{model_key}: Incorrect summary pair count."
     )
 
     assert_condition(
         summary["successful_pairs"] == successes,
-        f"{model_key}: özet doğru sayısı yanlış."
+        f"{model_key}: Incorrect summary correct count."
     )
 
     assert_condition(
         summary["unsuccessful_pairs"] == 20 - successes,
-        f"{model_key}: özet yanlış sayısı yanlış."
+        f"{model_key}: Incorrect summary incorrect count."
     )
 
     assert_condition(
         summary["tie_count"] == ties,
-        f"{model_key}: özet eşitlik sayısı yanlış."
+        f"{model_key}: Incorrect summary tie count."
     )
 
     assert_condition(
@@ -171,23 +174,24 @@ def validate_results(
             successes / 20,
             abs_tol=1e-12
         ),
-        f"{model_key}: özet doğruluk yanlış."
+        f"{model_key}: Incorrect summary accuracy."
     )
 
     print(
         f"{model_key.upper():4} | "
-        f"{successes:2}/20 doğru | "
-        f"%{100 * successes / 20:.1f} | doğrulandı"
+        f"{successes:2}/20 correct | "
+        f"%{100 * successes / 20:.1f} | validated"
     )
 
     return {row["pair_id"]: row for row in rows}
 
 
+# Rule out tokenizer differences as an explanation for precision-specific decisions.
 def verify_tokenizers(
     pairs: list[dict],
     results: dict[str, dict[str, dict]]
 ) -> None:
-    """Model ağırlıklarını yüklemeden 40 cümlenin token ID'lerini karşılaştırır."""
+    """Compare token IDs for all 40 sentences without loading model weights."""
 
     tokenizers = {
         key: AutoTokenizer.from_pretrained(
@@ -219,23 +223,24 @@ def verify_tokenizers(
 
                 assert_condition(
                     tok.bos_token_id == tokenizers["fp16"].bos_token_id,
-                    f"{key}: BOS token farklı."
+                    f"{key}: BOS token mismatch."
                 )
 
                 assert_condition(
                     ids == baseline,
-                    f"{key}: {pair['pair_id']} için token ID'leri farklı."
+                    f"{key}: {pair['pair_id']} has different token IDs."
                 )
 
                 assert_condition(
                     len(ids)
                     == results[key][pair["pair_id"]][f"{prefix}_token_count"],
-                    f"{key}: {pair['pair_id']} token sayısı sonuçla farklı."
+                    f"{key}: {pair['pair_id']} token count differs from the saved result."
                 )
 
-    print("Tokenizer: BOS ve 40 cümlenin token ID'leri üç modelde aynı.")
+    print("Tokenizer: BOS and token IDs for all 40 sentences match across the three models.")
 
 
+# Validate each model, then summarize category results and transitions from the FP16 reference.
 def main() -> None:
     actual_hash = hashlib.sha256(
         PILOT_PATH.read_bytes()
@@ -243,23 +248,23 @@ def main() -> None:
 
     assert_condition(
         actual_hash == EXPECTED_SHA256,
-        "Pilot veri setinin SHA-256 değeri farklı!"
+        "Pilot dataset SHA-256 mismatch!"
     )
 
     pairs = read_jsonl(PILOT_PATH)
 
     assert_condition(
         len(pairs) == 20,
-        "Pilot veri setinde 20 çift bulunmalı."
+        "The pilot dataset must contain 20 pairs."
     )
 
     assert_condition(
         len({p["pair_id"] for p in pairs}) == 20,
-        "Pilot veri setinde tekrar var."
+        "The pilot dataset contains duplicate pairs."
     )
 
-    print("\n--- DOSYA VE SONUÇ DOĞRULAMASI ---")
-    print("Pilot SHA-256 doğrulandı. 20 çift mevcut.")
+    print("\n--- FILE AND RESULT VALIDATION ---")
+    print("Pilot SHA-256 verified. 20 pairs available.")
 
     results = {
         key: validate_results(key, pairs)
@@ -268,7 +273,7 @@ def main() -> None:
 
     verify_tokenizers(pairs, results)
 
-    print("\n--- KATEGORİ BAZLI DOĞRULUK ---")
+    print("\n--- ACCURACY BY CATEGORY ---")
 
     categories = list(
         dict.fromkeys(pair["category"] for pair in pairs)
@@ -302,7 +307,7 @@ def main() -> None:
 
         print(f"{category}: {summary}")
 
-    print("\n--- FP16'YA GÖRE KARAR DEĞİŞİMLERİ ---")
+    print("\n--- DECISION CHANGES FROM FP16 ---")
 
     changed = {}
 
@@ -334,7 +339,7 @@ def main() -> None:
         changed[key] = transitions
 
         if not transitions:
-            print(f"{key.upper()}: Karar değişimi yok.")
+            print(f"{key.upper()}: No decision changes.")
 
     output = {
         "dataset_sha256": actual_hash,
@@ -362,8 +367,8 @@ def main() -> None:
         encoding="utf-8"
     )
 
-    print(f"\nKarşılaştırma kaydedildi: {output_path}")
-    print("PİLOT KARŞILAŞTIRMA KONTROLLERİ BAŞARILI.")
+    print(f"\nComparison saved: {output_path}")
+    print("PILOT COMPARISON CHECKS PASSED.")
 
 
 if __name__ == "__main__":

@@ -1,3 +1,8 @@
+"""Check saved-experiment loading and the pilot's strict-positive decision rule.
+
+Use the actual project artifacts to catch provenance or result regressions and
+patch one in-memory margin to verify that small positive scores remain correct."""
+
 import sys
 import unittest
 from pathlib import Path
@@ -9,6 +14,7 @@ import analyze_main
 
 
 class SavedExperimentTests(unittest.TestCase):
+    # Verify the full saved run still yields the recorded correct-pair counts.
     def test_loads_project_manifest_and_saved_results(self):
         _, ids, _, scores, _, _ = analyze_main.load_data()
         self.assertEqual(len(ids), 1000)
@@ -18,6 +24,7 @@ class SavedExperimentTests(unittest.TestCase):
             {'fp16': 912, 'q8': 915, 'q4': 884},
         )
 
+    # Exercise the zero-tolerance decision rule without changing any on-disk results.
     def test_accepts_small_positive_margin_under_scoring_protocol(self):
         read_jsonl = analyze_main.read_jsonl
 

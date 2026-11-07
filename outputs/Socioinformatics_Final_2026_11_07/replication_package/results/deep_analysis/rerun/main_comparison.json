@@ -1,0 +1,196 @@
+{
+  "dataset_sha256": "bcb2c7f25475f8290d1511d742e1e9f8f515fd29df11dd3e3f64f2f53bcb4835",
+  "method": "mean_logp_float32_bos_context_no_eos_v1",
+  "n_pairs": 1000,
+  "models": {
+    "fp16": {
+      "correct": 912,
+      "total": 1000,
+      "accuracy": 0.912,
+      "ties": 0
+    },
+    "q8": {
+      "correct": 915,
+      "total": 1000,
+      "accuracy": 0.915,
+      "ties": 0
+    },
+    "q4": {
+      "correct": 884,
+      "total": 1000,
+      "accuracy": 0.884,
+      "ties": 0
+    }
+  },
+  "categories": {
+    "subject_agreement": {
+      "fp16": {
+        "correct": 221,
+        "total": 250,
+        "accuracy": 0.884
+      },
+      "q8": {
+        "correct": 222,
+        "total": 250,
+        "accuracy": 0.888
+      },
+      "q4": {
+        "correct": 203,
+        "total": 250,
+        "accuracy": 0.812
+      }
+    },
+    "argument_structure_transitive": {
+      "fp16": {
+        "correct": 233,
+        "total": 250,
+        "accuracy": 0.932
+      },
+      "q8": {
+        "correct": 233,
+        "total": 250,
+        "accuracy": 0.932
+      },
+      "q4": {
+        "correct": 229,
+        "total": 250,
+        "accuracy": 0.916
+      }
+    },
+    "nominalization": {
+      "fp16": {
+        "correct": 210,
+        "total": 250,
+        "accuracy": 0.84
+      },
+      "q8": {
+        "correct": 212,
+        "total": 250,
+        "accuracy": 0.848
+      },
+      "q4": {
+        "correct": 203,
+        "total": 250,
+        "accuracy": 0.812
+      }
+    },
+    "irregular_forms": {
+      "fp16": {
+        "correct": 248,
+        "total": 250,
+        "accuracy": 0.992
+      },
+      "q8": {
+        "correct": 248,
+        "total": 250,
+        "accuracy": 0.992
+      },
+      "q4": {
+        "correct": 249,
+        "total": 250,
+        "accuracy": 0.996
+      }
+    }
+  },
+  "transitions_from_fp16": {
+    "q8": {
+      "correct_to_incorrect": [],
+      "incorrect_to_correct": [
+        "subject_agreement:0031",
+        "nominalization:0536",
+        "nominalization:0857"
+      ],
+      "n_down": 0,
+      "n_up": 3,
+      "net_percentage_points": 0.3
+    },
+    "q4": {
+      "correct_to_incorrect": [
+        "subject_agreement:0105",
+        "subject_agreement:0532",
+        "subject_agreement:0985",
+        "subject_agreement:0469",
+        "subject_agreement:0625",
+        "subject_agreement:0351",
+        "subject_agreement:0923",
+        "subject_agreement:0128",
+        "subject_agreement:0237",
+        "subject_agreement:0975",
+        "subject_agreement:0948",
+        "subject_agreement:0474",
+        "subject_agreement:0177",
+        "subject_agreement:0419",
+        "subject_agreement:0280",
+        "subject_agreement:0601",
+        "subject_agreement:0417",
+        "subject_agreement:0398",
+        "subject_agreement:0773",
+        "subject_agreement:0020",
+        "subject_agreement:0088",
+        "subject_agreement:0862",
+        "subject_agreement:0258",
+        "argument_structure_transitive:0483",
+        "argument_structure_transitive:0305",
+        "argument_structure_transitive:0231",
+        "argument_structure_transitive:0938",
+        "argument_structure_transitive:0850",
+        "argument_structure_transitive:0678",
+        "nominalization:0540",
+        "nominalization:0315",
+        "nominalization:0443",
+        "nominalization:0800",
+        "nominalization:0936",
+        "nominalization:0026",
+        "nominalization:0048",
+        "nominalization:0501",
+        "nominalization:0696",
+        "nominalization:0663",
+        "nominalization:0300",
+        "nominalization:0577",
+        "nominalization:0353"
+      ],
+      "incorrect_to_correct": [
+        "subject_agreement:0679",
+        "subject_agreement:0964",
+        "subject_agreement:0068",
+        "subject_agreement:0525",
+        "subject_agreement:0109",
+        "argument_structure_transitive:0824",
+        "argument_structure_transitive:0515",
+        "nominalization:0892",
+        "nominalization:0962",
+        "nominalization:0713",
+        "nominalization:0533",
+        "nominalization:0857",
+        "nominalization:0411",
+        "irregular_forms:0804"
+      ],
+      "n_down": 42,
+      "n_up": 14,
+      "net_percentage_points": -2.8
+    }
+  },
+  "resource_summary": {
+    "fp16": {
+      "score_seconds_sum": 127.07860679300006,
+      "mlx_allocator_peak_gb_max": 3.41611792,
+      "process_rss_gb_max": 1.86523648,
+      "total_scored_tokens": 26879,
+      "note": "Time excludes model load/warmup; RSS high water mark by process, not device total."
+    },
+    "q8": {
+      "score_seconds_sum": 104.85649333299966,
+      "mlx_allocator_peak_gb_max": 2.068173544,
+      "process_rss_gb_max": 1.576681472,
+      "total_scored_tokens": 26879,
+      "note": "Time excludes model load/warmup; RSS high water mark by process, not device total."
+    },
+    "q4": {
+      "score_seconds_sum": 98.85214187499969,
+      "mlx_allocator_peak_gb_max": 1.236718312,
+      "process_rss_gb_max": 1.574404096,
+      "total_scored_tokens": 26879,
+      "note": "Time excludes model load/warmup; RSS high water mark by process, not device total."
+    }
+  }
+}

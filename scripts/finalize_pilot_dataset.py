@@ -1,3 +1,8 @@
+"""Verify the frozen main benchmark and derive its reproducible 20-pair pilot.
+
+Select five pairs per category and write a manifest tying both datasets to their
+source revision, sampling seeds and SHA-256 identities. Never alter the main set."""
+
 
 import json
 import random
@@ -13,7 +18,7 @@ from prepare_dataset import (
     write_jsonl,
 )
 
-# Sabitler
+# Keep pilot sampling reproducible and balanced across the four categories.
 PILOT_SEED = 42
 PILOT_PER_CATEGORY = 5
 
@@ -21,13 +26,14 @@ EXPECTED_HASH = (
     "bcb2c7f25475f8290d1511d742e1e9f8f515fd29df11dd3e3f64f2f53bcb4835"
 )
 
-# Dosya yolları
+# Derive the pilot and its provenance manifest from the frozen main dataset.
 INPUT_PATH = OUT_DIR / "turblimp_1000.jsonl"
 PILOT_PATH = OUT_DIR / "turblimp_pilot_20.jsonl"
 MANIFEST_PATH = OUT_DIR / "manifest.json"
 
 
-# JSONL dosyasını okuma
+# Ignore blank lines when reading one JSON object per sentence pair.
+# Load the frozen records without reordering or modifying their sentence content.
 def load_jsonl(path):
     with path.open("r", encoding="utf-8") as file:
         return [
@@ -38,35 +44,35 @@ def load_jsonl(path):
 
 
 def main():
-    # Ana veri setinin SHA-256 doğrulaması
+    # Refuse to sample from modified data: all models must see the same benchmark.
     actual_hash = sha256(INPUT_PATH)
 
     if actual_hash != EXPECTED_HASH:
-        raise ValueError("Ana veri setinin SHA-256 değeri değişmiş!")
+        raise ValueError("The main dataset SHA-256 has changed!")
 
-    # Ana veri setini yükleme ve kayıt sayısını doğrulama
+    # Confirm the benchmark size before selecting the pilot subset.
     records = load_jsonl(INPUT_PATH)
 
     if len(records) != 1000:
-        raise ValueError("Ana veri setinde 1000 çift bulunmalı.")
+        raise ValueError("The main dataset must contain 1000 pairs.")
 
-    # Tekrarlanan pair_id kontrolü
+    # Unique IDs keep later model comparisons aligned to the same pairs.
     pair_ids = [record["pair_id"] for record in records]
 
     if len(set(pair_ids)) != len(pair_ids):
-        raise ValueError("Tekrarlanan pair_id bulundu.")
+        raise ValueError("Duplicate pair_id found.")
 
-    # Rastgele örnekleme hazırlığı
+    # Use a private seeded generator so unrelated randomness cannot affect selection.
     rng = random.Random(PILOT_SEED)
     pilot_records = []
 
-    # Kategori sayılarını hesaplama ve doğrulama
+    # Verify category membership before applying balanced sampling.
     counts = Counter(record["category"] for record in records)
 
     if set(counts) != set(CATEGORIES):
-        raise ValueError("Beklenmeyen kategori bulundu.")
+        raise ValueError("Unexpected category found.")
 
-    # Her kategoriden rastgele 5 çift seçme
+    # Select five pairs per category from the main set; this is not a held-out test set.
     for category in CATEGORIES:
         category_records = [
             record for record in records
@@ -74,7 +80,7 @@ def main():
         ]
 
         if len(category_records) != 250:
-            raise ValueError(f"{category}: 250 çift bekleniyor.")
+            raise ValueError(f"{category}: Expected 250 pairs.")
 
         selected = rng.sample(
             category_records,
@@ -83,7 +89,7 @@ def main():
 
         pilot_records.extend(selected)
 
-        print(f"{category}: {len(selected)} çift seçildi.")
+        print(f"{category}: {len(selected)} pairs selected.")
 
     write_jsonl(PILOT_PATH, pilot_records)
 
@@ -93,7 +99,7 @@ def main():
         raw_path = ROOT / "data" / "raw" / filename
         raw_hashes[filename] = sha256(raw_path)
 
-    # Deneyin metadata bilgilerini oluşturma
+    # Record seeds, source revision and file hashes so the sample can be audited.
     manifest = {
         "source_revision": SOURCE_REVISION,
         "dataset_seed": SEED,
@@ -116,13 +122,13 @@ def main():
     
     with MANIFEST_PATH.open("w", encoding="utf-8") as file:
         json.dump(manifest, file, ensure_ascii=False, indent=2)
-        # Pilot veri setinin oluşturulma sonuçları
-        print("\nPilot veri seti oluşturuldu.")
-        print("Toplam çift:", len(pilot_records))
+        # Report the pilot identity that subsequent scoring runs must verify.
+        print("\nPilot dataset created.")
+        print("Total pairs:", len(pilot_records))
         print("Pilot SHA-256:", sha256(PILOT_PATH))
         print("Manifest:", MANIFEST_PATH)
 
 
-# Programın giriş noktası
+# Run dataset finalization only when invoked as a script.
 if __name__ == "__main__":
     main()

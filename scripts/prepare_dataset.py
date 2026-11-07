@@ -1,3 +1,9 @@
+"""Build the fixed, balanced TurBLiMP benchmark from four pinned source CSVs.
+
+Reuse local raw files when available, remove invalid and duplicate pairs, then
+sample 250 pairs per category with seed 42. Preserve the Turkish sentences and
+source metadata: these are experimental inputs, not interface text."""
+
 import csv
 import hashlib
 import json
@@ -29,28 +35,30 @@ CATEGORIES = {
 }
 
 
+# Hash file bytes in bounded blocks to identify the exact data used in an experiment.
 def sha256(path: Path) -> str:
     digest = hashlib.sha256()
 
-    with path.open("rb") as stream: # Dosyayı ikili modda aç ve oku rb → read binary.
+    with path.open("rb") as stream:
         for block in iter(lambda: stream.read(1024 * 1024), b""):
             digest.update(block)
 
     return digest.hexdigest()
 
 
+# Reuse cached sources; download via a temporary file to avoid accepting partial CSVs.
 def fetch_csv(filename: str) -> Path:
     RAW_DIR.mkdir(parents=True, exist_ok=True)
 
     path = RAW_DIR / filename
 
     if path.exists():
-        print(f"Dosya zaten mevcut: {filename}")
+        print(f"File already exists: {filename}")
         return path
 
     url = SOURCE_BASE + filename
 
-    print(f"İndiriliyor: {filename}")
+    print(f"Downloading: {filename}")
 
     request = urllib.request.Request(
         url,
@@ -72,22 +80,25 @@ def fetch_csv(filename: str) -> Path:
     return path
 
 
+# Inspect source columns and a few labelled pairs without changing the dataset.
 def preview_csv(path: Path) -> None:
     with path.open("r", encoding="utf-8-sig", newline="") as file:
         reader = csv.DictReader(file, delimiter=";")
 
-        print("CSV sütunları:", reader.fieldnames)
+        print("CSV columns:", reader.fieldnames)
 
         for index, row in enumerate(reader, start=1):
-            print(f"\nCümle çifti {index}")
-            print("Doğru:", row["good_sentence"])
-            print("Hatalı:", row["bad_sentence"])
+            print(f"\nSentence pair {index}")
+            print("Good:", row["good_sentence"])
+            print("Bad:", row["bad_sentence"])
 
             if index == 3:
                 break
 
 
 
+# Clean each source and remove exact duplicates within and across categories.
+# Preserve source row IDs and linguistic metadata for later error analysis.
 def read_unique_pairs(
     path: Path,
     category: str,
@@ -110,7 +121,7 @@ def read_unique_pairs(
         required_columns = {"good_sentence", "bad_sentence"}
 
         if not required_columns.issubset(reader.fieldnames or []):
-            raise ValueError(f"Beklenmeyen CSV sütunları: {path}")
+            raise ValueError(f"Unexpected CSV columns: {path}")
 
         for source_index, record in enumerate(reader, start=1):
             stats["original_rows"] += 1
@@ -155,6 +166,7 @@ def read_unique_pairs(
     return result, stats
 
 
+# Use deterministic serialization and replace the target only after a complete write.
 def write_jsonl(path: Path, rows: list) -> None:
     tmp = path.with_suffix(path.suffix + ".tmp")
 
@@ -171,6 +183,7 @@ def write_jsonl(path: Path, rows: list) -> None:
     tmp.replace(path)
 
 
+# Sample in the fixed category order with one seeded generator, then save the benchmark.
 def main() -> None:
     OUT_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -182,7 +195,7 @@ def main() -> None:
     raw_hashes = {}
 
     for category, filename in CATEGORIES.items():
-        print(f"\nİşlenen kategori: {category}")
+        print(f"\nProcessing category: {category}")
 
         path = fetch_csv(filename)
 
@@ -196,7 +209,7 @@ def main() -> None:
 
         if len(pairs) < SAMPLE_PER_CATEGORY:
             raise ValueError(
-                f"{category} kategorisinde yeterli çift yok!"
+                f"{category} does not contain enough pairs!"
             )
 
         selected = rng.sample(
@@ -207,21 +220,21 @@ def main() -> None:
         selected_by_category[category] = selected
         source_statistics[category] = stats
 
-        print("Orijinal çift:", stats["original_rows"])
-        print("Benzersiz çift:", stats["unique_available"])
-        print("Seçilen çift:", len(selected))
+        print("Original pairs:", stats["original_rows"])
+        print("Unique pairs:", stats["unique_available"])
+        print("Selected pairs:", len(selected))
 
     total = sum(
         len(pairs)
         for pairs in selected_by_category.values()
     )
 
-    print("\nToplam seçilen çift:", total)
+    print("\nTotal selected pairs:", total)
 
     for category, pairs in selected_by_category.items():
-        print(f"\nKategori: {category}")
-        print("Örnek doğru:", pairs[0]["sentence_good"])
-        print("Örnek hatalı:", pairs[0]["sentence_bad"])
+        print(f"\nCategory: {category}")
+        print("Example good sentence:", pairs[0]["sentence_good"])
+        print("Example bad sentence:", pairs[0]["sentence_bad"])
         
     all_selected = []
 
@@ -234,9 +247,9 @@ def main() -> None:
 
     write_jsonl(output_path, all_selected)
 
-    print("\n--- Veri Seti Kaydedildi ---")
-    print("Dosya:", output_path)
-    print("Toplam kayıt:", len(all_selected))
+    print("\n--- DATASET SAVED ---")
+    print("File:", output_path)
+    print("Total records:", len(all_selected))
     print("SHA-256:", sha256(output_path))
 
 

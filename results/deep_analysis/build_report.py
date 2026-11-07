@@ -1,4 +1,10 @@
-"""Render the Turkish research narrative from verified numeric artifacts."""
+"""Build the historical research report from verified numeric artifacts.
+
+Read saved statistics and reviews, assemble Markdown tables and figure links,
+and write the existing report path. The embedded Turkish report narrative is
+historical documentation, retained with the Markdown documents by request.
+All computation, file identities and scientific claims remain unchanged.
+"""
 import json,csv
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[2];OUT=Path(__file__).resolve().parent
@@ -7,13 +13,20 @@ S=json.loads((OUT/'recomputed/main_statistics.json').read_text())
 N=['fp16','q8','q4'];C=list(R['category'])
 CN=dict(subject_agreement='Özne–yüklem uyumu',argument_structure_transitive='Argüman yapısı / durum eki seçimi',nominalization='Adlaştırma',irregular_forms='Düzensiz biçimler')
 parts=[]
+# Accumulate Markdown sections in report order.
 def add(s):parts.append(s.strip()+'\n')
+# Format report values consistently with the existing numeric presentation.
 def f(x,d=3):return f'{x:.{d}f}'.replace('.',',')
+# Preserve sufficient significant digits when displaying small p-values.
 def pv(x):return f'{x:.8g}'.replace('.',',')
+# Render both interval endpoints using the report formatter.
 def interval(x):return '['+f(x[0])+'; '+f(x[1])+']'
+# Escape cell separators so source text cannot break the Markdown table structure.
 def table(headers,rows):
  add('| '+' | '.join(headers)+' |\n| '+' | '.join(['---']*len(headers))+' |\n'+'\n'.join('| '+' | '.join(str(x).replace('|','/') for x in row)+' |' for row in rows))
+# Point report readers to the local source or result artifact.
 def link(p,label=None):return f'[{label or p}]({ROOT/p})'
+# Embed the exported figure and repeat its caption for accessible reading.
 def fig(name,caption):add(f'![{caption}]({OUT}/figures/{name}.png)\n\n{caption}')
 add('''# EuroLLM-1.7B Türkçe nicemleme deneyi: ayrıntılı istatistiksel analiz ve yeniden üretim raporu
 

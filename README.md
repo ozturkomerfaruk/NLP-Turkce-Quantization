@@ -2,6 +2,10 @@
 
 EuroLLM-1.7B Base modelinde FP16, Q8 ve Q4 sürümlerinin Türkçe morfosentaktik minimal çiftler üzerindeki karşılaştırılması.
 
+## 7 Kasım 2026 eşitlemesi
+
+Güncel deney klasöründeki kod, veri, tokenizer/model ayarları, analizler ve `outputs/` altındaki belgeler bu kopyaya aktarıldı. Model ağırlıkları, sanal ortam ve önbellekler dahil değildir. Güncel tekrar paketi ve kullanım adımları: [replication_package/README.md](outputs/Socioinformatics_Final_2026_11_07/replication_package/README.md). Paket, kayıtlı puanlardan analizleri tekrar üretmeyi destekler; model çıkarımının birebir tekrarı için ağırlıklar ve eksik model revizyonu/dönüştürme kayıtları ayrıca gerekir. Deneyler bu eşitlemede yeniden çalıştırılmadı. Aşağıdaki 28 Ekim açıklaması önceki kopyanın tarihsel kaydıdır.
+
 ## Mevcut durum
 
 28 Ekim 2026 kopyasında veri hazırlığı, üç modelin pilot ve 1.000 çiftlik ana deney kayıtları, ana karşılaştırma ve istatistiksel analiz çıktıları bulunur. Kaydedilmiş ana deney doğruluğu FP16 %91,2, Q8 %91,5, Q4 %88,4’tür. Bunlar bu kopyalama sırasında yeniden hesaplanmadı; mevcut sonuç dosyalarından aktarılmıştır. Projenin güncel aşaması ve kalan işler için [durum arşivinin son kaydına](ProjeMarkdown/MEVCUT_DURUM.md) bakın. Bu aktarım projenin tamamlandığı anlamına gelmez.
