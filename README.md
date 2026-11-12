@@ -8,7 +8,7 @@ EuroLLM-1.7B modelinin FP16, 8-bit (Q8) ve 4-bit (Q4) sürümlerini Türkçe dil
 
 Kaynak model **EuroLLM-1.7B Base**’dir. Q8 ve Q4 sürümleri aynı FP16 modelden ayrı ayrı, `group_size=64` ve `affine` nicemleme ile hazırlanmıştır. Deney, Apple Silicon M2 ve 16 GB RAM bulunan macOS ortamında MLX ile yürütülmüştür.
 
-Her minimal çift, dilbilgisel açıdan doğru bir cümle ile belirli bir dilbilgisi kuralını ihlal eden karşılığından oluşur. Modelin doğru cümleye daha yüksek ortalama token log-olasılığı vermesi doğru karar sayılır. BOS yalnızca bağlam olarak kullanılır; EOS puanlamaya eklenmez. Log-softmax ve toplamalar float32 ile hesaplanır. Eşit puanlar doğru kabul edilmez.
+Her minimal çift, benchmark tarafından dilbilgisel kabul edilen bir cümle ile tercih edilmeyen alternatifinden oluşur; bazı etiketler bağlama ve dilbilgisel yoruma açıktır. Modelin benchmark tarafından tercih edilen cümleye daha yüksek ortalama token log-olasılığı vermesi doğru karar sayılır. BOS yalnızca bağlam olarak kullanılır; EOS puanlamaya eklenmez. Log-softmax ve toplamalar float32 ile hesaplanır. Eşit puanlar doğru kabul edilmez.
 
 TurBLiMP’in dört kategorisinden, tekrarlar ayıklandıktan sonra `seed=42` ile 250’şer çift seçilmiştir. Üç model aynı 1.000 çift ve aynı puanlama protokolüyle değerlendirilmiştir.
 
@@ -102,9 +102,8 @@ Kurulum notlarında kaynak model indirme revizyonu `refs/pr/5` olarak geçer. De
 | `results/fragmentation_analysis/` | Alt sözcük parçalanmasına ilişkin keşifsel analizler |
 | `tests/` | Analiz doğrulama testleri |
 | `ProjeMarkdown/` | Yöntem, süreç ve çalışma notları |
-| `outputs/` | Makale dosyaları, şekiller ve tekrar paketleri |
 
-[7 Kasım 2026 tekrar paketinin açıklaması](outputs/Socioinformatics_Final_2026_11_07/replication_package/README.md), ek materyallerin kapsamını ve kullanımını açıklar.
+Eski makale/gönderim dosyaları, PDF ve sayfa önizlemeleri ile yinelenen tekrar paketleri çalışma ağacından çıkarılmıştır. Deneyin asıl veri, kod, model yapılandırmaları ve kayıtlı sonuçları yukarıdaki dizinlerde korunur. Önceki sürümler Git geçmişinde erişilebilir; geçmiş yeniden yazılmamıştır.
 
 ## Kapsam ve sınırlılıklar
 
@@ -117,4 +116,32 @@ Raporlanan doğruluklar ortalama token log-olasılığına dayanır. Toplam log-
 - Başar, Padovani, Jumelet ve Bisazza (2025), **TurBLiMP**: [makale](https://doi.org/10.18653/v1/2025.emnlp-main.834), [veri deposu](https://github.com/ezgibasar/TurBLiMP).
 - Martins ve diğerleri (2024), **EuroLLM**: [makale](https://doi.org/10.48550/arXiv.2409.16235), [model kartı](https://huggingface.co/utter-project/EuroLLM-1.7B).
 
-TurBLiMP verileri için kaynak deponun belirttiği CC BY 4.0 koşulları geçerlidir. Buradaki örneklem, kaynak veriden tekrarlar ayıklanarak ve örnekleme yapılarak oluşturulmuştur. Kaynak veri ve modelin lisans koşulları kendi yayınlarından kontrol edilmelidir. Bu depodaki özgün kod için ayrıca bir lisans tanımlanmamıştır.
+TurBLiMP verileri için kaynak deponun belirttiği CC BY 4.0 koşulları geçerlidir. Buradaki örneklem, kaynak veriden tekrarlar ayıklanarak ve örnekleme yapılarak oluşturulmuştur. Kaynak veri ve modelin lisans koşulları kendi yayınlarından kontrol edilmelidir. Özgün kodun lisansı aşağıda belirtilmiştir.
+
+## Lisans ve üçüncü taraf kaynakları
+
+Bu projeye ait özgün kod ve eşlik eden özgün teknik belgeler [MIT lisansı](LICENSE) altında sunulur (© 2026 Ömer Faruk Öztürk). Lisans, telif ve izin bildirimi korunarak kodun kullanılmasına, değiştirilmesine ve yeniden dağıtılmasına izin verir; garanti sağlamaz.
+
+Bu izin üçüncü taraf veri ve model dosyalarını yeniden lisanslamaz:
+
+- **TurBLiMP** ham verileri ve bunlardan türetilen seçilmiş örneklemler kaynak projenin **CC BY 4.0** koşullarına tabidir. Kaynak makale, depo ve veri revizyonuna atıf korunmalıdır; bu projedeki değişiklikler tekrarların ayıklanması ve sabit tohumla örneklemedir.
+- **EuroLLM** model yapılandırmaları, tokenizer dosyaları ve kaynak model kartları modelin **Apache-2.0** lisansına tabidir. `models/` içindeki kaynak bildirimleri korunmuştur. Model ağırlıkları bu depoya dahil değildir.
+- Makale ve dergiye gönderim belgelerinin yayın lisansı, kod lisansından ayrıdır.
+
+Ayrıntılar ve kaynak bağlantıları: [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+
+## Doğrulama
+
+Kayıtlı ana deney puanlarının yüklenmesini ve karar kuralını, sonuç dosyalarını yeniden yazmadan kontrol etmek için:
+
+```bash
+python3 -m unittest discover -s tests -v
+```
+
+NumPy, SciPy ve Matplotlib kurulu ortamda keşifsel analiz testleri:
+
+```bash
+python3 -m unittest discover -s results/fragmentation_analysis -p 'test_*.py' -v
+```
+
+Makaledeki deney sürümünü kaynak gösterirken yalnızca dal bağlantısı yerine tam commit kimliğini belirtin. Önceki title page'de sabitlenen `036acec81a1f3bd0cf31697cab4c75c09e4bc5c3` sürümü değişmez; bu temizlik sonraki çalışma ağacına uygulanmıştır.
