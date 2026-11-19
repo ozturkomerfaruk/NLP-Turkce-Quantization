@@ -72,9 +72,9 @@ def token_hash(ids):
 
 # Compute total and mean next-token log-probability under the frozen pilot protocol.
 # Use float32 for log-softmax and reductions even when model weights are quantized.
-def score_sentence(text, model, tokenizer, mx, nn, context_limit):
+def score_sentence(text, model, tokenizer, mx, nn, context_limit, *, bos_token_id=None):
     # Exact pilot scoring protocol: BOS as context; all sentence tokens scored; EOS absent.
-    bos = tokenizer.bos_token_id
+    bos = tokenizer.bos_token_id if bos_token_id is None else bos_token_id
     if bos is None:
         raise ValueError('BOS token ID is missing; the scoring protocol must be preserved.')
     sentence_ids = tokenizer.encode(text, add_special_tokens=False)

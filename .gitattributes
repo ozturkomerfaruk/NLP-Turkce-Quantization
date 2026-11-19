@@ -1,0 +1,8 @@
+# Preserve archived data, model metadata and score bytes across Git configurations.
+data/** -text
+models/revision_v2/** -text
+results/revision_v2/** -text
+
+# The score archive also records the hashes of these scripts.
+scripts/score_main.py text eol=lf
+scripts/score_revision.py text eol=lf

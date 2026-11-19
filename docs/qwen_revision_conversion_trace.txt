@@ -1,0 +1,9 @@
+# Selected commands and verification output from the original build (2026-11-18).
+# Paths record the original staging location before relocation to models/revision_v2/.
++ .venv/bin/python -m mlx_lm convert --hf-path outputs/revision_v2/qwen/source --mlx-path outputs/revision_v2/qwen/.conversion.yvbfrt/fp16 --dtype float16
++ .venv/bin/python -m mlx_lm convert --hf-path outputs/revision_v2/qwen/fp16 --quantize --q-bits 8 --q-group-size 64 --q-mode affine --mlx-path outputs/revision_v2/qwen/.conversion.i1RhpA/q8 --dtype float16
++ .venv/bin/python -m mlx_lm convert --hf-path outputs/revision_v2/qwen/fp16 --quantize --q-bits 4 --q-group-size 64 --q-mode affine --mlx-path outputs/revision_v2/qwen/.conversion.jrUI2Y/q4 --dtype float16
++ .venv/bin/python scripts/verify_qwen_revision.py outputs/revision_v2/qwen Qwen/Qwen3-1.7B-Base ea980cb0a6c2ae4b936e82123acc929f1cec04c1
+fp16: verified 3 minimal pairs, tokenizer and Mean/Total scores
+q8: verified 3 minimal pairs, tokenizer and Mean/Total scores
+q4: verified 3 minimal pairs, tokenizer and Mean/Total scores

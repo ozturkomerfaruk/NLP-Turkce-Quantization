@@ -1,0 +1,1204 @@
+{
+  "chunk_index": 17,
+  "identity": {
+    "bos_context_id": 1,
+    "code_sha256": {
+      "score_main.py": "7cd3a0dc547acfe16da1092556df46909a8caa2dc4302aae6e6894112e0bfc59",
+      "score_revision.py": "57528813bfe592d0d281ba27fb6db5d0e20a810c5858fdac7d4841fa40e5cedd"
+    },
+    "dataset_sha256": "f04ee6b48fa27056261e85741139f64a59e1c4078928f2855fdf381cc30c94e9",
+    "fp16_reference_files": {
+      "README.md": "748c964f9b7e5f2c3770ce013bbc0153be7c54311d9692c343b6188eefe77ac6",
+      "config.json": "30cc7b26904873cca2ad27cd6e05d0c8b83e7aca45bf27c5fd5c52b4d003f4ce",
+      "generation_config.json": "596b24533e30077af73e4115712ef57ecbbbe2c80c1f4af91a6692ddff67c52a",
+      "model.safetensors": "179b442ef5a4a22cad87640f6c89a11d9dafe81674cdcf9df6d11a7f4545bac9",
+      "model.safetensors.index.json": "1fe796285098d03384c9d39c48afc9ac1d147235ff796b30b35286949b3de698",
+      "tokenizer.json": "ce80677041c41aa69098b5f2bb9ee16fdce7777c84a1de3fac36678a997aedff",
+      "tokenizer_config.json": "7c2d3331cb1ddda345b423d1f53392da92057710e0a9cef4a7bb0a93a4a4e67a"
+    },
+    "method": "mean_total_float32_bos_context_no_eos_v1",
+    "mode": "main",
+    "model": "eurollm",
+    "model_files": {
+      "README.md": "748c964f9b7e5f2c3770ce013bbc0153be7c54311d9692c343b6188eefe77ac6",
+      "config.json": "e79b9ed2b7a107dcf49486f25ca47b1b5ff410985cea64e363b48ef43549456a",
+      "generation_config.json": "596b24533e30077af73e4115712ef57ecbbbe2c80c1f4af91a6692ddff67c52a",
+      "model.safetensors": "a653c92f03b133b79f57b05cf680ace89ee6f2e5313baca8ccde1fd4e2581577",
+      "model.safetensors.index.json": "c24e6ac6201f376f19e16c7e7e5c668a3de04edbea651652b0cd59c3e8c6a32d",
+      "tokenizer.json": "316217714cc736cd93c3cda6ce34444448511b6248d8e436ca232dda7110e2eb",
+      "tokenizer_config.json": "7c2d3331cb1ddda345b423d1f53392da92057710e0a9cef4a7bb0a93a4a4e67a"
+    },
+    "precision": "q4",
+    "runtime": {
+      "mlx": "0.32.4",
+      "mlx-lm": "0.32.2",
+      "platform": "macOS-26.4.1-arm64-arm-64bit",
+      "python": "3.12.15",
+      "tokenizers": "0.23.3",
+      "transformers": "5.20.2"
+    },
+    "source_revision": "e00c97a9a389cc184174163cff4ba58facdb8e28"
+  },
+  "metrics": {
+    "mlx_allocator_peak_bytes_chunk": 1193841304,
+    "model_load_seconds_this_process": 1.1020485000008193,
+    "pairs_in_chunk": 50,
+    "process_peak_rss_bytes_so_far": 1680703488,
+    "score_seconds_chunk": 4.731802124999376,
+    "scored_tokens_chunk": 1220,
+    "timestamp_utc": "2026-11-18T12:37:24.373940+00:00",
+    "warmup_seconds_this_process": 0.13074708400017698
+  },
+  "records": [
+    {
+      "bad": {
+        "mean_logp": -4.974865913391113,
+        "n_tokens": 12,
+        "token_ids_sha256": "58fedc8c3ee293cb8a8bb02a167c3a9c27caca69f1b15b9d45e285831ce70dd6",
+        "total_logp": -59.69839096069336
+      },
+      "category": "subject_agreement",
+      "good": {
+        "mean_logp": -4.83762264251709,
+        "n_tokens": 13,
+        "token_ids_sha256": "ec52634183ffd116f9404653d0c5b543c7bc5a9ad583bbc32615f5f82d10919c",
+        "total_logp": -62.88909149169922
+      },
+      "in_baseline": false,
+      "mean_correct": true,
+      "mean_logp_diff": 0.13724327087402344,
+      "mean_tie": false,
+      "pair_id": "subject_agreement:0900",
+      "total_correct": false,
+      "total_logp_diff": -3.1907005310058594,
+      "total_tie": false
+    },
+    {
+      "bad": {
+        "mean_logp": -5.71490478515625,
+        "n_tokens": 9,
+        "token_ids_sha256": "902d66d3a8f7a70866b7d389c9f5d2485516024b1b7d116cdd8192fd65385f23",
+        "total_logp": -51.43414306640625
+      },
+      "category": "subject_agreement",
+      "good": {
+        "mean_logp": -5.627049446105957,
+        "n_tokens": 8,
+        "token_ids_sha256": "7fa4a0aa8cbe3438eb4c789007cde8b389ea80cc0175d8bd8e7d9d09efc5b506",
+        "total_logp": -45.016395568847656
+      },
+      "in_baseline": false,
+      "mean_correct": true,
+      "mean_logp_diff": 0.08785533905029297,
+      "mean_tie": false,
+      "pair_id": "subject_agreement:0902",
+      "total_correct": true,
+      "total_logp_diff": 6.417747497558594,
+      "total_tie": false
+    },
+    {
+      "bad": {
+        "mean_logp": -5.713061809539795,
+        "n_tokens": 9,
+        "token_ids_sha256": "5de17a3b89e91aa8166aa1c85696d3f35cfdc3370ec9fe598a266c201b752d85",
+        "total_logp": -51.41755676269531
+      },
+      "category": "subject_agreement",
+      "good": {
+        "mean_logp": -4.7138590812683105,
+        "n_tokens": 8,
+        "token_ids_sha256": "4d5de06bd75ee603a8b783992093ff144d9391727afcf539d15ea168bf57c34e",
+        "total_logp": -37.710872650146484
+      },
+      "in_baseline": false,
+      "mean_correct": true,
+      "mean_logp_diff": 0.9992027282714844,
+      "mean_tie": false,
+      "pair_id": "subject_agreement:0903",
+      "total_correct": true,
+      "total_logp_diff": 13.706684112548828,
+      "total_tie": false
+    },
+    {
+      "bad": {
+        "mean_logp": -4.974486351013184,
+        "n_tokens": 9,
+        "token_ids_sha256": "1ea2812f8c1bdcacaaa26f0b99dafa21370541f87d26f8836697137d745cab20",
+        "total_logp": -44.77037811279297
+      },
+      "category": "subject_agreement",
+      "good": {
+        "mean_logp": -4.183728218078613,
+        "n_tokens": 10,
+        "token_ids_sha256": "9a24a7345392c1a7e79abffc2343150d9d4711ef394d5e5bd16cc51fc8debb04",
+        "total_logp": -41.837284088134766
+      },
+      "in_baseline": true,
+      "mean_correct": true,
+      "mean_logp_diff": 0.7907581329345703,
+      "mean_tie": false,
+      "pair_id": "subject_agreement:0904",
+      "total_correct": true,
+      "total_logp_diff": 2.933094024658203,
+      "total_tie": false
+    },
+    {
+      "bad": {
+        "mean_logp": -4.924153804779053,
+        "n_tokens": 14,
+        "token_ids_sha256": "60d22c83cab47a7b3c4f65d22f8539322a129a1095f73cc4464b3e6615cc8c55",
+        "total_logp": -68.93815612792969
+      },
+      "category": "subject_agreement",
+      "good": {
+        "mean_logp": -4.496492862701416,
+        "n_tokens": 15,
+        "token_ids_sha256": "7536f9b91ba454b9bb30e7509db277f5c0a4ac702772b72f7115202767a58bc2",
+        "total_logp": -67.44739532470703
+      },
+      "in_baseline": false,
+      "mean_correct": true,
+      "mean_logp_diff": 0.4276609420776367,
+      "mean_tie": false,
+      "pair_id": "subject_agreement:0906",
+      "total_correct": true,
+      "total_logp_diff": 1.4907608032226562,
+      "total_tie": false
+    },
+    {
+      "bad": {
+        "mean_logp": -4.955031871795654,
+        "n_tokens": 11,
+        "token_ids_sha256": "6395acd20b82dd03acec578d4dbe82f593cd5d31eb76546d6df909c8b06e3d47",
+        "total_logp": -54.50535202026367
+      },
+      "category": "subject_agreement",
+      "good": {
+        "mean_logp": -4.456592559814453,
+        "n_tokens": 11,
+        "token_ids_sha256": "32e2db260000b81b2ef2e6c1bd2432fc8504c1529db973c32df3ab259cfcf062",
+        "total_logp": -49.022518157958984
+      },
+      "in_baseline": false,
+      "mean_correct": true,
+      "mean_logp_diff": 0.49843931198120117,
+      "mean_tie": false,
+      "pair_id": "subject_agreement:0907",
+      "total_correct": true,
+      "total_logp_diff": 5.4828338623046875,
+      "total_tie": false
+    },
+    {
+      "bad": {
+        "mean_logp": -3.8380537033081055,
+        "n_tokens": 11,
+        "token_ids_sha256": "3eafb2474776e8759527ee37ebce5109efa05c266582994172ca49c0e06d38a9",
+        "total_logp": -42.218589782714844
+      },
+      "category": "subject_agreement",
+      "good": {
+        "mean_logp": -3.572282314300537,
+        "n_tokens": 11,
+        "token_ids_sha256": "0a81ecb1b01b1dbd44581e376379256e6095eabdc731eebfd472b8cb46dad42f",
+        "total_logp": -39.29510498046875
+      },
+      "in_baseline": false,
+      "mean_correct": true,
+      "mean_logp_diff": 0.26577138900756836,
+      "mean_tie": false,
+      "pair_id": "subject_agreement:0908",
+      "total_correct": true,
+      "total_logp_diff": 2.9234848022460938,
+      "total_tie": false
+    },
+    {
+      "bad": {
+        "mean_logp": -4.833054542541504,
+        "n_tokens": 15,
+        "token_ids_sha256": "8f00bf9adcd85a4fffe8e3d07bd77a72e3853599bf5ba523b06870a767de61c6",
+        "total_logp": -72.49581909179688
+      },
+      "category": "subject_agreement",
+      "good": {
+        "mean_logp": -3.9093551635742188,
+        "n_tokens": 16,
+        "token_ids_sha256": "d74d636a6e02dcf1153a363f34c0583f42a8787c096871bf22cb2ce73b0cfc34",
+        "total_logp": -62.5496826171875
+      },
+      "in_baseline": false,
+      "mean_correct": true,
+      "mean_logp_diff": 0.9236993789672852,
+      "mean_tie": false,
+      "pair_id": "subject_agreement:0909",
+      "total_correct": true,
+      "total_logp_diff": 9.946136474609375,
+      "total_tie": false
+    },
+    {
+      "bad": {
+        "mean_logp": -5.624112606048584,
+        "n_tokens": 11,
+        "token_ids_sha256": "5bfe772b12ea6a8cb3c46da0e987efa70cfc83afe07749ac7a8e5cc180056d39",
+        "total_logp": -61.865238189697266
+      },
+      "category": "subject_agreement",
+      "good": {
+        "mean_logp": -5.0850090980529785,
+        "n_tokens": 10,
+        "token_ids_sha256": "be1a8d15eb5e98a7abc384fb4c805ab0c81ff599b41f142dae18e70d2ff013b5",
+        "total_logp": -50.85009002685547
+      },
+      "in_baseline": false,
+      "mean_correct": true,
+      "mean_logp_diff": 0.5391035079956055,
+      "mean_tie": false,
+      "pair_id": "subject_agreement:0910",
+      "total_correct": true,
+      "total_logp_diff": 11.015148162841797,
+      "total_tie": false
+    },
+    {
+      "bad": {
+        "mean_logp": -5.347629547119141,
+        "n_tokens": 17,
+        "token_ids_sha256": "51dbfa2bf6ab535681d62b692ac09f6719cf2e612ee585c9258c11284b22f172",
+        "total_logp": -90.90970611572266
+      },
+      "category": "subject_agreement",
+      "good": {
+        "mean_logp": -5.39202356338501,
+        "n_tokens": 17,
+        "token_ids_sha256": "74bee22b1f59abcfe918a7218947a6da34c69f6a9d2ed55aa362cc7fe4de97e7",
+        "total_logp": -91.66439819335938
+      },
+      "in_baseline": false,
+      "mean_correct": false,
+      "mean_logp_diff": -0.04439401626586914,
+      "mean_tie": false,
+      "pair_id": "subject_agreement:0911",
+      "total_correct": false,
+      "total_logp_diff": -0.7546920776367188,
+      "total_tie": false
+    },
+    {
+      "bad": {
+        "mean_logp": -5.147819995880127,
+        "n_tokens": 10,
+        "token_ids_sha256": "c41d8ba5ce297e03394670c1f36daa33ba58726d60e5ada276cde4b8201ad6a1",
+        "total_logp": -51.47819900512695
+      },
+      "category": "subject_agreement",
+      "good": {
+        "mean_logp": -4.340631008148193,
+        "n_tokens": 11,
+        "token_ids_sha256": "bd6b0cc6548c22f4a13d1d976bca3b55ed44f9a4d8fcef63e8e03e3f67d1cdeb",
+        "total_logp": -47.74694061279297
+      },
+      "in_baseline": false,
+      "mean_correct": true,
+      "mean_logp_diff": 0.8071889877319336,
+      "mean_tie": false,
+      "pair_id": "subject_agreement:0913",
+      "total_correct": true,
+      "total_logp_diff": 3.7312583923339844,
+      "total_tie": false
+    },
+    {
+      "bad": {
+        "mean_logp": -3.6101837158203125,
+        "n_tokens": 22,
+        "token_ids_sha256": "6245a13d806295a7f44530a5b5c6d3d204e5b00086402574d7edd60a4751d7f4",
+        "total_logp": -79.42404174804688
+      },
+      "category": "subject_agreement",
+      "good": {
+        "mean_logp": -3.3105156421661377,
+        "n_tokens": 23,
+        "token_ids_sha256": "ed922d7b611eb887adbf864439cf580fb4d805e632ea3a035f0919269f8aef25",
+        "total_logp": -76.14186096191406
+      },
+      "in_baseline": true,
+      "mean_correct": true,
+      "mean_logp_diff": 0.2996680736541748,
+      "mean_tie": false,
+      "pair_id": "subject_agreement:0916",
+      "total_correct": true,
+      "total_logp_diff": 3.2821807861328125,
+      "total_tie": false
+    },
+    {
+      "bad": {
+        "mean_logp": -5.041982650756836,
+        "n_tokens": 10,
+        "token_ids_sha256": "8e41731edca423f2727886712c9d31dd826c80c07fcceff07cfc3df3805a9d59",
+        "total_logp": -50.41982650756836
+      },
+      "category": "subject_agreement",
+      "good": {
+        "mean_logp": -4.9145402908325195,
+        "n_tokens": 10,
+        "token_ids_sha256": "dc1c5142ed76733f074978a0fa9ed71789ef506c71a76892a90c923c5778967b",
+        "total_logp": -49.14540481567383
+      },
+      "in_baseline": false,
+      "mean_correct": true,
+      "mean_logp_diff": 0.1274423599243164,
+      "mean_tie": false,
+      "pair_id": "subject_agreement:0917",
+      "total_correct": true,
+      "total_logp_diff": 1.2744216918945312,
+      "total_tie": false
+    },
+    {
+      "bad": {
+        "mean_logp": -5.103964805603027,
+        "n_tokens": 10,
+        "token_ids_sha256": "6793f7637433ba0c063c478d7ea074721e5ddb921bf573c26a9f7d2fee680769",
+        "total_logp": -51.03964614868164
+      },
+      "category": "subject_agreement",
+      "good": {
+        "mean_logp": -4.659052848815918,
+        "n_tokens": 11,
+        "token_ids_sha256": "85167b75005812713fd945baa61ed73b9774bd736812c150524363a95222c2cf",
+        "total_logp": -51.24958038330078
+      },
+      "in_baseline": false,
+      "mean_correct": true,
+      "mean_logp_diff": 0.4449119567871094,
+      "mean_tie": false,
+      "pair_id": "subject_agreement:0918",
+      "total_correct": false,
+      "total_logp_diff": -0.20993423461914062,
+      "total_tie": false
+    },
+    {
+      "bad": {
+        "mean_logp": -4.573486804962158,
+        "n_tokens": 12,
+        "token_ids_sha256": "f92987128375521d2bdf6c62988f0619bf4c9ce17f01aa9540a862339ba65610",
+        "total_logp": -54.881839752197266
+      },
+      "category": "subject_agreement",
+      "good": {
+        "mean_logp": -4.447052001953125,
+        "n_tokens": 12,
+        "token_ids_sha256": "b2f161244595e14092cb28bdcf0fdf40a2a359989b2f9438210e8fe9fbb1a7df",
+        "total_logp": -53.3646240234375
+      },
+      "in_baseline": false,
+      "mean_correct": true,
+      "mean_logp_diff": 0.1264348030090332,
+      "mean_tie": false,
+      "pair_id": "subject_agreement:0919",
+      "total_correct": true,
+      "total_logp_diff": 1.5172157287597656,
+      "total_tie": false
+    },
+    {
+      "bad": {
+        "mean_logp": -4.428534030914307,
+        "n_tokens": 10,
+        "token_ids_sha256": "0c5e1a8c11bcb75dceee3c6029238f2bc4a709a0cabe813a22533fc23dabfa06",
+        "total_logp": -44.28533935546875
+      },
+      "category": "subject_agreement",
+      "good": {
+        "mean_logp": -4.012927055358887,
+        "n_tokens": 10,
+        "token_ids_sha256": "9e1f8f678ace9e4b18a080e726fee71e601883dd7a715b21220f5c310ba558b8",
+        "total_logp": -40.129268646240234
+      },
+      "in_baseline": true,
+      "mean_correct": true,
+      "mean_logp_diff": 0.4156069755554199,
+      "mean_tie": false,
+      "pair_id": "subject_agreement:0920",
+      "total_correct": true,
+      "total_logp_diff": 4.156070709228516,
+      "total_tie": false
+    },
+    {
+      "bad": {
+        "mean_logp": -4.190651893615723,
+        "n_tokens": 10,
+        "token_ids_sha256": "bf8193bed0b2cd9472f7cedf45dfc8c675d0ce357b906a452ff20845527d3548",
+        "total_logp": -41.906517028808594
+      },
+      "category": "subject_agreement",
+      "good": {
+        "mean_logp": -3.7265613079071045,
+        "n_tokens": 10,
+        "token_ids_sha256": "7fc59847c8e6e0ab787f5b694a8c37787c0a63f845af2f3d91413c86f03846d0",
+        "total_logp": -37.2656135559082
+      },
+      "in_baseline": false,
+      "mean_correct": true,
+      "mean_logp_diff": 0.46409058570861816,
+      "mean_tie": false,
+      "pair_id": "subject_agreement:0921",
+      "total_correct": true,
+      "total_logp_diff": 4.640903472900391,
+      "total_tie": false
+    },
+    {
+      "bad": {
+        "mean_logp": -3.184492588043213,
+        "n_tokens": 25,
+        "token_ids_sha256": "180c2b6422865a345eac7afc73b6d79ca9ce49a1026d1fd370088b52977b2d88",
+        "total_logp": -79.61231231689453
+      },
+      "category": "subject_agreement",
+      "good": {
+        "mean_logp": -3.206515312194824,
+        "n_tokens": 25,
+        "token_ids_sha256": "c7ac5cc38809599f073e7f9708eeb0b4dd54dc2a4041993f3bf8a468b975b81d",
+        "total_logp": -80.16287994384766
+      },
+      "in_baseline": true,
+      "mean_correct": false,
+      "mean_logp_diff": -0.022022724151611328,
+      "mean_tie": false,
+      "pair_id": "subject_agreement:0923",
+      "total_correct": false,
+      "total_logp_diff": -0.550567626953125,
+      "total_tie": false
+    },
+    {
+      "bad": {
+        "mean_logp": -4.892146587371826,
+        "n_tokens": 10,
+        "token_ids_sha256": "a92ea956dafbeb4553676ae58216a2db424312dd7f6bcb3d1a38997579c64085",
+        "total_logp": -48.92146682739258
+      },
+      "category": "subject_agreement",
+      "good": {
+        "mean_logp": -4.390928745269775,
+        "n_tokens": 11,
+        "token_ids_sha256": "c64640f8b384060a4ce82ad5b6215afd2c11ffad7ff1295e7592310bd3e716e3",
+        "total_logp": -48.30021667480469
+      },
+      "in_baseline": false,
+      "mean_correct": true,
+      "mean_logp_diff": 0.5012178421020508,
+      "mean_tie": false,
+      "pair_id": "subject_agreement:0924",
+      "total_correct": true,
+      "total_logp_diff": 0.6212501525878906,
+      "total_tie": false
+    },
+    {
+      "bad": {
+        "mean_logp": -4.487847328186035,
+        "n_tokens": 12,
+        "token_ids_sha256": "7c8c879d27bc2e4763063b3b2c89275521455a1020de16975e4a46a845bc8265",
+        "total_logp": -53.85416793823242
+      },
+      "category": "subject_agreement",
+      "good": {
+        "mean_logp": -4.661487102508545,
+        "n_tokens": 12,
+        "token_ids_sha256": "8561a04d2e52267a3e1cd394f1a30efdf5eb29ae36ad7c75042feec57105a647",
+        "total_logp": -55.937843322753906
+      },
+      "in_baseline": false,
+      "mean_correct": false,
+      "mean_logp_diff": -0.17363977432250977,
+      "mean_tie": false,
+      "pair_id": "subject_agreement:0926",
+      "total_correct": false,
+      "total_logp_diff": -2.0836753845214844,
+      "total_tie": false
+    },
+    {
+      "bad": {
+        "mean_logp": -4.306993007659912,
+        "n_tokens": 12,
+        "token_ids_sha256": "28caec60c1a383640fb7d22bce4dd59881ba14cf579687d75afd1184bba93483",
+        "total_logp": -51.68391799926758
+      },
+      "category": "subject_agreement",
+      "good": {
+        "mean_logp": -4.178205966949463,
+        "n_tokens": 12,
+        "token_ids_sha256": "57e9451ded2f87f443cbb4badcaaa03038371a81186a4f42e1dfcfe368514903",
+        "total_logp": -50.13847351074219
+      },
+      "in_baseline": true,
+      "mean_correct": true,
+      "mean_logp_diff": 0.12878704071044922,
+      "mean_tie": false,
+      "pair_id": "subject_agreement:0927",
+      "total_correct": true,
+      "total_logp_diff": 1.5454444885253906,
+      "total_tie": false
+    },
+    {
+      "bad": {
+        "mean_logp": -5.454838752746582,
+        "n_tokens": 11,
+        "token_ids_sha256": "2b9443ebf161b8fa786f0666401b92180c350596682617d0aacccd5c50ef7147",
+        "total_logp": -60.00322723388672
+      },
+      "category": "subject_agreement",
+      "good": {
+        "mean_logp": -5.033331871032715,
+        "n_tokens": 10,
+        "token_ids_sha256": "2ba4a32c68fd99209b408c86ff00bd4b9b49a6885007191bc7231b07bba7e7ac",
+        "total_logp": -50.33332061767578
+      },
+      "in_baseline": false,
+      "mean_correct": true,
+      "mean_logp_diff": 0.4215068817138672,
+      "mean_tie": false,
+      "pair_id": "subject_agreement:0928",
+      "total_correct": true,
+      "total_logp_diff": 9.669906616210938,
+      "total_tie": false
+    },
+    {
+      "bad": {
+        "mean_logp": -5.355119705200195,
+        "n_tokens": 15,
+        "token_ids_sha256": "a7a5cedd65a8f9ce64a53cb55b0c545f69095d5a326d6006163ae8a3af891be0",
+        "total_logp": -80.32679748535156
+      },
+      "category": "subject_agreement",
+      "good": {
+        "mean_logp": -5.467770099639893,
+        "n_tokens": 15,
+        "token_ids_sha256": "5674a8952f54ebbd978e4fd99dd8db0f87b2a37a7d3a279c7550d1574899882c",
+        "total_logp": -82.01654815673828
+      },
+      "in_baseline": false,
+      "mean_correct": false,
+      "mean_logp_diff": -0.11265039443969727,
+      "mean_tie": false,
+      "pair_id": "subject_agreement:0929",
+      "total_correct": false,
+      "total_logp_diff": -1.6897506713867188,
+      "total_tie": false
+    },
+    {
+      "bad": {
+        "mean_logp": -5.255452632904053,
+        "n_tokens": 9,
+        "token_ids_sha256": "5d8663d25d0a90408fb848fc1405e7759fdf1b2363069c2851a090ff6cf8edf0",
+        "total_logp": -47.299072265625
+      },
+      "category": "subject_agreement",
+      "good": {
+        "mean_logp": -4.9842400550842285,
+        "n_tokens": 9,
+        "token_ids_sha256": "0b2d2d0018fca480d4cf8d983d355511caf63505e26314d1f2c146141b6ad755",
+        "total_logp": -44.85816192626953
+      },
+      "in_baseline": false,
+      "mean_correct": true,
+      "mean_logp_diff": 0.2712125778198242,
+      "mean_tie": false,
+      "pair_id": "subject_agreement:0930",
+      "total_correct": true,
+      "total_logp_diff": 2.4409103393554688,
+      "total_tie": false
+    },
+    {
+      "bad": {
+        "mean_logp": -4.71207857131958,
+        "n_tokens": 10,
+        "token_ids_sha256": "66e007a5f9207a9cbdbf19ce77d9e220fa09f80f860c4e743fb69c9ae55fbd85",
+        "total_logp": -47.120784759521484
+      },
+      "category": "subject_agreement",
+      "good": {
+        "mean_logp": -4.503687858581543,
+        "n_tokens": 10,
+        "token_ids_sha256": "48ca3e81779ef098b0cb70bb22dd346125276dff2ded79551fb501b277906c61",
+        "total_logp": -45.0368766784668
+      },
+      "in_baseline": false,
+      "mean_correct": true,
+      "mean_logp_diff": 0.2083907127380371,
+      "mean_tie": false,
+      "pair_id": "subject_agreement:0932",
+      "total_correct": true,
+      "total_logp_diff": 2.0839080810546875,
+      "total_tie": false
+    },
+    {
+      "bad": {
+        "mean_logp": -4.3831706047058105,
+        "n_tokens": 14,
+        "token_ids_sha256": "8a1a4feb92b96cceebee1c293bd661a8f56178dd20203ca79359fb2a8a144dc7",
+        "total_logp": -61.36438751220703
+      },
+      "category": "subject_agreement",
+      "good": {
+        "mean_logp": -4.41208028793335,
+        "n_tokens": 14,
+        "token_ids_sha256": "0b9ca8ae1d9c2afbf729bb49d458cb8436314afb44b274352c804ac077f86281",
+        "total_logp": -61.76912307739258
+      },
+      "in_baseline": false,
+      "mean_correct": false,
+      "mean_logp_diff": -0.028909683227539062,
+      "mean_tie": false,
+      "pair_id": "subject_agreement:0933",
+      "total_correct": false,
+      "total_logp_diff": -0.4047355651855469,
+      "total_tie": false
+    },
+    {
+      "bad": {
+        "mean_logp": -4.625060081481934,
+        "n_tokens": 14,
+        "token_ids_sha256": "f53a379dd3c9d893bffacc4c49ba6b276bfd916b0ce0adb3747a56f48f32490a",
+        "total_logp": -64.75083923339844
+      },
+      "category": "subject_agreement",
+      "good": {
+        "mean_logp": -3.8816425800323486,
+        "n_tokens": 15,
+        "token_ids_sha256": "5b811f002215d144e7785841b39bb6c641b0236badedbb1b7d7378ea1be7fd43",
+        "total_logp": -58.224639892578125
+      },
+      "in_baseline": false,
+      "mean_correct": true,
+      "mean_logp_diff": 0.743417501449585,
+      "mean_tie": false,
+      "pair_id": "subject_agreement:0934",
+      "total_correct": true,
+      "total_logp_diff": 6.5261993408203125,
+      "total_tie": false
+    },
+    {
+      "bad": {
+        "mean_logp": -4.320927143096924,
+        "n_tokens": 13,
+        "token_ids_sha256": "d3caee9be10b3c6b546dcf3d552768fa9ebfbab2214c76edc548e595516fc64c",
+        "total_logp": -56.17205047607422
+      },
+      "category": "subject_agreement",
+      "good": {
+        "mean_logp": -3.7803945541381836,
+        "n_tokens": 13,
+        "token_ids_sha256": "23837d6a247f1d91f7156d837a96eae57e412716f98e876fdb17ea8d3d7b5476",
+        "total_logp": -49.1451301574707
+      },
+      "in_baseline": false,
+      "mean_correct": true,
+      "mean_logp_diff": 0.5405325889587402,
+      "mean_tie": false,
+      "pair_id": "subject_agreement:0935",
+      "total_correct": true,
+      "total_logp_diff": 7.026920318603516,
+      "total_tie": false
+    },
+    {
+      "bad": {
+        "mean_logp": -3.992180347442627,
+        "n_tokens": 16,
+        "token_ids_sha256": "a3824656a73afa90c4bd2aaf0bb5c3c372e7bd786f7b7f177a42bd5ce23b7185",
+        "total_logp": -63.87488555908203
+      },
+      "category": "subject_agreement",
+      "good": {
+        "mean_logp": -3.9177024364471436,
+        "n_tokens": 15,
+        "token_ids_sha256": "81bc576a9ab0cf54ea15606c0e35652804d6b37a8c25af3ac40379dcdee6e984",
+        "total_logp": -58.76553726196289
+      },
+      "in_baseline": true,
+      "mean_correct": true,
+      "mean_logp_diff": 0.0744779109954834,
+      "mean_tie": false,
+      "pair_id": "subject_agreement:0936",
+      "total_correct": true,
+      "total_logp_diff": 5.109348297119141,
+      "total_tie": false
+    },
+    {
+      "bad": {
+        "mean_logp": -3.953895092010498,
+        "n_tokens": 13,
+        "token_ids_sha256": "0d897704933070d2b930566c40fecd82fc35624540b9affac84cf9654f45899f",
+        "total_logp": -51.400634765625
+      },
+      "category": "subject_agreement",
+      "good": {
+        "mean_logp": -3.5493431091308594,
+        "n_tokens": 13,
+        "token_ids_sha256": "4d259dad2c57f430629f504212176699af7cf92e9c7fcf25551d6a495624351b",
+        "total_logp": -46.14146041870117
+      },
+      "in_baseline": false,
+      "mean_correct": true,
+      "mean_logp_diff": 0.40455198287963867,
+      "mean_tie": false,
+      "pair_id": "subject_agreement:0937",
+      "total_correct": true,
+      "total_logp_diff": 5.259174346923828,
+      "total_tie": false
+    },
+    {
+      "bad": {
+        "mean_logp": -3.6862096786499023,
+        "n_tokens": 15,
+        "token_ids_sha256": "ed447510e246cf2e9ea350d42f5a08c786e51731bae225a231ffba1b1cd0ccc0",
+        "total_logp": -55.29314422607422
+      },
+      "category": "subject_agreement",
+      "good": {
+        "mean_logp": -3.452796220779419,
+        "n_tokens": 16,
+        "token_ids_sha256": "6d4c1986bb5d60212ba09d292092f39eda5fb9af8529066dbb76cadf00bdeed6",
+        "total_logp": -55.2447395324707
+      },
+      "in_baseline": false,
+      "mean_correct": true,
+      "mean_logp_diff": 0.2334134578704834,
+      "mean_tie": false,
+      "pair_id": "subject_agreement:0938",
+      "total_correct": true,
+      "total_logp_diff": 0.048404693603515625,
+      "total_tie": false
+    },
+    {
+      "bad": {
+        "mean_logp": -4.633240222930908,
+        "n_tokens": 9,
+        "token_ids_sha256": "fe0e1e02867ace7fb0954f8f4dacc94c7dc55c1e58b37fe540b8ebc889b71253",
+        "total_logp": -41.699161529541016
+      },
+      "category": "subject_agreement",
+      "good": {
+        "mean_logp": -4.580164432525635,
+        "n_tokens": 9,
+        "token_ids_sha256": "5fcadd9660387652ca5b3a7692f1131bc931d66d1460f7eb1610e7b1b7007aab",
+        "total_logp": -41.22148132324219
+      },
+      "in_baseline": true,
+      "mean_correct": true,
+      "mean_logp_diff": 0.05307579040527344,
+      "mean_tie": false,
+      "pair_id": "subject_agreement:0939",
+      "total_correct": true,
+      "total_logp_diff": 0.4776802062988281,
+      "total_tie": false
+    },
+    {
+      "bad": {
+        "mean_logp": -5.5017547607421875,
+        "n_tokens": 10,
+        "token_ids_sha256": "d7333becfb0365f57409f92dd152f16222aaed5fdeb110a002561fc430e2e7b1",
+        "total_logp": -55.017547607421875
+      },
+      "category": "subject_agreement",
+      "good": {
+        "mean_logp": -5.388912677764893,
+        "n_tokens": 10,
+        "token_ids_sha256": "05391c71b544a3c58046e618cb00adb2f5d7985349c20bd79c5a3fa52df63f3d",
+        "total_logp": -53.88912582397461
+      },
+      "in_baseline": false,
+      "mean_correct": true,
+      "mean_logp_diff": 0.11284208297729492,
+      "mean_tie": false,
+      "pair_id": "subject_agreement:0940",
+      "total_correct": true,
+      "total_logp_diff": 1.1284217834472656,
+      "total_tie": false
+    },
+    {
+      "bad": {
+        "mean_logp": -3.9640750885009766,
+        "n_tokens": 12,
+        "token_ids_sha256": "d02416eb05131c45c3586183b4db62d392d3364c3b7d4506389308bd936b2b7d",
+        "total_logp": -47.56890106201172
+      },
+      "category": "subject_agreement",
+      "good": {
+        "mean_logp": -4.472048759460449,
+        "n_tokens": 11,
+        "token_ids_sha256": "48978b78918cad56edd8b4dd4075a07566212e677d8ad416df57edaf3ab037f0",
+        "total_logp": -49.192535400390625
+      },
+      "in_baseline": false,
+      "mean_correct": false,
+      "mean_logp_diff": -0.5079736709594727,
+      "mean_tie": false,
+      "pair_id": "subject_agreement:0941",
+      "total_correct": false,
+      "total_logp_diff": -1.6236343383789062,
+      "total_tie": false
+    },
+    {
+      "bad": {
+        "mean_logp": -4.720323085784912,
+        "n_tokens": 10,
+        "token_ids_sha256": "6aec4eab3e9e11110bcfee35c7c26f1ea4a419f59329885c40ef988b06fac8a6",
+        "total_logp": -47.20323181152344
+      },
+      "category": "subject_agreement",
+      "good": {
+        "mean_logp": -3.6333439350128174,
+        "n_tokens": 10,
+        "token_ids_sha256": "e131ac8613303491fe4079e7883f03dd21bbf38d1d9b1d94f1332b28e543799d",
+        "total_logp": -36.333438873291016
+      },
+      "in_baseline": false,
+      "mean_correct": true,
+      "mean_logp_diff": 1.0869791507720947,
+      "mean_tie": false,
+      "pair_id": "subject_agreement:0942",
+      "total_correct": true,
+      "total_logp_diff": 10.869792938232422,
+      "total_tie": false
+    },
+    {
+      "bad": {
+        "mean_logp": -5.047125816345215,
+        "n_tokens": 9,
+        "token_ids_sha256": "91f229c87ec27455984704290c91036186edacc8170152c97dce5f375bc804df",
+        "total_logp": -45.42413330078125
+      },
+      "category": "subject_agreement",
+      "good": {
+        "mean_logp": -4.5092854499816895,
+        "n_tokens": 9,
+        "token_ids_sha256": "c252ac4f7604ad67a43928da99765015bbf725e62f2f7fbebe629ce597713dc4",
+        "total_logp": -40.58356857299805
+      },
+      "in_baseline": false,
+      "mean_correct": true,
+      "mean_logp_diff": 0.5378403663635254,
+      "mean_tie": false,
+      "pair_id": "subject_agreement:0945",
+      "total_correct": true,
+      "total_logp_diff": 4.840564727783203,
+      "total_tie": false
+    },
+    {
+      "bad": {
+        "mean_logp": -4.715823650360107,
+        "n_tokens": 10,
+        "token_ids_sha256": "270ebce1970477cb9f95264507ad82c07c54bf25ee566bd0cc516c03ef035983",
+        "total_logp": -47.15823745727539
+      },
+      "category": "subject_agreement",
+      "good": {
+        "mean_logp": -4.120448112487793,
+        "n_tokens": 10,
+        "token_ids_sha256": "8a862e0433b98e137804ee669b3880a241086287e997a6ba0198ded5a53b705d",
+        "total_logp": -41.2044792175293
+      },
+      "in_baseline": false,
+      "mean_correct": true,
+      "mean_logp_diff": 0.5953755378723145,
+      "mean_tie": false,
+      "pair_id": "subject_agreement:0946",
+      "total_correct": true,
+      "total_logp_diff": 5.953758239746094,
+      "total_tie": false
+    },
+    {
+      "bad": {
+        "mean_logp": -4.5846333503723145,
+        "n_tokens": 10,
+        "token_ids_sha256": "f4fbfec35594f5f17be5050fb304d8432e8228141c0f6539f3054383de17d628",
+        "total_logp": -45.84633255004883
+      },
+      "category": "subject_agreement",
+      "good": {
+        "mean_logp": -3.845353603363037,
+        "n_tokens": 10,
+        "token_ids_sha256": "39e7afd3534dee9e6f12e5080176b07e8a9095f44dd5b1adec5f08c3188766de",
+        "total_logp": -38.45353698730469
+      },
+      "in_baseline": false,
+      "mean_correct": true,
+      "mean_logp_diff": 0.7392797470092773,
+      "mean_tie": false,
+      "pair_id": "subject_agreement:0947",
+      "total_correct": true,
+      "total_logp_diff": 7.392795562744141,
+      "total_tie": false
+    },
+    {
+      "bad": {
+        "mean_logp": -4.681163787841797,
+        "n_tokens": 11,
+        "token_ids_sha256": "d36ce054f8aab91d4f64e79e9663ca446bef0c6d79c0648bedaf3763765bfe37",
+        "total_logp": -51.492801666259766
+      },
+      "category": "subject_agreement",
+      "good": {
+        "mean_logp": -4.73729944229126,
+        "n_tokens": 11,
+        "token_ids_sha256": "942562712399e87a7a372813991d3e33660cd8fba20dff7d2addb71a42729200",
+        "total_logp": -52.110294342041016
+      },
+      "in_baseline": true,
+      "mean_correct": false,
+      "mean_logp_diff": -0.05613565444946289,
+      "mean_tie": false,
+      "pair_id": "subject_agreement:0948",
+      "total_correct": false,
+      "total_logp_diff": -0.61749267578125,
+      "total_tie": false
+    },
+    {
+      "bad": {
+        "mean_logp": -4.973559856414795,
+        "n_tokens": 13,
+        "token_ids_sha256": "da64e449042cae4862787009493015075baa0e3a4f2118d927a6f1ba924e4c44",
+        "total_logp": -64.65628051757812
+      },
+      "category": "subject_agreement",
+      "good": {
+        "mean_logp": -4.365478038787842,
+        "n_tokens": 14,
+        "token_ids_sha256": "c89b191d98594f51a2c7714d3ff20cc403f8ad6d6cc85ad2ec902bcea503b56d",
+        "total_logp": -61.11669158935547
+      },
+      "in_baseline": true,
+      "mean_correct": true,
+      "mean_logp_diff": 0.6080818176269531,
+      "mean_tie": false,
+      "pair_id": "subject_agreement:0949",
+      "total_correct": true,
+      "total_logp_diff": 3.5395889282226562,
+      "total_tie": false
+    },
+    {
+      "bad": {
+        "mean_logp": -5.176217079162598,
+        "n_tokens": 10,
+        "token_ids_sha256": "b1d3abad0a4129e1f98a22060dee73ffcd59ac6a0f3a6de92c9c6459ee6a0226",
+        "total_logp": -51.762168884277344
+      },
+      "category": "subject_agreement",
+      "good": {
+        "mean_logp": -4.753942012786865,
+        "n_tokens": 10,
+        "token_ids_sha256": "82d29c78e1c1cd6f38165ae63b201911fa89695de2a4d3a7603269b6bc55ceb8",
+        "total_logp": -47.53942108154297
+      },
+      "in_baseline": true,
+      "mean_correct": true,
+      "mean_logp_diff": 0.4222750663757324,
+      "mean_tie": false,
+      "pair_id": "subject_agreement:0950",
+      "total_correct": true,
+      "total_logp_diff": 4.222747802734375,
+      "total_tie": false
+    },
+    {
+      "bad": {
+        "mean_logp": -4.912281513214111,
+        "n_tokens": 14,
+        "token_ids_sha256": "2d0cd4ba36414e4dc148834cd8ce41812f36c56a627cc76a86c30ddcf521215a",
+        "total_logp": -68.77194213867188
+      },
+      "category": "subject_agreement",
+      "good": {
+        "mean_logp": -4.4155988693237305,
+        "n_tokens": 14,
+        "token_ids_sha256": "891108ce36c70cf4bd3ba2d28fcc690fbccff116616cb6d4913c9d61ab23d10c",
+        "total_logp": -61.818382263183594
+      },
+      "in_baseline": false,
+      "mean_correct": true,
+      "mean_logp_diff": 0.49668264389038086,
+      "mean_tie": false,
+      "pair_id": "subject_agreement:0951",
+      "total_correct": true,
+      "total_logp_diff": 6.953559875488281,
+      "total_tie": false
+    },
+    {
+      "bad": {
+        "mean_logp": -4.322612762451172,
+        "n_tokens": 13,
+        "token_ids_sha256": "64e9adc75346fa62a47aac22e95cd311176c54537fb5da911ff73ed4fc4b963a",
+        "total_logp": -56.193965911865234
+      },
+      "category": "subject_agreement",
+      "good": {
+        "mean_logp": -4.141022205352783,
+        "n_tokens": 13,
+        "token_ids_sha256": "e751b7455713aeee179d2173830821d8171761369987e8b66ff4f7abdd09158a",
+        "total_logp": -53.83328628540039
+      },
+      "in_baseline": true,
+      "mean_correct": true,
+      "mean_logp_diff": 0.18159055709838867,
+      "mean_tie": false,
+      "pair_id": "subject_agreement:0952",
+      "total_correct": true,
+      "total_logp_diff": 2.3606796264648438,
+      "total_tie": false
+    },
+    {
+      "bad": {
+        "mean_logp": -5.405146598815918,
+        "n_tokens": 13,
+        "token_ids_sha256": "a75e9b04199c82922f06a5200f305d992db4b9478ad0e20a25015ba69ee5f735",
+        "total_logp": -70.26690673828125
+      },
+      "category": "subject_agreement",
+      "good": {
+        "mean_logp": -4.916494846343994,
+        "n_tokens": 14,
+        "token_ids_sha256": "9f26538231ea7ca21553a41866355a5aaa78436c6583b4629445a1f08926d1bc",
+        "total_logp": -68.83092498779297
+      },
+      "in_baseline": false,
+      "mean_correct": true,
+      "mean_logp_diff": 0.48865175247192383,
+      "mean_tie": false,
+      "pair_id": "subject_agreement:0953",
+      "total_correct": true,
+      "total_logp_diff": 1.4359817504882812,
+      "total_tie": false
+    },
+    {
+      "bad": {
+        "mean_logp": -4.435181617736816,
+        "n_tokens": 13,
+        "token_ids_sha256": "688b6fa0453013dd855e583b42922195a558087f3c88713cad46eece641c28b2",
+        "total_logp": -57.6573600769043
+      },
+      "category": "subject_agreement",
+      "good": {
+        "mean_logp": -3.853566884994507,
+        "n_tokens": 14,
+        "token_ids_sha256": "853517024638865c62aa7e2c17cc00aa1cd165f46f64d6e8012875b75b24fbc2",
+        "total_logp": -53.94993591308594
+      },
+      "in_baseline": false,
+      "mean_correct": true,
+      "mean_logp_diff": 0.5816147327423096,
+      "mean_tie": false,
+      "pair_id": "subject_agreement:0954",
+      "total_correct": true,
+      "total_logp_diff": 3.7074241638183594,
+      "total_tie": false
+    },
+    {
+      "bad": {
+        "mean_logp": -4.5131683349609375,
+        "n_tokens": 13,
+        "token_ids_sha256": "ce907ee4cee95ad220bf32303fef7782e82bf5a62cd2aa6611333e6cba22b226",
+        "total_logp": -58.67118835449219
+      },
+      "category": "subject_agreement",
+      "good": {
+        "mean_logp": -3.5955026149749756,
+        "n_tokens": 13,
+        "token_ids_sha256": "2c98cfc029432444d116d6992f85b3fbb9f2ffe1a222a3e143fc48dbe710b8bf",
+        "total_logp": -46.74153518676758
+      },
+      "in_baseline": false,
+      "mean_correct": true,
+      "mean_logp_diff": 0.9176657199859619,
+      "mean_tie": false,
+      "pair_id": "subject_agreement:0955",
+      "total_correct": true,
+      "total_logp_diff": 11.92965316772461,
+      "total_tie": false
+    },
+    {
+      "bad": {
+        "mean_logp": -4.555908203125,
+        "n_tokens": 12,
+        "token_ids_sha256": "c9b59c4a097e57d984382f325321bb0b2a99d693e9ddf7e23d71eb2598081cee",
+        "total_logp": -54.6708984375
+      },
+      "category": "subject_agreement",
+      "good": {
+        "mean_logp": -4.125739097595215,
+        "n_tokens": 12,
+        "token_ids_sha256": "070ec70af75af915408e39c7508b7a33344564b6998c60fa8036685bf713b72e",
+        "total_logp": -49.50886917114258
+      },
+      "in_baseline": true,
+      "mean_correct": true,
+      "mean_logp_diff": 0.43016910552978516,
+      "mean_tie": false,
+      "pair_id": "subject_agreement:0956",
+      "total_correct": true,
+      "total_logp_diff": 5.162029266357422,
+      "total_tie": false
+    },
+    {
+      "bad": {
+        "mean_logp": -4.108516693115234,
+        "n_tokens": 13,
+        "token_ids_sha256": "5bd900350998ebf4d35e3d942fcf3cbf51aef10fab22d9429f32283897dd41af",
+        "total_logp": -53.41071701049805
+      },
+      "category": "subject_agreement",
+      "good": {
+        "mean_logp": -3.722849130630493,
+        "n_tokens": 13,
+        "token_ids_sha256": "22f3349df27209921ab8a8b6dc9530eee54bdaa060f332640dc6cbb6a4711251",
+        "total_logp": -48.397037506103516
+      },
+      "in_baseline": false,
+      "mean_correct": true,
+      "mean_logp_diff": 0.3856675624847412,
+      "mean_tie": false,
+      "pair_id": "subject_agreement:0957",
+      "total_correct": true,
+      "total_logp_diff": 5.013679504394531,
+      "total_tie": false
+    },
+    {
+      "bad": {
+        "mean_logp": -4.797677993774414,
+        "n_tokens": 9,
+        "token_ids_sha256": "e113a861f6b79f1c0e683aa1941dc129a23aa22234554195faf557cb09138516",
+        "total_logp": -43.179100036621094
+      },
+      "category": "subject_agreement",
+      "good": {
+        "mean_logp": -4.126836776733398,
+        "n_tokens": 9,
+        "token_ids_sha256": "47e38a652e24bf424ea909c6d5b59f7522c0320fc1292404511dd1942c8690c8",
+        "total_logp": -37.14152908325195
+      },
+      "in_baseline": true,
+      "mean_correct": true,
+      "mean_logp_diff": 0.6708412170410156,
+      "mean_tie": false,
+      "pair_id": "subject_agreement:0958",
+      "total_correct": true,
+      "total_logp_diff": 6.037570953369141,
+      "total_tie": false
+    },
+    {
+      "bad": {
+        "mean_logp": -4.93960428237915,
+        "n_tokens": 11,
+        "token_ids_sha256": "6eb72c0788467a726e59d00c47083c33cf65b38c2fa777a6fca0d6b0db3c3bf9",
+        "total_logp": -54.33564758300781
+      },
+      "category": "subject_agreement",
+      "good": {
+        "mean_logp": -4.142716407775879,
+        "n_tokens": 12,
+        "token_ids_sha256": "111e431ecc3bdd88cc9dbb21fd502a756623cfe0ad637984b2674970b352b5a1",
+        "total_logp": -49.71259689331055
+      },
+      "in_baseline": false,
+      "mean_correct": true,
+      "mean_logp_diff": 0.7968878746032715,
+      "mean_tie": false,
+      "pair_id": "subject_agreement:0959",
+      "total_correct": true,
+      "total_logp_diff": 4.623050689697266,
+      "total_tie": false
+    }
+  ]
+}

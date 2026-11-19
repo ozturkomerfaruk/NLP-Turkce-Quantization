@@ -1,6 +1,6 @@
-# Aşama 3 — Revizyon deneyi analiz protokolü
+# Revizyon deneyi analiz protokolü
 
-**Sürüm 1.0 · 18 Kasım 2026**
+**Sürüm 1.1 · 18 Kasım 2026**
 
 Bu protokol yeni değerlendirme sonuçları görülmeden hazırlanmıştır. İlk EuroLLM deneyinin 1.000 çiftlik sonuçları biliniyor. Protokol bu sonuçların ön kaydı olarak sunulmayacaktır.
 
@@ -37,6 +37,8 @@ Eski 1.000 çift, tam veriyle kategori ve iki cümlenin sıralı metni üzerinde
 Yeni alt küme aynı kaynak veri kümesinden gelir. İki alt kümenin benzer cümle şablonlarını paylaşma olasılığı, yeni çiftlerdeki tekrarın yorumunda belirtilir. Yeni alt kümede de aynı etki yönleri, testler ve Q8 kabul marjı kullanılır. Ana örneklem ile yeni alt küme örtüştüğü için iki analiz birer bağımsız doğrulama olarak sayılmaz.
 
 ## Raporlama ve eşleştirilmiş karşılaştırmalar
+
+Her model, hassasiyet, skor yöntemi ve veri grubu için iki genel doğruluk özeti birlikte sunulur. **Micro Accuracy**, doğru karar sayısının toplam çift sayısına oranıdır. **Macro Accuracy**, dört kategori doğruluğunun ağırlıksız aritmetik ortalamasıdır. FP16’ya göre Micro ve Macro farkları kendi ölçeklerinde ayrı raporlanır. Ana hipotez testlerinde, Q8 kabul marjı dahil, çift ağırlıklı Micro fark kullanılır. Macro sonuçlar kategori büyüklüklerinin genel özete etkisini göstermek için betimleyici olarak sunulur. Bu raporlama kararı 1.1 sürümünde, yeni skorlar üretilmeden eklendi.
 
 İki skor yöntemi eşit ağırlıkla sunulur. Her model, hassasiyet düzeyi ve veri grubu için doğruluk ve %95 güven aralığı verilir. Q8 ve Q4 için aynı çiftteki doğru karar göstergelerinin farkı D = doğruluk(kuantize) − doğruluk(FP16) olarak kodlanır. Ortalama D, doğruluk farkını verir ve 100 ile çarpılarak yüzde puanla raporlanır. Doğrudan yanlış karara ve yanlıştan doğru karara geçişler, toplam tercih değişimi ve %95 fark aralığı da verilir. Genel doğruluk her çifte eşit ağırlık verir. Kategori doğrulukları ayrıca sunulur.
 

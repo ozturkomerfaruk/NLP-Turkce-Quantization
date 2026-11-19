@@ -1,8 +1,10 @@
-# EuroLLM-1.7B Türkçe nicemleme deneyi: ayrıntılı istatistiksel analiz ve yeniden üretim raporu
+# İlk EuroLLM-1.7B deneyinin istatistik ve yeniden üretim raporu
+
+Bu tarihsel rapor ilk 1.000 çiftlik deneyin ek analizlerini belgeler. Makaledeki iki model ve 3.662 çift için [güncel istatistik sonuçlarına](../results/revision_v2/statistics/report.md) ve [yeniden üretim kılavuzuna](../docs/reproducibility_v2.md) bakın.
 
 **Rapor tarihi:** 28 Ekim 2026, Türkiye saati. **Kapsam:** aynı 1.000 TurBLiMP minimal çiftinin FP16, Q8 ve Q4 ile karşılaştırılması. **Ana değerlendirme:** token başına ortalama log-olasılık. **Analiz türü:** mevcut ana deneyin bağımsız denetimi, model puanlamasının ayrı klasörde tekrarı, eşleştirilmiş istatistik ve ön dilbilimsel inceleme.
 
-Bu belge önceki durum notlarını değiştirmeyen yeni bir araştırma raporudur. Kullanıcının sağladığı Aşama 5 metni bir taslak olarak ele alındı; rakamları dosyalardan yeniden hesaplandı. İnsan uzman tarafından onaylanmamış dilbilimsel değerlendirmeler açıkça ön inceleme olarak belirtilmiştir. “Doğru” sözcüğü, aksi belirtilmedikçe veri setindeki iyi etiketli cümlenin daha yüksek puan alması anlamındadır; evrensel dilbilgisel doğruluğun ölçüldüğü iddiası değildir.
+İnsan uzman tarafından onaylanmamış dilbilimsel değerlendirmeler açıkça ön inceleme olarak belirtilmiştir. “Doğru” sözcüğü, aksi belirtilmedikçe veri setindeki iyi etiketli cümlenin daha yüksek puan alması anlamındadır; evrensel dilbilgisel doğruluğun ölçüldüğü iddiası değildir.
 
 ## 1. Araştırma sorusu ve en önemli sonuç
 
@@ -23,7 +25,7 @@ Ana benchmark sonucunda FP16 912, Q8 915, Q4 884 doğru karar verdi. Q8’in ü�
 
 “GA” güven aralığı, “yp” yüzde puan anlamındadır. GB, 10⁹ bayt olarak hesaplandı. Yukarıdaki kaynak değerleri özgün deney kayıtlarıdır; bu oturumdaki tekrar ölçümleri ayrıca verilir. Doğruluk için ayrı ayrı hesaplanan aralıkların üst üste gelmesi, eşleştirilmiş fark testinin yerine geçmez.
 
-![Şekil 1. Ana yöntem doğrulukları; çubuklar %95 kesin binom aralıklarını gösterir. Bu aralıklar model farkı aralıkları değildir.](/Users/omerfarukozturk/Desktop/turkce-quantization/results/deep_analysis/figures/01_accuracy.png)
+![Şekil 1. Ana yöntem doğrulukları; çubuklar %95 kesin binom aralıklarını gösterir. Bu aralıklar model farkı aralıkları değildir.](../results/deep_analysis/figures/01_accuracy.png)
 
 Şekil 1. Ana yöntem doğrulukları; çubuklar %95 kesin binom aralıklarını gösterir. Bu aralıklar model farkı aralıkları değildir.
 
@@ -33,16 +35,16 @@ Kod satırlarını tekrar etmek yerine deneyin işleyişini ve sorumlulukların�
 
 | Dosya | Deneydeki görev |
 | --- | --- |
-| [scripts/prepare_dataset.py](/Users/omerfarukozturk/Desktop/turkce-quantization/scripts/prepare_dataset.py) | Dört ham CSV’yi okur; boş/eşit cümleleri ve birebir tekrar çiftleri ayıklar; sabit rastgele tohumla her kategoriden 250 çift seçer. |
-| [scripts/finalize_pilot_dataset.py](/Users/omerfarukozturk/Desktop/turkce-quantization/scripts/finalize_pilot_dataset.py) | Ana veri hash’ini doğrular; ana verinin içinden kategori başına 5 pilot çift seçer; veri ve kaynak hash’lerini manifest dosyasına yazar. |
-| [scripts/score_pilot.py](/Users/omerfarukozturk/Desktop/turkce-quantization/scripts/score_pilot.py) | 20 çiftlik pilotta BOS bağlamını, token hedeflerini ve ortalama/toplam log-olasılık hesabını uygular. Ana veri setinden bağımsız bir test kümesi oluşturmaz. |
-| [scripts/score_main.py](/Users/omerfarukozturk/Desktop/turkce-quantization/scripts/score_main.py) | Aynı puanlama kuralıyla 50 çiftlik 20 parça çalıştırır. Her cümleyi tek başına puanlar; sonuçları ve süre/bellek kayıtlarını yazar; tamamlanmış parçaları atlar. |
-| [scripts/summarize_main.py](/Users/omerfarukozturk/Desktop/turkce-quantization/scripts/summarize_main.py) | Üç modelin tam kayıtlarını, kimlikleri ve token eşleşmelerini kontrol eder; sayımları ve kaynak toplamlarını çıkarır. |
-| [scripts/analyze_main.py](/Users/omerfarukozturk/Desktop/turkce-quantization/scripts/analyze_main.py) | Kesin McNemar, iki testlik Holm, muhafazakâr eşleştirilmiş fark aralıkları, kategori ve puanlama duyarlılığı üretir; 20 inceleme çifti seçer. |
-| [tests/test_analyze_main.py](/Users/omerfarukozturk/Desktop/turkce-quantization/tests/test_analyze_main.py) | Gerçek kayıtların yüklenmesini ve sıfırdan büyük küçük puan farklarının pilot protokolüne uygun kabul edilmesini sınar. |
-| [results/deep_analysis/analyze_extended.py](/Users/omerfarukozturk/Desktop/turkce-quantization/results/deep_analysis/analyze_extended.py) | Bu rapor için kaynak yeniden seçimini, tokenları, sayısal özdeşlikleri ve SciPy karşılaştırmasını denetler; bootstrap, kümeler, etiket/uzunluk/kategori duyarlılıkları, grafikler ve inceleme tablolarını üretir. |
-| [results/deep_analysis/rerun_models.py](/Users/omerfarukozturk/Desktop/turkce-quantization/results/deep_analysis/rerun_models.py) | Var olan score_main uygulamasını kullanır; yalnızca çıktı kökünü ayrı doğrulama klasörüne yönlendirir. |
-| [results/deep_analysis/build_report.py](/Users/omerfarukozturk/Desktop/turkce-quantization/results/deep_analysis/build_report.py) | Doğrulanmış JSON ve CSV’lerden bu ayrıntılı Markdown raporunu üretir. |
+| [scripts/prepare_dataset.py](../scripts/prepare_dataset.py) | Dört ham CSV’yi okur; boş/eşit cümleleri ve birebir tekrar çiftleri ayıklar; sabit rastgele tohumla her kategoriden 250 çift seçer. |
+| [scripts/finalize_pilot_dataset.py](../scripts/finalize_pilot_dataset.py) | Ana veri hash’ini doğrular; ana verinin içinden kategori başına 5 pilot çift seçer; veri ve kaynak hash’lerini manifest dosyasına yazar. |
+| [scripts/score_pilot.py](../scripts/score_pilot.py) | 20 çiftlik pilotta BOS bağlamını, token hedeflerini ve ortalama/toplam log-olasılık hesabını uygular. Ana veri setinden bağımsız bir test kümesi oluşturmaz. |
+| [scripts/score_main.py](../scripts/score_main.py) | Aynı puanlama kuralıyla 50 çiftlik 20 parça çalıştırır. Her cümleyi tek başına puanlar; sonuçları ve süre/bellek kayıtlarını yazar; tamamlanmış parçaları atlar. |
+| [scripts/summarize_main.py](../scripts/summarize_main.py) | Üç modelin tam kayıtlarını, kimlikleri ve token eşleşmelerini kontrol eder; sayımları ve kaynak toplamlarını çıkarır. |
+| [scripts/analyze_main.py](../scripts/analyze_main.py) | Kesin McNemar, iki testlik Holm, muhafazakâr eşleştirilmiş fark aralıkları, kategori ve puanlama duyarlılığı üretir; 20 inceleme çifti seçer. |
+| [tests/test_analyze_main.py](../tests/test_analyze_main.py) | Gerçek kayıtların yüklenmesini ve sıfırdan büyük küçük puan farklarının pilot protokolüne uygun kabul edilmesini sınar. |
+| [results/deep_analysis/analyze_extended.py](../results/deep_analysis/analyze_extended.py) | Bu rapor için kaynak yeniden seçimini, tokenları, sayısal özdeşlikleri ve SciPy karşılaştırmasını denetler; bootstrap, kümeler, etiket/uzunluk/kategori duyarlılıkları, grafikler ve inceleme tablolarını üretir. |
+| [results/deep_analysis/rerun_models.py](../results/deep_analysis/rerun_models.py) | Var olan score_main uygulamasını kullanır; yalnızca çıktı kökünü ayrı doğrulama klasörüne yönlendirir. |
+| [results/deep_analysis/build_report.py](../results/deep_analysis/build_report.py) | Doğrulanmış JSON ve CSV’lerden bu ayrıntılı Markdown raporunu üretir. |
 
 ## 3. Veri nereden geliyor ve gerçekten 1.000 farklı çift var mı?
 
@@ -75,7 +77,7 @@ Bir çiftte iyi cümlenin ortalama puanı eksi kötü cümlenin ortalama puanı 
 
 Bu yöntem cümle üretimi, çoktan seçmeli cevap üretme, insan kabul edilebilirlik puanı veya sonraki-token doğruluğu ölçmüyor. İki cümleden hangisine daha yüksek dil modeli puanı verildiğini ölçüyor. Kritik bölge bilgisi veri içinde bulunsa da ana puan tüm cümleyi kapsıyor; etkilerin yalnızca belirli bir ekin log-olasılığından geldiği, kaydedilmemiş token puanları incelenmeden ileri sürülemez.
 
-## 5. Bu oturumda yapılan doğrulamalar
+## 5. Skor kayıtlarının doğrulanması
 
 Projenin iki mevcut birim testi çalıştırıldı ve geçti. Python dosyalarının sözdizimsel derleme kontrolü de geçti. Python/MLX projesinde bu kontrol bir native uygulama derlemesi değildir; model yürütmesinin doğrulaması ayrıca yapılmıştır.
 
@@ -108,7 +110,7 @@ Holm düzeltmesi ana ailede iki karşılaştırmaya uygulanmıştır: Q8–FP16 
 
 Ana test ailesinin dışında sonradan yapılan keşifsel analizler ayrı işaretlenmiştir. Her tabloya yerel Holm uygulamak, bütün araştırmadaki tüm olası analizleri kapsayan tek bir hata denetimi sağlamaz. Özellikle birçok duyarlılık senaryosundan en küçük p değerini seçmek uygun değildir.
 
-![Şekil 3. FP16’ya göre iyileşen ve bozulan kararlar. Q4’te tek yönlü bir bozulma değil, iki yönlü hareket ve negatif net etki vardır.](/Users/omerfarukozturk/Desktop/turkce-quantization/results/deep_analysis/figures/03_transitions.png)
+![Şekil 3. FP16’ya göre iyileşen ve bozulan kararlar. Q4’te tek yönlü bir bozulma değil, iki yönlü hareket ve negatif net etki vardır.](../results/deep_analysis/figures/03_transitions.png)
 
 Şekil 3. FP16’ya göre iyileşen ve bozulan kararlar. Q4’te tek yönlü bir bozulma değil, iki yönlü hareket ve negatif net etki vardır.
 
@@ -127,7 +129,7 @@ Q8 aralığının sıfırı içermesi “eşitlik kanıtlandı” demek değildi
 
 Bootstrap, gözlenmiş çiftleri yeniden seçer; Q8’de gözlenmiş bozulma hiç olmadığı için yeniden örneklemeler de bozulma üretemez. Bu nedenle Q8 bootstrap alt sınırının sıfır olması, gelecekte bozulma riskinin sıfır olduğuna ilişkin kanıt değildir. Seyrek ayrışma durumunda ana kesin/muhafazakâr aralık daha temkinli yorum sağlar. Başarı farkı testinin p değeri ile muhafazakâr aralığın sıfırı içerip içermemesi bazı alt gruplarda birebir örtüşmeyebilir; çünkü bunlar aynı testin matematiksel tersleri değildir.
 
-![Şekil 6. Aynı ana fark için üç belirsizlik yaklaşımı. Bootstrap aralıkları keşifsel sağlamlık kontrolüdür; ana testi değiştirmez.](/Users/omerfarukozturk/Desktop/turkce-quantization/results/deep_analysis/figures/06_uncertainty.png)
+![Şekil 6. Aynı ana fark için üç belirsizlik yaklaşımı. Bootstrap aralıkları keşifsel sağlamlık kontrolüdür; ana testi değiştirmez.](../results/deep_analysis/figures/06_uncertainty.png)
 
 Şekil 6. Aynı ana fark için üç belirsizlik yaklaşımı. Bootstrap aralıkları keşifsel sağlamlık kontrolüdür; ana testi değiştirmez.
 
@@ -161,7 +163,7 @@ Her kategoride 250 çift var; bir karar 0,4 yp eder. Kategorilerin farklı başl
 | Adlaştırma | 84,0 | 84,8 | 81,2 | 0,8 | -2,8 | 13/6 |
 | Düzensiz biçimler | 99,2 | 99,2 | 99,6 | 0,0 | 0,4 | 0/1 |
 
-![Şekil 2. Eşit ağırlıklı dört kategori. Kategori isimleri veri dosyalarının sınıflandırmasını temsil eder.](/Users/omerfarukozturk/Desktop/turkce-quantization/results/deep_analysis/figures/02_categories.png)
+![Şekil 2. Eşit ağırlıklı dört kategori. Kategori isimleri veri dosyalarının sınıflandırmasını temsil eder.](../results/deep_analysis/figures/02_categories.png)
 
 Şekil 2. Eşit ağırlıklı dört kategori. Kategori isimleri veri dosyalarının sınıflandırmasını temsil eder.
 
@@ -203,7 +205,7 @@ Q8’de ortalama değişim neredeyse sıfır; tek tek çiftlerdeki küçük pozi
 
 Q4’ün 56 karar değişiminin 46’sı en küçük mutlak FP16 farkına sahip çeyrekte: %82,14. İlk çeyrekte değişim oranı %18,4, kalan 750 çiftte %1,33; oran yaklaşık 13,8 kattır. Bu keşifsel ilişki nicemleme hatasının rastgele dağılmadığını düşündürür. Ancak karar değişimi zaten puanın sıfır sınırını geçmesini gerektirdiği için bu ilişkinin kısmen matematiksel/geometrik olması beklenir; bağımsız bir nedensel mekanizma kanıtı gibi sunulmamalıdır.
 
-![Şekil 4. Solda FP16/Q4 farkları; sağda FP16 mutlak fark çeyreklerine göre Q4 karar değişimleri.](/Users/omerfarukozturk/Desktop/turkce-quantization/results/deep_analysis/figures/04_margins.png)
+![Şekil 4. Solda FP16/Q4 farkları; sağda FP16 mutlak fark çeyreklerine göre Q4 karar değişimleri.](../results/deep_analysis/figures/04_margins.png)
 
 Şekil 4. Solda FP16/Q4 farkları; sağda FP16 mutlak fark çeyreklerine göre Q4 karar değişimleri.
 
@@ -306,211 +308,9 @@ Kullanılan durumlar: etiket ayrımı destekleniyor; bağlama duyarlı; iki cüm
 
 Önemli örnekler: “yatırım kararlarını hızla almasına … şaşırdı” ve “… aldığına … şaşırdı” olay/olgu odaklarıyla okunabilir. “Toplantının ertelenmesine … tepki gösterdi” ile “… ertelendiğine … tepki gösterdi” de benzer biçimde açık bir dilbilgisizlik karşıtlığı kurmayabilir. “Doğruyu söylediğine … inanıyor” ile “doğruyu söylemesine … inanıyor” için farklı anlamsal okuma ihtimali vardır. Buna karşılık “uygulanmasını destekledi” / “uygulandığını destekledi” çiftinde ikinci biçimin kabulü daha özel bir iddia/kanıt bağlamı gerektirebilir; bu nedenle kesin iki-geçerli etiketi verilmedi.
 
-Kullanıcının taslağındaki 0962 örneği kısaltılmıştı; gerçek kayıtta cümle “Ve şirketin…” diye başlıyor. Aşağıdaki alıntılar mevcut CSV’deki cümleleri aynen korur. Bu küçük ayrıntı, şablon ilişkisini ve tekrar üretilebilirliği izlemek açısından önemlidir.
+## 18. Çift düzeyinde ön inceleme
 
-## 18. Seçilmiş 20 çiftin tek tek gerekçeli incelemesi
-
-Aşağıdaki puan farkları FP16 / Q8 / Q4 sırasındadır. Pozitif değer veri setinin iyi etiketli cümlesini destekler. Bu bölüm ana sonuçları düzeltmez; tartışmalı değerlendirmeyi görünür kılar.
-
-### 18.1. `nominalization:0577` — Q4 doğru->yanlış
-
-**İyi etiketli:** Beyaz meyvelerin erken olgunlaşmasına sıcak havalar sebep oldu.
-
-**Kötü etiketli:** Beyaz meyvelerin erken olgunlaştığına sıcak havalar sebep oldu.
-
-**Puan farkları:** 0,064758 / 0,057256 / -0,021774.
-
-**Ön değerlendirme:** `etiket_ayrimi_destekleniyor`. sebep oldu yüklemiyle olgunlaşmasına / olgunlaştığına tamamlayıcısının seçimi hedefleniyor. İyi biçim daha doğal; olgu/olay ayrımı bu tümcede etiket ayrımını destekliyor. Bu bir insan paneli kararı değildir.
-
-### 18.2. `subject_agreement:0128` — Q4 doğru->yanlış
-
-**İyi etiketli:** Belki sen bu zamana kadar yaptıklarınızı görmüşsündür.
-
-**Kötü etiketli:** Belki siz bu zamana kadar yaptıklarınızı görmüşsündür.
-
-**Puan farkları:** 0,026385 / 0,030974 / -0,124207.
-
-**Ön değerlendirme:** `etiket_ayrimi_destekleniyor`. Özne değişimi (Sen → Siz) ile yüklemin kişi/sayı biçimi (görmüşsündür) arasındaki uyum hedefleniyor. Standart tek konuşucu okumasında iyi cümledeki uyum daha açık. İç cümledeki yaptıklarınızı ikinci çoğul kişiye, ana cümledeki sen tekil kişiye gönderme yapabilir; bu tek başına iyi etiketi geçersiz kılmaz, fakat söylem gerektirir.
-
-### 18.3. `subject_agreement:0532` — Q4 doğru->yanlış
-
-**İyi etiketli:** Ancak o bu projeye çok emek verdi.
-
-**Kötü etiketli:** Ancak sen bu projeye çok emek verdi.
-
-**Puan farkları:** 0,301963 / 0,304616 / -0,062743.
-
-**Ön değerlendirme:** `etiket_ayrimi_destekleniyor`. Özne değişimi (O → Sen) ile yüklemin kişi/sayı biçimi (verdi) arasındaki uyum hedefleniyor. Standart tek konuşucu okumasında iyi cümledeki uyum daha açık.
-
-### 18.4. `subject_agreement:0398` — Q4 doğru->yanlış
-
-**İyi etiketli:** Bugün ben yapay zeka etiği üzerine ders veriyorum.
-
-**Kötü etiketli:** Bugün onlar yapay zeka etiği üzerine ders veriyorum.
-
-**Puan farkları:** 0,027097 / 0,041973 / -0,006865.
-
-**Ön değerlendirme:** `etiket_ayrimi_destekleniyor`. Özne değişimi (Ben → Onlar) ile yüklemin kişi/sayı biçimi (veriyorum) arasındaki uyum hedefleniyor. Standart tek konuşucu okumasında iyi cümledeki uyum daha açık.
-
-### 18.5. `subject_agreement:0601` — Q4 doğru->yanlış
-
-**İyi etiketli:** Fakat siz bu konuda çok dikkatlisiniz.
-
-**Kötü etiketli:** Fakat biz bu konuda çok dikkatlisiniz.
-
-**Puan farkları:** 0,252949 / 0,259129 / -0,139896.
-
-**Ön değerlendirme:** `etiket_ayrimi_destekleniyor`. Özne değişimi (Siz → Biz) ile yüklemin kişi/sayı biçimi (dikkatlisiniz) arasındaki uyum hedefleniyor. Standart tek konuşucu okumasında iyi cümledeki uyum daha açık.
-
-### 18.6. `subject_agreement:0280` — Q4 doğru->yanlış
-
-**İyi etiketli:** Şimdi o bu projeye çok emek verdi.
-
-**Kötü etiketli:** Şimdi sen bu projeye çok emek verdi.
-
-**Puan farkları:** 0,109743 / 0,111476 / -0,143960.
-
-**Ön değerlendirme:** `etiket_ayrimi_destekleniyor`. Özne değişimi (O → Sen) ile yüklemin kişi/sayı biçimi (verdi) arasındaki uyum hedefleniyor. Standart tek konuşucu okumasında iyi cümledeki uyum daha açık.
-
-### 18.7. `subject_agreement:0237` — Q4 doğru->yanlış
-
-**İyi etiketli:** Ancak siz geçen gün de bahsettiğimiz mevzuyu çözmek için gerçekten çok uğraştınız.
-
-**Kötü etiketli:** Ancak biz geçen gün de bahsettiğimiz mevzuyu çözmek için gerçekten çok uğraştınız.
-
-**Puan farkları:** 0,046377 / 0,052559 / -0,037635.
-
-**Ön değerlendirme:** `etiket_ayrimi_destekleniyor`. Özne değişimi (Siz → Biz) ile yüklemin kişi/sayı biçimi (uğraştınız) arasındaki uyum hedefleniyor. Standart tek konuşucu okumasında iyi cümledeki uyum daha açık.
-
-### 18.8. `subject_agreement:0923` — Q4 doğru->yanlış
-
-**İyi etiketli:** Çünkü siz geçen gün de bahsettiğimiz mevzuyu çözmek için gerçekten çok uğraştınız.
-
-**Kötü etiketli:** Çünkü biz geçen gün de bahsettiğimiz mevzuyu çözmek için gerçekten çok uğraştınız.
-
-**Puan farkları:** 0,055094 / 0,065670 / -0,022023.
-
-**Ön değerlendirme:** `etiket_ayrimi_destekleniyor`. Özne değişimi (Siz → Biz) ile yüklemin kişi/sayı biçimi (uğraştınız) arasındaki uyum hedefleniyor. Standart tek konuşucu okumasında iyi cümledeki uyum daha açık.
-
-### 18.9. `subject_agreement:0351` — Q4 doğru->yanlış
-
-**İyi etiketli:** İşte sen her zaman bize doğruyu söylersin.
-
-**Kötü etiketli:** İşte o her zaman bize doğruyu söylersin.
-
-**Puan farkları:** 0,182724 / 0,188126 / -0,009032.
-
-**Ön değerlendirme:** `etiket_ayrimi_destekleniyor`. Özne değişimi (Sen → O) ile yüklemin kişi/sayı biçimi (söylersin) arasındaki uyum hedefleniyor. Standart tek konuşucu okumasında iyi cümledeki uyum daha açık.
-
-### 18.10. `argument_structure_transitive:0850` — Q4 doğru->yanlış
-
-**İyi etiketli:** Hadi bu filme bayılıyoruz.
-
-**Kötü etiketli:** Hadi bu filmi bayılıyoruz.
-
-**Puan farkları:** 0,039436 / 0,041425 / -0,167631.
-
-**Ön değerlendirme:** `etiket_ayrimi_destekleniyor`. bayılıyoruz yükleminin istediği durum eki, filme → filmi değişimiyle karşılaştırılıyor. Bu okuma altında etiket ayrımı destekleniyor.
-
-### 18.11. `subject_agreement:0985` — Q4 doğru->yanlış
-
-**İyi etiketli:** Yani ben artık gitmediğimiz yer kalmayınca aramayı bıraktım.
-
-**Kötü etiketli:** Yani biz artık gitmediğimiz yer kalmayınca aramayı bıraktım.
-
-**Puan farkları:** 0,024025 / 0,033042 / -0,088729.
-
-**Ön değerlendirme:** `etiket_ayrimi_destekleniyor`. Özne değişimi (Ben → Biz) ile yüklemin kişi/sayı biçimi (bıraktım) arasındaki uyum hedefleniyor. Standart tek konuşucu okumasında iyi cümledeki uyum daha açık.
-
-### 18.12. `subject_agreement:0105` — Q4 doğru->yanlış
-
-**İyi etiketli:** Çünkü sen her zaman bize doğruyu söylersin.
-
-**Kötü etiketli:** Çünkü o her zaman bize doğruyu söylersin.
-
-**Puan farkları:** 0,166929 / 0,159529 / -0,108514.
-
-**Ön değerlendirme:** `etiket_ayrimi_destekleniyor`. Özne değişimi (Sen → O) ile yüklemin kişi/sayı biçimi (söylersin) arasındaki uyum hedefleniyor. Standart tek konuşucu okumasında iyi cümledeki uyum daha açık.
-
-### 18.13. `subject_agreement:0964` — Q4 yanlış->doğru
-
-**İyi etiketli:** Siz bu kararı tek başınıza almamalıydınız.
-
-**Kötü etiketli:** Biz bu kararı tek başınıza almamalıydınız.
-
-**Puan farkları:** -0,230658 / -0,234031 / 0,122282.
-
-**Ön değerlendirme:** `etiket_ayrimi_destekleniyor`. Özne değişimi (Siz → Biz) ile yüklemin kişi/sayı biçimi (almamalıydınız) arasındaki uyum hedefleniyor. Standart tek konuşucu okumasında iyi cümledeki uyum daha açık.
-
-### 18.14. `subject_agreement:0525` — Q4 yanlış->doğru
-
-**İyi etiketli:** Evet ben kuantum fiziği üzerine doktora yapıyorum.
-
-**Kötü etiketli:** Evet biz kuantum fiziği üzerine doktora yapıyorum.
-
-**Puan farkları:** -0,337307 / -0,325794 / 0,044130.
-
-**Ön değerlendirme:** `etiket_ayrimi_destekleniyor`. Özne değişimi (Ben → Biz) ile yüklemin kişi/sayı biçimi (yapıyorum) arasındaki uyum hedefleniyor. Standart tek konuşucu okumasında iyi cümledeki uyum daha açık.
-
-### 18.15. `nominalization:0411` — Q4 yanlış->doğru
-
-**İyi etiketli:** Türk polisler çevredekilerin olay yerine yaklaşmasını bile engellemiş.
-
-**Kötü etiketli:** Türk polisler çevredekilerin olay yerine yaklaştığını bile engellemiş.
-
-**Puan farkları:** -0,083088 / -0,096987 / 0,034789.
-
-**Ön değerlendirme:** `etiket_ayrimi_destekleniyor`. engellemiş yüklemiyle yaklaşmasını / yaklaştığını tamamlayıcısının seçimi hedefleniyor. İyi biçim daha doğal; olgu/olay ayrımı bu tümcede etiket ayrımını destekliyor. Bu bir insan paneli kararı değildir.
-
-### 18.16. `nominalization:0962` — Q4 yanlış->doğru
-
-**İyi etiketli:** Ve şirketin yatırım kararlarını hızla almasına çoğu çalışan şaşırdı.
-
-**Kötü etiketli:** Ve şirketin yatırım kararlarını hızla aldığına çoğu çalışan şaşırdı.
-
-**Puan farkları:** -0,017708 / -0,016909 / 0,236379.
-
-**Ön değerlendirme:** `iki_cumle_de_kabul_edilebilir`. -mA olay adlaştırması ile -DIK olgu bildiren adlaştırma, bu yüklemle ayrı anlam vurgularında kabul edilebilir görünüyor. Anlamsal fark tek başına dilbilgisel yanlışlık kanıtı değildir; uzman yargısı gerekir.
-
-### 18.17. `nominalization:0713` — Q4 yanlış->doğru
-
-**İyi etiketli:** Öncelikle şirketin yatırım kararlarını hızla almasına çoğu çalışan şaşırdı.
-
-**Kötü etiketli:** Öncelikle şirketin yatırım kararlarını hızla aldığına çoğu çalışan şaşırdı.
-
-**Puan farkları:** -0,056118 / -0,056372 / 0,178350.
-
-**Ön değerlendirme:** `iki_cumle_de_kabul_edilebilir`. -mA olay adlaştırması ile -DIK olgu bildiren adlaştırma, bu yüklemle ayrı anlam vurgularında kabul edilebilir görünüyor. Anlamsal fark tek başına dilbilgisel yanlışlık kanıtı değildir; uzman yargısı gerekir.
-
-### 18.18. `subject_agreement:0031` — Q8 yanlış->doğru
-
-**İyi etiketli:** Aslında siz geçen gün de bahsettiğimiz mevzuyu çözmek için gerçekten çok uğraştınız.
-
-**Kötü etiketli:** Aslında biz geçen gün de bahsettiğimiz mevzuyu çözmek için gerçekten çok uğraştınız.
-
-**Puan farkları:** -0,004505 / 0,006784 / -0,046363.
-
-**Ön değerlendirme:** `etiket_ayrimi_destekleniyor`. Özne değişimi (Siz → Biz) ile yüklemin kişi/sayı biçimi (uğraştınız) arasındaki uyum hedefleniyor. Standart tek konuşucu okumasında iyi cümledeki uyum daha açık.
-
-### 18.19. `nominalization:0857` — Q8 yanlış->doğru
-
-**İyi etiketli:** Yapılan yeni kuralın uygulanmasını herkes destekledi.
-
-**Kötü etiketli:** Yapılan yeni kuralın uygulandığını herkes destekledi.
-
-**Puan farkları:** -0,009384 / 0,000906 / 0,026428.
-
-**Ön değerlendirme:** `uzman_incelemesi_gerekli`. Uygulanmasını desteklemek doğal bir olay/istek tamamlayıcısıdır. Uygulandığını desteklemek bir iddia/kanıt bağlamında yorumlanabilir ancak bu cümlede daha az doğal; kesin iki-geçerli hükmü verilmedi.
-
-### 18.20. `nominalization:0536` — Q8 yanlış->doğru
-
-**İyi etiketli:** Bu toplantının ertelenmesine katılımcılar tepki gösterdi.
-
-**Kötü etiketli:** Bu toplantının ertelendiğine katılımcılar tepki gösterdi.
-
-**Puan farkları:** -0,003302 / 0,011350 / -0,321710.
-
-**Ön değerlendirme:** `iki_cumle_de_kabul_edilebilir`. -mA olay adlaştırması ile -DIK olgu bildiren adlaştırma, bu yüklemle ayrı anlam vurgularında kabul edilebilir görünüyor. Anlamsal fark tek başına dilbilgisel yanlışlık kanıtı değildir; uzman yargısı gerekir.
+Seçilmiş 20 çiftin skorları, etiket değerlendirmeleri ve notları [inceleme tablosunda](../results/deep_analysis/manual_review_20_annotated.csv) yer alır. En az bir nicemlenmiş yapılandırmada tercihi değişen 58 çiftin kayıtları için [genişletilmiş incelemeye](../results/deep_analysis/linguistic_review_58.csv) bakın.
 
 ## 19. Etiket duyarlılığı: sonuç tartışmalı örneklerden mi doğuyor?
 
@@ -552,7 +352,7 @@ Süre azalması ile hız artışı farklı oranlardır: Q4’ün %22,62 daha kı
 
 RSS FP16’da Q8’den küçük gözlenmişken MLX allocator FP16’da daha büyüktür. Bu çelişki gibi görünse de farklı bellek kapsamları ve süreç koşulları nedeniyle mümkündür. “Q4 toplam cihaz belleğini %63,8 azaltır” yerine “bu deneyde MLX allocator tepe ölçümü %63,8 daha düşüktür” denmelidir. Swap, bellek baskısı, güç ve enerji tüketimi için bu kayıtlarda eşzamanlı ölçüm yoktur.
 
-![Şekil 5. Özgün deneyde süre, MLX tepe ve ağırlık boyutu. Bunlar farklı fiziksel büyüklüklerdir; ortak bir bellek metriği gibi birleştirilmemelidir.](/Users/omerfarukozturk/Desktop/turkce-quantization/results/deep_analysis/figures/05_resources.png)
+![Şekil 5. Özgün deneyde süre, MLX tepe ve ağırlık boyutu. Bunlar farklı fiziksel büyüklüklerdir; ortak bir bellek metriği gibi birleştirilmemelidir.](../results/deep_analysis/figures/05_resources.png)
 
 Şekil 5. Özgün deneyde süre, MLX tepe ve ağırlık boyutu. Bunlar farklı fiziksel büyüklüklerdir; ortak bir bellek metriği gibi birleştirilmemelidir.
 
@@ -566,7 +366,7 @@ Her model için 20 parça bulunması, 20 bağımsız tam deney tekrarı bulundu�
 | Q8 | 4,8942 | 0,0583 | 4,7254 | 4,8936 | 4,9748 |
 | Q4 | 4,7601 | 0,0810 | 4,4887 | 4,7829 | 4,8488 |
 
-## 21. Bu oturumdaki tam model tekrarı
+## 21. Puanlamanın tekrarı
 
 Model tekrarı mevcut `score_main.py` puanlama fonksiyonunu kullanır. Yeni sarmalayıcı sadece çıktı klasörünü `results/deep_analysis/rerun/` olarak ayarlar; tamamlanmış özgün sonuçlar atlanmış gibi görünmesin diye ayrı klasör kullanılmıştır. FP16, Q8 ve Q4 ayrı süreçlerde, sırayla, her biri 20 parça ve toplam 1.000 çift olacak biçimde çalıştırıldı. Parça arası bekleme sıfırlandı; bu bekleme zaten puanlama süresine dahil değildi. Bu yürütme, yeni eğitim veya yeni nicemleme değildir.
 
@@ -578,25 +378,9 @@ Tekrar çalışması sırasında analiz ve diğer masaüstü işleri de yürüd�
 | Q8 | 915 | 0 | 1000 | 0,000000000 | 97,884 | 104,856 | 2,068174 |
 | Q4 | 884 | 0 | 1000 | 0,000000000 | 95,203 | 98,852 | 1,236718 |
 
-Tekrar kontrolünün ayrıntıları [results/deep_analysis/rerun_comparison.json](/Users/omerfarukozturk/Desktop/turkce-quantization/results/deep_analysis/rerun_comparison.json) dosyasında bulunuyor. Aynı modelin aynı 1.000 çiftte yeniden çalıştırılması örneklem büyüklüğünü 2.000’e çıkarmaz; aynı deterministik kararların tekrar ölçümüdür. Ayrıca kaynak süresindeki değişim, tek ölçümün makine koşullarına bağımlı olduğunu gösterir.
+Tekrar kontrolünün ayrıntıları [results/deep_analysis/rerun_comparison.json](../results/deep_analysis/rerun_comparison.json) dosyasında bulunuyor. Aynı modelin aynı 1.000 çiftte yeniden çalıştırılması örneklem büyüklüğünü 2.000’e çıkarmaz; aynı deterministik kararların tekrar ölçümüdür. Ayrıca kaynak süresindeki değişim, tek ölçümün makine koşullarına bağımlı olduğunu gösterir.
 
-## 22. Kodda hata var mı; değişiklik gerekiyor mu?
-
-Mevcut kayıtlarda doğruluk, eşleştirme veya ana istatistik sonucunu değiştirmeyi gerektiren doğrulanmış bir hesap hatası bulunmadı. Bu, kodun her olası bozuk girdiye dayanıklı olduğunun kanıtı değildir. Kullanıcının kod sorunlarını birlikte değerlendirme isteği nedeniyle mevcut deney betikleri değiştirilmedi. Aşağıdaki noktalar gözlenen sonuçları düzeltmekten çok araştırma güvenilirliğini ve veri korumasını güçlendirme önerileridir.
-
-| Öncelik | Dosya | Bulgu ve önerilen yaklaşım |
-| --- | --- | --- |
-| Yüksek: anotasyon kaybı | [scripts/analyze_main.py](/Users/omerfarukozturk/Desktop/turkce-quantization/scripts/analyze_main.py) | main() her çalışmada manual_review_20.csv üretirken inceleme alanlarını boş yazar. İnsan notları bu dosyaya eklenirse sonraki çalışmada silinebilir. Ayrı anotasyon dosyası veya pair_id ile mevcut notları koruyan birleştirme gerekir. Bu oturumda yeni çıktılar ayrı tutuldu. |
-| Orta: kayıt doğrulama | [scripts/analyze_main.py](/Users/omerfarukozturk/Desktop/turkce-quantization/scripts/analyze_main.py) | load_data ortalama fark ve token eşleşmesini kontrol ediyor; toplam puan özdeşliği, toplam/token=ortalama, yerel tokenizer yeniden hesabı ve model config hash’i gibi ek kontroller bu raporda ayrı yapıldı. Mevcut kayıtlar geçti; ana koda eklenmesi gelecekteki bozulmaları erken yakalar. |
-| Orta: devam etme | [scripts/score_main.py](/Users/omerfarukozturk/Desktop/turkce-quantization/scripts/score_main.py) | check_saved_chunk aynı veri/model adı/yönteme odaklı. Aynı klasörde ağırlıklar değiştirilirse eski ve yeni parçaların karışmasını engellemek için model ağırlık hash’i ve ortam sürümü doğrulaması güçlendirilebilir. Bu oturumda böyle bir karışma saptanmadı. |
-| Orta: ölçüm kaybı | [scripts/score_main.py](/Users/omerfarukozturk/Desktop/turkce-quantization/scripts/score_main.py) | Puan dosyası yazıldıktan sonra metrik yazımı başarısız olursa eksik metrik için uyarı veriliyor; geçmiş süreyi puanlardan geri üretmek mümkün değil. Yeni koşuda ayrı ölçüm gerekir. Mevcut 60 özgün metrik dosyası tam. |
-| Orta: eksik belleğin sıfır sayılması | [scripts/analyze_main.py](/Users/omerfarukozturk/Desktop/turkce-quantization/scripts/analyze_main.py) | Kaynak özetinde None değerini 0 ile değiştiren ifade var. Gelecekte ölçüm yoksa “ölçülmedi” yazılmalı. Bu deneyde bellek değerleri mevcut; rapordaki sayılar bu eksiklikten etkilenmedi. |
-| Araştırma tasarımı | [scripts/prepare_dataset.py](/Users/omerfarukozturk/Desktop/turkce-quantization/scripts/prepare_dataset.py) | Tam tekrar temizliği şablon bağımlılığını çözmez. Kaynak şablon ID’lerinin korunması ve şablon düzeyinde örnekleme değerlendirilebilir; mevcut ana veri seti sonradan değiştirilmemeli. |
-| Kaynak izlenebilirliği | [models/eurollm-fp16/config.json](/Users/omerfarukozturk/Desktop/turkce-quantization/models/eurollm-fp16/config.json) | Yapılandırmadaki dtype alanı yerel ağırlık başlığıyla aynı semantiği taşımıyor. Dönüşüm komutu, sürüm, kaynak/ağırlık hash’leri ve gerçek tensör türleri ayrı manifestte belgelenebilir. |
-
-Bunların hiçbiri mevcut %91,2 / %91,5 / %88,4 sayımlarını otomatik olarak geçersiz kılmıyor. Ana öncelik puanlama kodunu değiştirmek değil, anotasyonları korumak ve yöntemin yorum sınırlarını doğru belgelemek. Sözcük bazlı özel kurallar ekleyip mevcut örneklerde başarıyı artırmak bu araştırmanın nicemleme karşılaştırmasını bozar; yapılmadı.
-
-## 23. Yapılmayan analizler ve nedenleri
+## 22. Yapılmayan analizler ve nedenleri
 
 **Enerji, güç ve swap:** Eşzamanlı telemetri yok; model ağırlığından enerji tasarrufu hesaplanamaz.
 
@@ -612,15 +396,7 @@ Bunların hiçbiri mevcut %91,2 / %91,5 / %88,4 sayımlarını otomatik olarak g
 
 **Bütün Türkçe veya başka modeller hakkında genelleme:** Dört kategori ve tek model ailesi, TurBLiMP’in tamamı veya genel Türkçe yetkinliği değildir. Üretim kalitesi, olgusal doğruluk, muhakeme ve güvenlik bu deneyde ölçülmedi.
 
-## 24. Makale için kullanılabilecek bulgu metni
-
-EuroLLM-1.7B’nin FP16, 8 bit ve 4 bit koşulları, dört TurBLiMP kategorisinden eşit sayıda seçilmiş toplam 1.000 minimal çift üzerinde, BOS bağlamlı ve EOS içermeyen token başına ortalama log-olasılık yöntemiyle değerlendirildi. FP16, Q8 ve Q4 doğrulukları sırasıyla %91,2, %91,5 ve %88,4 oldu. Aynı çiftler üzerindeki eşleştirilmiş karşılaştırmada Q8’in FP16’ya göre +0,3 yüzde puan farkı anlamlı değildi (iki yönlü kesin McNemar, Holm p=0,25). Q4’ün −2,8 yüzde puan farkı anlamlıydı (Holm p≈0,000469; muhafazakâr eşleştirilmiş %95 güven aralığı −5,151 ile −0,416 yüzde puan). Q4’te 42 doğru→yanlış ve 14 yanlış→doğru geçiş gözlendi.
-
-Q4 kaybının en büyük tanımlayıcı katkısı özne–yüklem uyumu kategorisinden geldi. Alternatif toplam log-olasılık puanlaması, pilot örneklerin dışlanması, belirtilen adlaştırma etiketlerinin dışlanması ve keşifsel cümle kümesi analizlerinde genel negatif yön korundu. Buna karşılık özne–yüklem kategorisi dışlandığında genel fark küçüldü ve anlamlılık eşiğini geçmedi. Bu bulgular kategori bileşiminin ve puanlama yönteminin raporlanmasının gerekli olduğunu gösteriyor.
-
-Özgün yürütmede Q4, FP16’ya kıyasla yaklaşık %63,8 daha düşük MLX allocator tepe ölçümü ve %22,6 daha kısa puanlama süresi verdi. Bu değerler kontrollü çoklu performans deneyinin sonuçları değil, belirli donanım ve yazılım koşullarındaki ölçümlerdir. Dilbilimsel ön incelemede bazı adlaştırma çiftlerinde iki cümlenin de bağlama göre kabul edilebilir olabileceği belirlendi; benchmark etiketleri değiştirilmeden ayrı duyarlılık analizleri raporlandı. Sonuçlar seçilen örneklem, model ve ölçüm protokolüyle sınırlıdır.
-
-## 25. Yeniden çalıştırma ve çıktı envanteri
+## 23. Yeniden çalıştırma ve çıktı envanteri
 
 Proje kökünde kullanılan temel komutlar aşağıdadır. Model komutları GPU erişimi olan oturum gerektirir. Üç model komutunu sırayla, ayrı süreçlerde çalıştırmak gerekir. Mevcut tamamlanmış tekrar klasöründe aynı komutlar yeni puanlama yapmadan kayıtları tanıyıp çıkar; yeni gerçek tekrar istenirse yeni bir çıktı kökü seçilmelidir. Bu rapordaki ilk tekrar, boş ayrı klasörle başladı.
 
@@ -632,29 +408,26 @@ Proje kökünde kullanılan temel komutlar aşağıdadır. Model komutları GPU 
 .venv/bin/python results/deep_analysis/rerun_models.py --model q8 --max-chunks 20 --pause-seconds 0
 .venv/bin/python results/deep_analysis/rerun_models.py --model q4 --max-chunks 20 --pause-seconds 0
 .venv/bin/python results/deep_analysis/verify_rerun.py
-.venv/bin/python results/deep_analysis/build_report.py
 ```
 
-Ek analiz ortamı: Python 3.12.15, NumPy 2.5.4, SciPy 1.18.1, Matplotlib 3.11.2. SciPy ve Matplotlib bu oturumda proje sanal ortamına kuruldu. Bu oturumdaki donanım okuması Apple M2, 16 GiB RAM (17.179.869.184 bayt) ve macOS 26.4.1 doğruladı; bunlar sistem ölçümü olup GPU/CPU sıcaklığı ya da güç ölçümü değildir. Ayrıntılar `environment.json` içinde. Özgün model metrikleri Python 3.12.15, MLX 0.32.4, MLX-LM 0.32.2 ve batch size 1 bildiriyor. Bootstrap 20,000 tekrar, çift örnekleme tohumu 20261028; küme örnekleme tohumu bir fazlası. Sonuçlar bu tohumlarla yeniden üretilebilir; başka tohumla Monte Carlo uçları küçük ölçüde değişebilir.
+Ek analiz ortamı: Python 3.12.15, NumPy 2.5.4, SciPy 1.18.1, Matplotlib 3.11.2. Sürüm bağımlılıkları [analiz ortamı dosyasında](../results/deep_analysis/analysis_requirements.txt) yer alır. Deney Apple M2, 16 GiB birleşik bellek ve macOS 26.4.1 ortamında yürütüldü. Ayrıntılar [ortam kaydında](../results/deep_analysis/environment.json) belgelenmiştir. Özgün model metrikleri Python 3.12.15, MLX 0.32.4, MLX-LM 0.32.2 ve batch size 1 bildiriyor. Bootstrap 20,000 tekrar, çift örnekleme tohumu 20261028; küme örnekleme tohumu bir fazlası. Sonuçlar bu tohumlarla yeniden üretilebilir; başka tohumla Monte Carlo uçları küçük ölçüde değişebilir.
 
 | Çıktı | İçerik |
 | --- | --- |
-| [results/deep_analysis/extended_statistics.json](/Users/omerfarukozturk/Desktop/turkce-quantization/results/deep_analysis/extended_statistics.json) | Bağımsız sayısal denetimler ve tüm ek analiz özetleri |
-| [results/deep_analysis/recomputed/main_statistics.json](/Users/omerfarukozturk/Desktop/turkce-quantization/results/deep_analysis/recomputed/main_statistics.json) | Özgün analiz kodunun ayrı klasörde yeniden ürettiği, eski sonuçla eşleşen çıktı |
-| [results/deep_analysis/pair_audit.csv](/Users/omerfarukozturk/Desktop/turkce-quantization/results/deep_analysis/pair_audit.csv) | 1.000 çift için kararlar, farklar, uzunluklar ve tarama bayrakları |
-| [results/deep_analysis/manual_review_20_annotated.csv](/Users/omerfarukozturk/Desktop/turkce-quantization/results/deep_analysis/manual_review_20_annotated.csv) | Özgün seçilmiş 20 çiftin gerekçeli ön değerlendirmesi |
-| [results/deep_analysis/linguistic_review_58.csv](/Users/omerfarukozturk/Desktop/turkce-quantization/results/deep_analysis/linguistic_review_58.csv) | Karar değiştiren 58 benzersiz çiftin tamamına ait ön değerlendirme |
-| [results/deep_analysis/predicate_screen_all_pairs.csv](/Users/omerfarukozturk/Desktop/turkce-quantization/results/deep_analysis/predicate_screen_all_pairs.csv) | Tüm veri üzerinde aynı yüklem kuralıyla taranan 17 çift |
-| [results/deep_analysis/template_clusters.csv](/Users/omerfarukozturk/Desktop/turkce-quantization/results/deep_analysis/template_clusters.csv) | Keşifsel yaklaşık cümle kümeleri ve üye kimlikleri |
-| [results/deep_analysis/rerun_comparison.json](/Users/omerfarukozturk/Desktop/turkce-quantization/results/deep_analysis/rerun_comparison.json) | Yeni model çalışmasının eski kayıtlarla karşılaştırması |
-| [results/deep_analysis/rerun/](/Users/omerfarukozturk/Desktop/turkce-quantization/results/deep_analysis/rerun) | Üç modelin yeni 60 puan dosyası ve 60 metrik dosyası |
-| [results/deep_analysis/figures/](/Users/omerfarukozturk/Desktop/turkce-quantization/results/deep_analysis/figures) | Altı şeklin PNG ve ölçeklenebilir SVG sürümleri |
-| [results/deep_analysis/provenance_sha256.json](/Users/omerfarukozturk/Desktop/turkce-quantization/results/deep_analysis/provenance_sha256.json) | Kaynak ve analiz dosyalarının yeniden üretim için hash envanteri |
+| [results/deep_analysis/extended_statistics.json](../results/deep_analysis/extended_statistics.json) | Bağımsız sayısal denetimler ve tüm ek analiz özetleri |
+| [results/deep_analysis/recomputed/main_statistics.json](../results/deep_analysis/recomputed/main_statistics.json) | Özgün analiz kodunun ayrı klasörde yeniden ürettiği, eski sonuçla eşleşen çıktı |
+| [results/deep_analysis/pair_audit.csv](../results/deep_analysis/pair_audit.csv) | 1.000 çift için kararlar, farklar, uzunluklar ve tarama bayrakları |
+| [results/deep_analysis/manual_review_20_annotated.csv](../results/deep_analysis/manual_review_20_annotated.csv) | Özgün seçilmiş 20 çiftin gerekçeli ön değerlendirmesi |
+| [results/deep_analysis/linguistic_review_58.csv](../results/deep_analysis/linguistic_review_58.csv) | Karar değiştiren 58 benzersiz çiftin tamamına ait ön değerlendirme |
+| [results/deep_analysis/predicate_screen_all_pairs.csv](../results/deep_analysis/predicate_screen_all_pairs.csv) | Tüm veri üzerinde aynı yüklem kuralıyla taranan 17 çift |
+| [results/deep_analysis/template_clusters.csv](../results/deep_analysis/template_clusters.csv) | Keşifsel yaklaşık cümle kümeleri ve üye kimlikleri |
+| [results/deep_analysis/rerun_comparison.json](../results/deep_analysis/rerun_comparison.json) | Yeni model çalışmasının eski kayıtlarla karşılaştırması |
+| [results/deep_analysis/rerun/](../results/deep_analysis/rerun) | Üç modelin yeni 60 puan dosyası ve 60 metrik dosyası |
+| [results/deep_analysis/figures/](../results/deep_analysis/figures) | Altı şeklin PNG ve ölçeklenebilir SVG sürümleri |
+| [results/deep_analysis/provenance_sha256.json](../results/deep_analysis/provenance_sha256.json) | Kaynak ve analiz dosyalarının yeniden üretim için hash envanteri |
 
-## 26. Yöntem kaynakları ve sonraki bilimsel adım
+## 24. Yöntem kaynakları
 
 Veri setinin kapsamı ve özgün çalışması: [Başar ve arkadaşları, TurBLiMP, EMNLP 2025](https://aclanthology.org/2025.emnlp-main.834/). Bu raporun sayısal bulguları makaleden alınmadı; yerel deney kayıtlarından hesaplandı. Özgün benchmark 16 olguyu içerirken burada yalnızca dört kategori seçilmiş olması, yayın karşılaştırmasında açıkça belirtilmelidir.
 
 Kesin binom hesabının bağımsız uygulama referansı: [SciPy binomtest belgesi](https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.binomtest.html). Clopper–Pearson sınırları ek analizde beta dağılımı kantilleriyle hesaplandı; mevcut betiğin sayısal kök bulma uygulamasıyla karşılaştırıldı.
-
-Bu veriyle yapılabilecek temel istatistiksel hesaplar, karşılaştırmalar ve başlıca duyarlılık kontrolleri yürütüldü. Yayın öncesindeki en önemli açık iş, tartışmalı çiftlerin bağımsız Türkçe/dilbilim uzmanları tarafından kör incelenmesi ve gerçek kaynak şablonlarının temin edilmesidir. Kaynak performansına ilişkin güçlü bir iddia hedefleniyorsa, sabit ortamda rastgele model sırasıyla tekrarlı ayrı bir ölçüm tasarımı gerekir. Bu açık işler, mevcut hesapların eksik bırakılmasıyla değil eldeki verinin kanıt sınırlarıyla ilgilidir.

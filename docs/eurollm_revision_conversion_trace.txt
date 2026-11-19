@@ -1,0 +1,10 @@
+# Selected commands and verification output from the original build (2026-11-18).
+# Paths record the original staging location before relocation to models/revision_v2/.
++ .venv/bin/python -m mlx_lm convert --hf-path outputs/revision_v2/eurollm/source --mlx-path outputs/revision_v2/eurollm/fp16 --dtype float16
++ .venv/bin/python -m mlx_lm convert --hf-path outputs/revision_v2/eurollm/fp16 --mlx-path outputs/revision_v2/eurollm/q8 --dtype float16 --quantize --q-bits 8 --q-group-size 64 --q-mode affine
++ .venv/bin/python -m mlx_lm convert --hf-path outputs/revision_v2/eurollm/fp16 --mlx-path outputs/revision_v2/eurollm/q4 --dtype float16 --quantize --q-bits 4 --q-group-size 64 --q-mode affine
++ .venv/bin/python scripts/verify_eurollm_revision.py outputs/revision_v2/eurollm utter-project/EuroLLM-1.7B e00c97a9a389cc184174163cff4ba58facdb8e28
+source: verified, weight file matches baseline=True, tensors match baseline=True
+fp16: verified, weight file matches baseline=True, tensors match baseline=True
+q8: verified, weight file matches baseline=True, tensors match baseline=True
+q4: verified, weight file matches baseline=True, tensors match baseline=True

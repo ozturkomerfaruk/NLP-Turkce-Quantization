@@ -412,7 +412,7 @@ def plot(s):
 
 # 10. KISA SONUÇ RAPORUNU ÜRETME
 # Hesaplanmış sözlükten tablolar ve yöntem açıklamaları oluşturur; yeniden model kurmaz.
-# Ayrıntılı öğretici belge: ProjeMarkdown/ALT_SOZCUK_PARCALANMASI_KOD_VE_YONTEM_REHBERI.md.
+# Yöntem ve bulgular: results/fragmentation_analysis/fragmentation_report.md.
 def report(s):
     # Yalnızca sunum yardımcıları: 0–1 oranını yüzdeye ve grup sözlüklerini tabloya çevirir.
     def pct(v): return f'{100*v:.2f}' if v is not None else '—'

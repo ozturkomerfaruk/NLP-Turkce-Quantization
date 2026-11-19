@@ -98,13 +98,13 @@ Ceza katsayısı ve kategori çıkarma duyarlılıkları için yalnızca nokta t
 
 Yaklaşık kümeler önceki analizde ortak baştaki söylem/zaman sözcüklerinin çıkarılmasıyla oluşturulmuştur; gerçek üretim şablonları değildir. Bootstrap bu kümelerin ötesindeki bağımlılığı gideremez. FP16 marjının fonksiyonel biçimi, uzunluk ile oran arasındaki matematiksel ilişki, noktalama katkısı ve sözcük tanımı sonuçları etkileyebilir. Bu gözlemsel analiz nedensellik göstermez ve tüm Türkçeye genellenemez. Çok sayıda keşifsel karşılaştırma için p-değerleri üretilmedi; aralıklar çoklu karşılaştırma için düzeltilmedi.
 
-Tartışmalı etiketlerin bağımsız uzmanlarca kör incelenmesi ve gerçek üretim şablonlarının doğrulanması sonraki işlerdir; bu analiz bunları tamamlamış sayılmaz. Makale yazımı bu teslimatın kapsamına alınmadı.
+Tartışmalı etiketler bağımsız uzmanlarca kör incelenmedi. Üretim şablonları doğrulanamadığı için yaklaşık kümeler kullanıldı.
 
 ## Yeniden üretim ve koruma
 
 `.venv/bin/python scripts/analyze_fragmentation.py --bootstrap 2000`
 
-Girdi SHA-256 değerleri, sürümler, katsayılar, ölçekler ve bootstrap ayrıntıları fragmentation_statistics.json içindedir. Çalışma öncesi/sonrası 300 mevcut dosyanın hash’i karşılaştırıldı: değişiklik yok. Ana deney ve eski istatistik dosyaları korunmuştur.
+Girdi SHA-256 değerleri, sürümler, katsayılar, ölçekler ve bootstrap ayrıntıları fragmentation_statistics.json içindedir.
 
 Yöntem kaynakları: [SciPy bootstrap](https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.bootstrap.html), [SciPy minimize](https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.minimize.html).
 

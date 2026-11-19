@@ -1,0 +1,1206 @@
+{
+  "chunk_index": 30,
+  "identity": {
+    "bos_context_id": 151643,
+    "code_sha256": {
+      "score_main.py": "7cd3a0dc547acfe16da1092556df46909a8caa2dc4302aae6e6894112e0bfc59",
+      "score_revision.py": "57528813bfe592d0d281ba27fb6db5d0e20a810c5858fdac7d4841fa40e5cedd"
+    },
+    "dataset_sha256": "f04ee6b48fa27056261e85741139f64a59e1c4078928f2855fdf381cc30c94e9",
+    "fp16_reference_files": {
+      "README.md": "748c964f9b7e5f2c3770ce013bbc0153be7c54311d9692c343b6188eefe77ac6",
+      "chat_template.jinja": "87a2728cb8dc9fe424d624542f6060ec05a1d285ebbec578bb078900e33396b5",
+      "config.json": "3f32852a8648a37a4c74bd0037177dc31e9fd12ee8688800c20921e4af18f623",
+      "generation_config.json": "8c970692323e3ea0e9b8b0a4dca79388d31226e41f83c9fd6014804280ebf6e8",
+      "model.safetensors": "c5473ed5c09fb102a5eabadeda2156ee6fc1d109273ad155ac1edac2ff453325",
+      "model.safetensors.index.json": "5bc27eb752e76bec3235ce08f98789307f6b3f00f3be241d9fa42a3a50c9fbe8",
+      "tokenizer.json": "be75606093db2094d7cd20f3c2f385c212750648bd6ea4fb2bf507a6a4c55506",
+      "tokenizer_config.json": "0ef40ad4946b9af6b4faec11f4551a32c6595fbee6ee67788e3e79ede3838a04"
+    },
+    "method": "mean_total_float32_bos_context_no_eos_v1",
+    "mode": "main",
+    "model": "qwen",
+    "model_files": {
+      "README.md": "748c964f9b7e5f2c3770ce013bbc0153be7c54311d9692c343b6188eefe77ac6",
+      "chat_template.jinja": "87a2728cb8dc9fe424d624542f6060ec05a1d285ebbec578bb078900e33396b5",
+      "config.json": "544c447aa005de8e1350d52c2b6611ca6d9659fae39fd132afb9be0fcdf8077b",
+      "generation_config.json": "8c970692323e3ea0e9b8b0a4dca79388d31226e41f83c9fd6014804280ebf6e8",
+      "model.safetensors": "02f700662c16020f8963c4c3d603e3ba77594c137c8d88bf2a410afa49a7a59b",
+      "model.safetensors.index.json": "43aa6eec87cf94861fe7a315d0ef796403832ea8cf1ef8d3b89d70852224d90d",
+      "tokenizer.json": "be75606093db2094d7cd20f3c2f385c212750648bd6ea4fb2bf507a6a4c55506",
+      "tokenizer_config.json": "0ef40ad4946b9af6b4faec11f4551a32c6595fbee6ee67788e3e79ede3838a04"
+    },
+    "precision": "q8",
+    "runtime": {
+      "mlx": "0.32.4",
+      "mlx-lm": "0.32.2",
+      "platform": "macOS-26.4.1-arm64-arm-64bit",
+      "python": "3.12.15",
+      "tokenizers": "0.23.3",
+      "transformers": "5.20.2"
+    },
+    "source_revision": "ea980cb0a6c2ae4b936e82123acc929f1cec04c1"
+  },
+  "metrics": {
+    "mlx_allocator_peak_bytes_chunk": 2056882784,
+    "model_load_seconds_this_process": 1.1368648339994252,
+    "pairs_in_chunk": 50,
+    "process_peak_rss_bytes_so_far": 874692608,
+    "score_seconds_chunk": 6.083552457999758,
+    "scored_tokens_chunk": 1293,
+    "timestamp_utc": "2026-11-18T12:54:38.563302+00:00",
+    "warmup_seconds_this_process": 0.33030595899981563
+  },
+  "records": [
+    {
+      "bad": {
+        "mean_logp": -5.247717380523682,
+        "n_tokens": 12,
+        "token_ids_sha256": "9410586e2d453a84644b4ae897738f839d2fcd29669244fefbc7f1f4bdd643d6",
+        "total_logp": -62.97261047363281
+      },
+      "category": "argument_structure_transitive",
+      "good": {
+        "mean_logp": -4.99539041519165,
+        "n_tokens": 12,
+        "token_ids_sha256": "e8fcbcebc5d1fe2c90b6b06837d066d654579d2920e108291ef23510ab9bf33f",
+        "total_logp": -59.94468307495117
+      },
+      "in_baseline": true,
+      "mean_correct": true,
+      "mean_logp_diff": 0.25232696533203125,
+      "mean_tie": false,
+      "pair_id": "argument_structure_transitive:0639",
+      "total_correct": true,
+      "total_logp_diff": 3.0279273986816406,
+      "total_tie": false
+    },
+    {
+      "bad": {
+        "mean_logp": -5.147431373596191,
+        "n_tokens": 23,
+        "token_ids_sha256": "bfc405cf4fb3f9a18c33acd4c07e3d023085813164232f3d5aa2beff6619d83f",
+        "total_logp": -118.39092254638672
+      },
+      "category": "argument_structure_transitive",
+      "good": {
+        "mean_logp": -4.947409152984619,
+        "n_tokens": 23,
+        "token_ids_sha256": "78622f0de56548800d51cc988313627c6262f586ce3a93b4968a6378f7b35bd4",
+        "total_logp": -113.7904052734375
+      },
+      "in_baseline": true,
+      "mean_correct": true,
+      "mean_logp_diff": 0.20002222061157227,
+      "mean_tie": false,
+      "pair_id": "argument_structure_transitive:0640",
+      "total_correct": true,
+      "total_logp_diff": 4.600517272949219,
+      "total_tie": false
+    },
+    {
+      "bad": {
+        "mean_logp": -4.584089279174805,
+        "n_tokens": 9,
+        "token_ids_sha256": "4e13dec69f722e88bbab230758750761a5345e9307b17492686073a4c0d45651",
+        "total_logp": -41.256805419921875
+      },
+      "category": "argument_structure_transitive",
+      "good": {
+        "mean_logp": -4.511632919311523,
+        "n_tokens": 9,
+        "token_ids_sha256": "9c2352f365b9c13f219a4b105ec6e8efbc1df02ae498e109cbcd5385c5d88ef0",
+        "total_logp": -40.60469436645508
+      },
+      "in_baseline": false,
+      "mean_correct": true,
+      "mean_logp_diff": 0.07245635986328125,
+      "mean_tie": false,
+      "pair_id": "argument_structure_transitive:0643",
+      "total_correct": true,
+      "total_logp_diff": 0.6521110534667969,
+      "total_tie": false
+    },
+    {
+      "bad": {
+        "mean_logp": -5.304408073425293,
+        "n_tokens": 12,
+        "token_ids_sha256": "a3dd3f87efac2ef50e7ef83ea70f6f2c499df6737a8082c318ab1451cc4b3320",
+        "total_logp": -63.652896881103516
+      },
+      "category": "argument_structure_transitive",
+      "good": {
+        "mean_logp": -5.404720783233643,
+        "n_tokens": 12,
+        "token_ids_sha256": "4b08906f795b77a9818dba18f4d5cb4ce2e01171582caa07d8471911b3e05e0e",
+        "total_logp": -64.85665130615234
+      },
+      "in_baseline": true,
+      "mean_correct": false,
+      "mean_logp_diff": -0.10031270980834961,
+      "mean_tie": false,
+      "pair_id": "argument_structure_transitive:0644",
+      "total_correct": false,
+      "total_logp_diff": -1.2037544250488281,
+      "total_tie": false
+    },
+    {
+      "bad": {
+        "mean_logp": -5.509832382202148,
+        "n_tokens": 9,
+        "token_ids_sha256": "79d97f3f22e022b3cb9edd9eb3691116a8eab81803c63228e22f2660b56f4514",
+        "total_logp": -49.58849334716797
+      },
+      "category": "argument_structure_transitive",
+      "good": {
+        "mean_logp": -5.066976547241211,
+        "n_tokens": 9,
+        "token_ids_sha256": "97ba39d9d8d852b4f96f46c76ac1584d7453cc3b29a30b1e51291fcac873debb",
+        "total_logp": -45.60279083251953
+      },
+      "in_baseline": false,
+      "mean_correct": true,
+      "mean_logp_diff": 0.4428558349609375,
+      "mean_tie": false,
+      "pair_id": "argument_structure_transitive:0645",
+      "total_correct": true,
+      "total_logp_diff": 3.9857025146484375,
+      "total_tie": false
+    },
+    {
+      "bad": {
+        "mean_logp": -4.7568678855896,
+        "n_tokens": 9,
+        "token_ids_sha256": "b358d5a9c3b4690aee97710a6c6f412b55b7ac1807408825f5e3bd1f911c826b",
+        "total_logp": -42.81180953979492
+      },
+      "category": "argument_structure_transitive",
+      "good": {
+        "mean_logp": -4.590041160583496,
+        "n_tokens": 9,
+        "token_ids_sha256": "a9c51558ac1f5049f7731d2c1dcb394519089db568ca94b998365cf740ef126d",
+        "total_logp": -41.31037139892578
+      },
+      "in_baseline": false,
+      "mean_correct": true,
+      "mean_logp_diff": 0.16682672500610352,
+      "mean_tie": false,
+      "pair_id": "argument_structure_transitive:0646",
+      "total_correct": true,
+      "total_logp_diff": 1.5014381408691406,
+      "total_tie": false
+    },
+    {
+      "bad": {
+        "mean_logp": -4.897018909454346,
+        "n_tokens": 11,
+        "token_ids_sha256": "b5f238e0e592b42f4d2a31bf6785d1814b42f43639c0bd9485a5bc43613ead11",
+        "total_logp": -53.867210388183594
+      },
+      "category": "argument_structure_transitive",
+      "good": {
+        "mean_logp": -5.452550888061523,
+        "n_tokens": 10,
+        "token_ids_sha256": "5f37ba487006fa424ba33a0123757172963f4f25d8b033ced368be062ed64d71",
+        "total_logp": -54.525508880615234
+      },
+      "in_baseline": false,
+      "mean_correct": false,
+      "mean_logp_diff": -0.5555319786071777,
+      "mean_tie": false,
+      "pair_id": "argument_structure_transitive:0647",
+      "total_correct": false,
+      "total_logp_diff": -0.6582984924316406,
+      "total_tie": false
+    },
+    {
+      "bad": {
+        "mean_logp": -5.272801876068115,
+        "n_tokens": 12,
+        "token_ids_sha256": "c347ffb7f652b8c084babd5ac65b25c0510d0379653c4c3bdabda7bf3a489aa8",
+        "total_logp": -63.273624420166016
+      },
+      "category": "argument_structure_transitive",
+      "good": {
+        "mean_logp": -5.227424621582031,
+        "n_tokens": 12,
+        "token_ids_sha256": "65c7e682bff40b2d7cc9f776f5b54259552f6a9501fdfbad293257fc1a4c87ea",
+        "total_logp": -62.729095458984375
+      },
+      "in_baseline": true,
+      "mean_correct": true,
+      "mean_logp_diff": 0.045377254486083984,
+      "mean_tie": false,
+      "pair_id": "argument_structure_transitive:0648",
+      "total_correct": true,
+      "total_logp_diff": 0.5445289611816406,
+      "total_tie": false
+    },
+    {
+      "bad": {
+        "mean_logp": -3.620347023010254,
+        "n_tokens": 15,
+        "token_ids_sha256": "6dcccb80c5981c78a2bc255fd69615106d0e076833ec1ed4a0a45d2943d57eb5",
+        "total_logp": -54.305206298828125
+      },
+      "category": "argument_structure_transitive",
+      "good": {
+        "mean_logp": -3.529839277267456,
+        "n_tokens": 15,
+        "token_ids_sha256": "e19926024178d23e8aa7badce9571f12dcef29896d9960bc858363398945b141",
+        "total_logp": -52.94758987426758
+      },
+      "in_baseline": true,
+      "mean_correct": true,
+      "mean_logp_diff": 0.09050774574279785,
+      "mean_tie": false,
+      "pair_id": "argument_structure_transitive:0651",
+      "total_correct": true,
+      "total_logp_diff": 1.3576164245605469,
+      "total_tie": false
+    },
+    {
+      "bad": {
+        "mean_logp": -4.350279331207275,
+        "n_tokens": 10,
+        "token_ids_sha256": "392353664e318750eeb471ac844f9d0a91f47649420b7ff8d004a5fa88b1e826",
+        "total_logp": -43.50279235839844
+      },
+      "category": "argument_structure_transitive",
+      "good": {
+        "mean_logp": -3.9088313579559326,
+        "n_tokens": 10,
+        "token_ids_sha256": "8e684250679c9e455be63ef204cc92afd9d0d34d0c648f5d7bd26ff42abcf589",
+        "total_logp": -39.088314056396484
+      },
+      "in_baseline": false,
+      "mean_correct": true,
+      "mean_logp_diff": 0.4414479732513428,
+      "mean_tie": false,
+      "pair_id": "argument_structure_transitive:0652",
+      "total_correct": true,
+      "total_logp_diff": 4.414478302001953,
+      "total_tie": false
+    },
+    {
+      "bad": {
+        "mean_logp": -4.8685736656188965,
+        "n_tokens": 12,
+        "token_ids_sha256": "59919a309a0644af6d5005d8a1165640deb27280fec649f918bcff4ce04651b2",
+        "total_logp": -58.422882080078125
+      },
+      "category": "argument_structure_transitive",
+      "good": {
+        "mean_logp": -4.199295997619629,
+        "n_tokens": 13,
+        "token_ids_sha256": "d05686549588a44755530176e5ad2731edf04ed4ebb3681ae9f1ad51337a8652",
+        "total_logp": -54.59084701538086
+      },
+      "in_baseline": true,
+      "mean_correct": true,
+      "mean_logp_diff": 0.6692776679992676,
+      "mean_tie": false,
+      "pair_id": "argument_structure_transitive:0654",
+      "total_correct": true,
+      "total_logp_diff": 3.8320350646972656,
+      "total_tie": false
+    },
+    {
+      "bad": {
+        "mean_logp": -3.0883028507232666,
+        "n_tokens": 14,
+        "token_ids_sha256": "c886a60d7e2a8b496adf8e824be0998d27e1af70f5ea2bf715fba9544995d69f",
+        "total_logp": -43.23624038696289
+      },
+      "category": "argument_structure_transitive",
+      "good": {
+        "mean_logp": -3.14369797706604,
+        "n_tokens": 14,
+        "token_ids_sha256": "22807abc08d90dc99e7cf0302a4163f9aa886d67ffa777d4f14debbcbe8f3f5c",
+        "total_logp": -44.01177215576172
+      },
+      "in_baseline": false,
+      "mean_correct": false,
+      "mean_logp_diff": -0.05539512634277344,
+      "mean_tie": false,
+      "pair_id": "argument_structure_transitive:0655",
+      "total_correct": false,
+      "total_logp_diff": -0.7755317687988281,
+      "total_tie": false
+    },
+    {
+      "bad": {
+        "mean_logp": -4.4446210861206055,
+        "n_tokens": 12,
+        "token_ids_sha256": "66e9ea73f9676f45e08818d2c27fea25344017ea53f5853247bd609afb11aebf",
+        "total_logp": -53.335453033447266
+      },
+      "category": "argument_structure_transitive",
+      "good": {
+        "mean_logp": -4.433170795440674,
+        "n_tokens": 12,
+        "token_ids_sha256": "9b5ea9867f2639f76b614261ad1031fd0b11499974f7906d12f864f04402b373",
+        "total_logp": -53.19805145263672
+      },
+      "in_baseline": true,
+      "mean_correct": true,
+      "mean_logp_diff": 0.01145029067993164,
+      "mean_tie": false,
+      "pair_id": "argument_structure_transitive:0657",
+      "total_correct": true,
+      "total_logp_diff": 0.13740158081054688,
+      "total_tie": false
+    },
+    {
+      "bad": {
+        "mean_logp": -4.560424327850342,
+        "n_tokens": 12,
+        "token_ids_sha256": "1d3900a62b054a241d4ea92c49d4a27c8e5036e4bef40813ff627a30a7bd2528",
+        "total_logp": -54.725093841552734
+      },
+      "category": "argument_structure_transitive",
+      "good": {
+        "mean_logp": -4.852938175201416,
+        "n_tokens": 11,
+        "token_ids_sha256": "3241772713d4bd2e59bbfb4e6901a660fb1945a920b1ed0834f13691a5262864",
+        "total_logp": -53.382320404052734
+      },
+      "in_baseline": false,
+      "mean_correct": false,
+      "mean_logp_diff": -0.2925138473510742,
+      "mean_tie": false,
+      "pair_id": "argument_structure_transitive:0658",
+      "total_correct": true,
+      "total_logp_diff": 1.3427734375,
+      "total_tie": false
+    },
+    {
+      "bad": {
+        "mean_logp": -3.602884531021118,
+        "n_tokens": 12,
+        "token_ids_sha256": "88f312c862d99905e10361094836d63476b93f0560c476e1eed4fd3a98d51dbc",
+        "total_logp": -43.234615325927734
+      },
+      "category": "argument_structure_transitive",
+      "good": {
+        "mean_logp": -3.3156089782714844,
+        "n_tokens": 12,
+        "token_ids_sha256": "0191b2a99e828ecf3bc15bd66c43d4add6de655cfcaa28002fdc891465105578",
+        "total_logp": -39.78730773925781
+      },
+      "in_baseline": false,
+      "mean_correct": true,
+      "mean_logp_diff": 0.2872755527496338,
+      "mean_tie": false,
+      "pair_id": "argument_structure_transitive:0659",
+      "total_correct": true,
+      "total_logp_diff": 3.447307586669922,
+      "total_tie": false
+    },
+    {
+      "bad": {
+        "mean_logp": -4.9209160804748535,
+        "n_tokens": 10,
+        "token_ids_sha256": "a81fabf201d01465d4911dac5912bb3e2cf6f39161d828e4f0e7d100744a14c7",
+        "total_logp": -49.20915985107422
+      },
+      "category": "argument_structure_transitive",
+      "good": {
+        "mean_logp": -4.629298210144043,
+        "n_tokens": 10,
+        "token_ids_sha256": "15cc30456c4c43ab6113e8fa7f1c483e97547b584605eceefc75ce290651ca22",
+        "total_logp": -46.2929801940918
+      },
+      "in_baseline": false,
+      "mean_correct": true,
+      "mean_logp_diff": 0.29161787033081055,
+      "mean_tie": false,
+      "pair_id": "argument_structure_transitive:0660",
+      "total_correct": true,
+      "total_logp_diff": 2.916179656982422,
+      "total_tie": false
+    },
+    {
+      "bad": {
+        "mean_logp": -4.48292350769043,
+        "n_tokens": 12,
+        "token_ids_sha256": "fa9a344d24bb6fe6434ddcd9feef289f176466f1e79c674c27c01f58bb0305ba",
+        "total_logp": -53.795082092285156
+      },
+      "category": "argument_structure_transitive",
+      "good": {
+        "mean_logp": -4.288459777832031,
+        "n_tokens": 12,
+        "token_ids_sha256": "a77dbd70a38a65c03adbc769c676ee2a4cf680c532264f5a2f88d9e3aaa7ed5c",
+        "total_logp": -51.461517333984375
+      },
+      "in_baseline": false,
+      "mean_correct": true,
+      "mean_logp_diff": 0.19446372985839844,
+      "mean_tie": false,
+      "pair_id": "argument_structure_transitive:0663",
+      "total_correct": true,
+      "total_logp_diff": 2.3335647583007812,
+      "total_tie": false
+    },
+    {
+      "bad": {
+        "mean_logp": -3.881474494934082,
+        "n_tokens": 13,
+        "token_ids_sha256": "b735738e6d2c6c41f495bbb1e8270f6723dff3daa945fe9b618d207bd2741501",
+        "total_logp": -50.45916748046875
+      },
+      "category": "argument_structure_transitive",
+      "good": {
+        "mean_logp": -3.39361572265625,
+        "n_tokens": 13,
+        "token_ids_sha256": "f37d55243b887113b936c4242baa8bcb58260cba79c710a1fe3d6883bbafe42c",
+        "total_logp": -44.11700439453125
+      },
+      "in_baseline": true,
+      "mean_correct": true,
+      "mean_logp_diff": 0.48785877227783203,
+      "mean_tie": false,
+      "pair_id": "argument_structure_transitive:0664",
+      "total_correct": true,
+      "total_logp_diff": 6.3421630859375,
+      "total_tie": false
+    },
+    {
+      "bad": {
+        "mean_logp": -4.093594074249268,
+        "n_tokens": 14,
+        "token_ids_sha256": "ce2e5e2ad3dda8b9e5fe55278a890f977d44649cafc97454aed1254357b2acf9",
+        "total_logp": -57.3103141784668
+      },
+      "category": "argument_structure_transitive",
+      "good": {
+        "mean_logp": -4.120921611785889,
+        "n_tokens": 14,
+        "token_ids_sha256": "47455b40c16cfca921fa21b896cb573346d106526581d1ed05f2bd8973894367",
+        "total_logp": -57.69290542602539
+      },
+      "in_baseline": true,
+      "mean_correct": false,
+      "mean_logp_diff": -0.027327537536621094,
+      "mean_tie": false,
+      "pair_id": "argument_structure_transitive:0665",
+      "total_correct": false,
+      "total_logp_diff": -0.38259124755859375,
+      "total_tie": false
+    },
+    {
+      "bad": {
+        "mean_logp": -4.0381035804748535,
+        "n_tokens": 12,
+        "token_ids_sha256": "2f77e6d57e142e6bfa6f4103ca02c857201bdbe643254d9a957d95b8140609a8",
+        "total_logp": -48.457244873046875
+      },
+      "category": "argument_structure_transitive",
+      "good": {
+        "mean_logp": -3.7068681716918945,
+        "n_tokens": 12,
+        "token_ids_sha256": "129f3e1d23f5e780994039c54f27e58952ea323f80816b8089ff25f4de8aa826",
+        "total_logp": -44.482418060302734
+      },
+      "in_baseline": false,
+      "mean_correct": true,
+      "mean_logp_diff": 0.331235408782959,
+      "mean_tie": false,
+      "pair_id": "argument_structure_transitive:0666",
+      "total_correct": true,
+      "total_logp_diff": 3.9748268127441406,
+      "total_tie": false
+    },
+    {
+      "bad": {
+        "mean_logp": -6.200217247009277,
+        "n_tokens": 16,
+        "token_ids_sha256": "15d70356cf25a0de76dbe3a0375c7afd5179b1e5215d71d848367188fc00d6ab",
+        "total_logp": -99.20347595214844
+      },
+      "category": "argument_structure_transitive",
+      "good": {
+        "mean_logp": -6.16863489151001,
+        "n_tokens": 16,
+        "token_ids_sha256": "d998600253fb39fd5a34b80e0159329ea27baf2112d2109899f3d4925dd34a96",
+        "total_logp": -98.69815826416016
+      },
+      "in_baseline": false,
+      "mean_correct": true,
+      "mean_logp_diff": 0.03158235549926758,
+      "mean_tie": false,
+      "pair_id": "argument_structure_transitive:0667",
+      "total_correct": true,
+      "total_logp_diff": 0.5053176879882812,
+      "total_tie": false
+    },
+    {
+      "bad": {
+        "mean_logp": -4.915162086486816,
+        "n_tokens": 12,
+        "token_ids_sha256": "7cc50215632c52105af1905148191fc5fb30a98cdfb6616c4256ccbf1aefee8e",
+        "total_logp": -58.9819450378418
+      },
+      "category": "argument_structure_transitive",
+      "good": {
+        "mean_logp": -5.035787105560303,
+        "n_tokens": 12,
+        "token_ids_sha256": "7e0351ea9d0ecbbb2241b213c266dfb3b68a2fe436a45ad0c58d424d03905f3c",
+        "total_logp": -60.429443359375
+      },
+      "in_baseline": false,
+      "mean_correct": false,
+      "mean_logp_diff": -0.12062501907348633,
+      "mean_tie": false,
+      "pair_id": "argument_structure_transitive:0668",
+      "total_correct": false,
+      "total_logp_diff": -1.4474983215332031,
+      "total_tie": false
+    },
+    {
+      "bad": {
+        "mean_logp": -5.203254699707031,
+        "n_tokens": 9,
+        "token_ids_sha256": "08f35b1fdf80c1ff51bf155e7be9757444d99257d1ca2d1bf96d94216a502c45",
+        "total_logp": -46.82929229736328
+      },
+      "category": "argument_structure_transitive",
+      "good": {
+        "mean_logp": -4.631021022796631,
+        "n_tokens": 9,
+        "token_ids_sha256": "d3ef9c5b90184cb001d6a0eb016fb40e8c48e7d87632018bfe0bb76a4e6e8411",
+        "total_logp": -41.6791877746582
+      },
+      "in_baseline": false,
+      "mean_correct": true,
+      "mean_logp_diff": 0.5722336769104004,
+      "mean_tie": false,
+      "pair_id": "argument_structure_transitive:0669",
+      "total_correct": true,
+      "total_logp_diff": 5.150104522705078,
+      "total_tie": false
+    },
+    {
+      "bad": {
+        "mean_logp": -5.631669044494629,
+        "n_tokens": 16,
+        "token_ids_sha256": "6d6a77778609c4ebfd016bf0374c63e53c191e2572ffbde2dff7fb41ea704262",
+        "total_logp": -90.10670471191406
+      },
+      "category": "argument_structure_transitive",
+      "good": {
+        "mean_logp": -5.46016788482666,
+        "n_tokens": 17,
+        "token_ids_sha256": "cc2a30bf4f979026cd451257b7080f9492cd9dacb7c02c77439deb14e7661094",
+        "total_logp": -92.8228530883789
+      },
+      "in_baseline": false,
+      "mean_correct": true,
+      "mean_logp_diff": 0.17150115966796875,
+      "mean_tie": false,
+      "pair_id": "argument_structure_transitive:0670",
+      "total_correct": false,
+      "total_logp_diff": -2.7161483764648438,
+      "total_tie": false
+    },
+    {
+      "bad": {
+        "mean_logp": -5.953397750854492,
+        "n_tokens": 11,
+        "token_ids_sha256": "9e90d78fc21483e69ccdcdf90ccf9faff854d8963272353e7a073fb0a212849e",
+        "total_logp": -65.48737335205078
+      },
+      "category": "argument_structure_transitive",
+      "good": {
+        "mean_logp": -5.589163303375244,
+        "n_tokens": 11,
+        "token_ids_sha256": "9f28a8220f6d2bc9f45d917a844856be5a15d955120a225f16d1875311a684b9",
+        "total_logp": -61.480796813964844
+      },
+      "in_baseline": true,
+      "mean_correct": true,
+      "mean_logp_diff": 0.36423444747924805,
+      "mean_tie": false,
+      "pair_id": "argument_structure_transitive:0671",
+      "total_correct": true,
+      "total_logp_diff": 4.0065765380859375,
+      "total_tie": false
+    },
+    {
+      "bad": {
+        "mean_logp": -3.9869256019592285,
+        "n_tokens": 11,
+        "token_ids_sha256": "870bc36fe6ae7e82993bc0d95d41761d719bad76466388b8340baaa6c1e03fbd",
+        "total_logp": -43.85618209838867
+      },
+      "category": "argument_structure_transitive",
+      "good": {
+        "mean_logp": -4.18284273147583,
+        "n_tokens": 10,
+        "token_ids_sha256": "598c99ac2acaf25a50b79dcca42f42c6b55677e394e90c8a6e05a070340ca23f",
+        "total_logp": -41.828426361083984
+      },
+      "in_baseline": false,
+      "mean_correct": false,
+      "mean_logp_diff": -0.19591712951660156,
+      "mean_tie": false,
+      "pair_id": "argument_structure_transitive:0672",
+      "total_correct": true,
+      "total_logp_diff": 2.0277557373046875,
+      "total_tie": false
+    },
+    {
+      "bad": {
+        "mean_logp": -4.575294494628906,
+        "n_tokens": 10,
+        "token_ids_sha256": "64ef7b92ebaa1f160ed6b8c073f769916befb2eece3b9b6c95320eca92065318",
+        "total_logp": -45.75294494628906
+      },
+      "category": "argument_structure_transitive",
+      "good": {
+        "mean_logp": -3.8533787727355957,
+        "n_tokens": 10,
+        "token_ids_sha256": "980219f669811b59bd31f4cd474044d61f463acba1477f8086c46d3bd71cffa6",
+        "total_logp": -38.53378677368164
+      },
+      "in_baseline": true,
+      "mean_correct": true,
+      "mean_logp_diff": 0.7219157218933105,
+      "mean_tie": false,
+      "pair_id": "argument_structure_transitive:0673",
+      "total_correct": true,
+      "total_logp_diff": 7.219158172607422,
+      "total_tie": false
+    },
+    {
+      "bad": {
+        "mean_logp": -4.783999443054199,
+        "n_tokens": 16,
+        "token_ids_sha256": "7bcbca497b1d49ca098a201bcc063f0c723922bb218511e0bf297598e5453135",
+        "total_logp": -76.54399108886719
+      },
+      "category": "argument_structure_transitive",
+      "good": {
+        "mean_logp": -4.709263801574707,
+        "n_tokens": 16,
+        "token_ids_sha256": "43104cec025f2d456a6983cfa79b1a458070bff2cd4606cb522daab3885cc815",
+        "total_logp": -75.34822082519531
+      },
+      "in_baseline": true,
+      "mean_correct": true,
+      "mean_logp_diff": 0.07473564147949219,
+      "mean_tie": false,
+      "pair_id": "argument_structure_transitive:0674",
+      "total_correct": true,
+      "total_logp_diff": 1.195770263671875,
+      "total_tie": false
+    },
+    {
+      "bad": {
+        "mean_logp": -3.9888737201690674,
+        "n_tokens": 14,
+        "token_ids_sha256": "da7bbfe60ef27f9bdfcca84bfb63cc2ce4028924e0cbafa42e3f8d2f23a0e7c7",
+        "total_logp": -55.84423065185547
+      },
+      "category": "argument_structure_transitive",
+      "good": {
+        "mean_logp": -3.79337739944458,
+        "n_tokens": 14,
+        "token_ids_sha256": "708d82d39f16addba9b98578e0d7b2331ce7134d317ec3c0af6ef73c2354dee1",
+        "total_logp": -53.10728454589844
+      },
+      "in_baseline": false,
+      "mean_correct": true,
+      "mean_logp_diff": 0.1954963207244873,
+      "mean_tie": false,
+      "pair_id": "argument_structure_transitive:0675",
+      "total_correct": true,
+      "total_logp_diff": 2.7369461059570312,
+      "total_tie": false
+    },
+    {
+      "bad": {
+        "mean_logp": -4.884653091430664,
+        "n_tokens": 12,
+        "token_ids_sha256": "0807ed7816ca42886cdd333aacd3eeb449ea7be1e2562daa0643f3c2af50438b",
+        "total_logp": -58.61583709716797
+      },
+      "category": "argument_structure_transitive",
+      "good": {
+        "mean_logp": -4.908966541290283,
+        "n_tokens": 11,
+        "token_ids_sha256": "7f2a1545717626354cb607a35823c8c49db73bf7f0524c92a8c3881d95879007",
+        "total_logp": -53.998634338378906
+      },
+      "in_baseline": false,
+      "mean_correct": false,
+      "mean_logp_diff": -0.02431344985961914,
+      "mean_tie": false,
+      "pair_id": "argument_structure_transitive:0677",
+      "total_correct": true,
+      "total_logp_diff": 4.6172027587890625,
+      "total_tie": false
+    },
+    {
+      "bad": {
+        "mean_logp": -4.317994594573975,
+        "n_tokens": 17,
+        "token_ids_sha256": "ba20aca4599fd08f4818b7b07c45474e8f5fa62efc03d3b57d87bcd26102b6f9",
+        "total_logp": -73.4059066772461
+      },
+      "category": "argument_structure_transitive",
+      "good": {
+        "mean_logp": -4.359953880310059,
+        "n_tokens": 16,
+        "token_ids_sha256": "d98f2c23de67b86e28ddaa886b03339e1a06c19f1779a3dca4ac23ab0477a289",
+        "total_logp": -69.75926208496094
+      },
+      "in_baseline": true,
+      "mean_correct": false,
+      "mean_logp_diff": -0.041959285736083984,
+      "mean_tie": false,
+      "pair_id": "argument_structure_transitive:0678",
+      "total_correct": true,
+      "total_logp_diff": 3.6466445922851562,
+      "total_tie": false
+    },
+    {
+      "bad": {
+        "mean_logp": -4.090829849243164,
+        "n_tokens": 13,
+        "token_ids_sha256": "7c1fe7020bcb3df2e4cf14ef738d8e84dab204ea0e0bb7b4caef7202b09575f7",
+        "total_logp": -53.180789947509766
+      },
+      "category": "argument_structure_transitive",
+      "good": {
+        "mean_logp": -3.909074068069458,
+        "n_tokens": 14,
+        "token_ids_sha256": "5a14b8f3504654218edd28d9e6dcdbcad528150922e13f6af777d25b485a2305",
+        "total_logp": -54.72703552246094
+      },
+      "in_baseline": true,
+      "mean_correct": true,
+      "mean_logp_diff": 0.18175578117370605,
+      "mean_tie": false,
+      "pair_id": "argument_structure_transitive:0680",
+      "total_correct": false,
+      "total_logp_diff": -1.5462455749511719,
+      "total_tie": false
+    },
+    {
+      "bad": {
+        "mean_logp": -6.575803756713867,
+        "n_tokens": 13,
+        "token_ids_sha256": "eb0986911d53601d872bc18b5eebe4d9613c57f536d7a1f56c9987aece4575eb",
+        "total_logp": -85.4854507446289
+      },
+      "category": "argument_structure_transitive",
+      "good": {
+        "mean_logp": -6.3792724609375,
+        "n_tokens": 13,
+        "token_ids_sha256": "dde541e1beee3f8af0112ce1a5e8423be84672a273002313d70c68b0e79986f1",
+        "total_logp": -82.9305419921875
+      },
+      "in_baseline": true,
+      "mean_correct": true,
+      "mean_logp_diff": 0.1965312957763672,
+      "mean_tie": false,
+      "pair_id": "argument_structure_transitive:0681",
+      "total_correct": true,
+      "total_logp_diff": 2.5549087524414062,
+      "total_tie": false
+    },
+    {
+      "bad": {
+        "mean_logp": -6.759486198425293,
+        "n_tokens": 16,
+        "token_ids_sha256": "8130068f38a8bd58302609592edea94857dd0e1305dcbb4b31584b1eb806edeb",
+        "total_logp": -108.15177917480469
+      },
+      "category": "argument_structure_transitive",
+      "good": {
+        "mean_logp": -6.645929336547852,
+        "n_tokens": 16,
+        "token_ids_sha256": "5531e7e879207f2dc2467968d2374d5e9d704338a119d2ce6327718b828d3e2c",
+        "total_logp": -106.33486938476562
+      },
+      "in_baseline": false,
+      "mean_correct": true,
+      "mean_logp_diff": 0.1135568618774414,
+      "mean_tie": false,
+      "pair_id": "argument_structure_transitive:0683",
+      "total_correct": true,
+      "total_logp_diff": 1.8169097900390625,
+      "total_tie": false
+    },
+    {
+      "bad": {
+        "mean_logp": -6.641167640686035,
+        "n_tokens": 13,
+        "token_ids_sha256": "50e08c5a2235ac7ed495a47b8db2a1cf0fa9c72d860e309e2d7403258776e671",
+        "total_logp": -86.3351821899414
+      },
+      "category": "argument_structure_transitive",
+      "good": {
+        "mean_logp": -6.57450532913208,
+        "n_tokens": 13,
+        "token_ids_sha256": "9ee808901942feb1c5eb07d41ea50680f3bee14596fa3843362614dcf37f00c0",
+        "total_logp": -85.46856689453125
+      },
+      "in_baseline": false,
+      "mean_correct": true,
+      "mean_logp_diff": 0.06666231155395508,
+      "mean_tie": false,
+      "pair_id": "argument_structure_transitive:0684",
+      "total_correct": true,
+      "total_logp_diff": 0.8666152954101562,
+      "total_tie": false
+    },
+    {
+      "bad": {
+        "mean_logp": -3.5740487575531006,
+        "n_tokens": 14,
+        "token_ids_sha256": "f049c0c06d2d50be98e9e4fd9aab62ce82abd73e6fa07bf34e0eb9f5712d4269",
+        "total_logp": -50.03668212890625
+      },
+      "category": "argument_structure_transitive",
+      "good": {
+        "mean_logp": -3.402864456176758,
+        "n_tokens": 14,
+        "token_ids_sha256": "bb3c54ec740d9c71bdf210bf05eda4ea34d70d410d9e3041a863326d2a23818e",
+        "total_logp": -47.64010238647461
+      },
+      "in_baseline": false,
+      "mean_correct": true,
+      "mean_logp_diff": 0.17118430137634277,
+      "mean_tie": false,
+      "pair_id": "argument_structure_transitive:0685",
+      "total_correct": true,
+      "total_logp_diff": 2.3965797424316406,
+      "total_tie": false
+    },
+    {
+      "bad": {
+        "mean_logp": -4.149853229522705,
+        "n_tokens": 12,
+        "token_ids_sha256": "16cdd8e742f487a3e1c756649fd0e7e1366c74ab7196a6fba3344fe439a5fe6b",
+        "total_logp": -49.798240661621094
+      },
+      "category": "argument_structure_transitive",
+      "good": {
+        "mean_logp": -3.6971004009246826,
+        "n_tokens": 12,
+        "token_ids_sha256": "98804c3a7ecf3380bfaa402456a1c3f631cfcce01a01127a59a51b6cefa96895",
+        "total_logp": -44.365203857421875
+      },
+      "in_baseline": true,
+      "mean_correct": true,
+      "mean_logp_diff": 0.45275282859802246,
+      "mean_tie": false,
+      "pair_id": "argument_structure_transitive:0686",
+      "total_correct": true,
+      "total_logp_diff": 5.433036804199219,
+      "total_tie": false
+    },
+    {
+      "bad": {
+        "mean_logp": -3.7027413845062256,
+        "n_tokens": 21,
+        "token_ids_sha256": "be5e45bd88b4a95897bb2373da6889217d2e9c2c76703a54754a6833a0fe3e55",
+        "total_logp": -77.757568359375
+      },
+      "category": "argument_structure_transitive",
+      "good": {
+        "mean_logp": -3.7201149463653564,
+        "n_tokens": 21,
+        "token_ids_sha256": "ce5ebc7a66212d5b6b34f619a23e33f0a1093e0223dc7c467c5409f06f62929a",
+        "total_logp": -78.1224136352539
+      },
+      "in_baseline": false,
+      "mean_correct": false,
+      "mean_logp_diff": -0.01737356185913086,
+      "mean_tie": false,
+      "pair_id": "argument_structure_transitive:0687",
+      "total_correct": false,
+      "total_logp_diff": -0.36484527587890625,
+      "total_tie": false
+    },
+    {
+      "bad": {
+        "mean_logp": -3.645364284515381,
+        "n_tokens": 15,
+        "token_ids_sha256": "d03d6d57f90b1398c627e239f7ed2e9125c037de06763e29427938b8cdd49c34",
+        "total_logp": -54.68046569824219
+      },
+      "category": "argument_structure_transitive",
+      "good": {
+        "mean_logp": -3.349546432495117,
+        "n_tokens": 16,
+        "token_ids_sha256": "0ff108af4e6be1320608132945525150243d4396a77ebbd60b23ac78d3029d04",
+        "total_logp": -53.592742919921875
+      },
+      "in_baseline": false,
+      "mean_correct": true,
+      "mean_logp_diff": 0.29581785202026367,
+      "mean_tie": false,
+      "pair_id": "argument_structure_transitive:0688",
+      "total_correct": true,
+      "total_logp_diff": 1.0877227783203125,
+      "total_tie": false
+    },
+    {
+      "bad": {
+        "mean_logp": -5.273921966552734,
+        "n_tokens": 9,
+        "token_ids_sha256": "b8ef951f4910a3e6ef18b31bbf4035851263b82d3e8f6f0bdfb12ea12858d9a0",
+        "total_logp": -47.46529769897461
+      },
+      "category": "argument_structure_transitive",
+      "good": {
+        "mean_logp": -4.610895156860352,
+        "n_tokens": 9,
+        "token_ids_sha256": "d94a6f4c2da039b83d23358fe767c9deca2a0b788d3d6a869ea00be31183d8a0",
+        "total_logp": -41.49805450439453
+      },
+      "in_baseline": false,
+      "mean_correct": true,
+      "mean_logp_diff": 0.6630268096923828,
+      "mean_tie": false,
+      "pair_id": "argument_structure_transitive:0689",
+      "total_correct": true,
+      "total_logp_diff": 5.967243194580078,
+      "total_tie": false
+    },
+    {
+      "bad": {
+        "mean_logp": -4.8214850425720215,
+        "n_tokens": 16,
+        "token_ids_sha256": "6edf676332737ad8b68581c2853133982c6a5eaa51ccb364c0472b70bb7f41a2",
+        "total_logp": -77.14376068115234
+      },
+      "category": "argument_structure_transitive",
+      "good": {
+        "mean_logp": -4.804838180541992,
+        "n_tokens": 16,
+        "token_ids_sha256": "a222b7fbdac77862fdd3652d48a3ba2255976b093e50ba4e611f044130dd188e",
+        "total_logp": -76.87741088867188
+      },
+      "in_baseline": false,
+      "mean_correct": true,
+      "mean_logp_diff": 0.016646862030029297,
+      "mean_tie": false,
+      "pair_id": "argument_structure_transitive:0691",
+      "total_correct": true,
+      "total_logp_diff": 0.26634979248046875,
+      "total_tie": false
+    },
+    {
+      "bad": {
+        "mean_logp": -4.139678955078125,
+        "n_tokens": 13,
+        "token_ids_sha256": "69ec4f444a61bd1fb581ef6275f2b43e04990370b26a529e4200178379428a86",
+        "total_logp": -53.815826416015625
+      },
+      "category": "argument_structure_transitive",
+      "good": {
+        "mean_logp": -4.254216194152832,
+        "n_tokens": 12,
+        "token_ids_sha256": "6f27546c01a3e47ac010210fe7a6a31c6bb08902ce1fc2ca37d68ca16e71e01c",
+        "total_logp": -51.050594329833984
+      },
+      "in_baseline": false,
+      "mean_correct": false,
+      "mean_logp_diff": -0.11453723907470703,
+      "mean_tie": false,
+      "pair_id": "argument_structure_transitive:0692",
+      "total_correct": true,
+      "total_logp_diff": 2.7652320861816406,
+      "total_tie": false
+    },
+    {
+      "bad": {
+        "mean_logp": -4.518840312957764,
+        "n_tokens": 12,
+        "token_ids_sha256": "702393a3cfb77304a7adcc59369aad1bd4f7349ca432005e5c9920284062dc77",
+        "total_logp": -54.22608184814453
+      },
+      "category": "argument_structure_transitive",
+      "good": {
+        "mean_logp": -4.730815410614014,
+        "n_tokens": 11,
+        "token_ids_sha256": "c86773121b8e1c7ef4c4ab88d97252c30238bf309ba8ae289b8ee1c12e447fb6",
+        "total_logp": -52.038970947265625
+      },
+      "in_baseline": true,
+      "mean_correct": false,
+      "mean_logp_diff": -0.21197509765625,
+      "mean_tie": false,
+      "pair_id": "argument_structure_transitive:0693",
+      "total_correct": true,
+      "total_logp_diff": 2.1871109008789062,
+      "total_tie": false
+    },
+    {
+      "bad": {
+        "mean_logp": -4.659041404724121,
+        "n_tokens": 13,
+        "token_ids_sha256": "520bab986e060bb097e51e6517eea3fe236c58ed99e1377083d1d06aa551f47b",
+        "total_logp": -60.567535400390625
+      },
+      "category": "argument_structure_transitive",
+      "good": {
+        "mean_logp": -4.658547401428223,
+        "n_tokens": 13,
+        "token_ids_sha256": "5c6587b6bf8340707af3fd8c261ff56cf94fdc8196a7effdec2e68bea4df3074",
+        "total_logp": -60.561119079589844
+      },
+      "in_baseline": true,
+      "mean_correct": true,
+      "mean_logp_diff": 0.0004940032958984375,
+      "mean_tie": false,
+      "pair_id": "argument_structure_transitive:0694",
+      "total_correct": true,
+      "total_logp_diff": 0.00641632080078125,
+      "total_tie": false
+    },
+    {
+      "bad": {
+        "mean_logp": -5.251195430755615,
+        "n_tokens": 10,
+        "token_ids_sha256": "3eb514d6978994eb20ed8d21ad5560387dcb410fe68e73e12cb1adc9dc22ceb0",
+        "total_logp": -52.51195526123047
+      },
+      "category": "argument_structure_transitive",
+      "good": {
+        "mean_logp": -5.1705217361450195,
+        "n_tokens": 10,
+        "token_ids_sha256": "13af2830919c4b0c38266ba26f3978b6d96ad8f8c54d58b0a90a91189b7ffac2",
+        "total_logp": -51.70521545410156
+      },
+      "in_baseline": false,
+      "mean_correct": true,
+      "mean_logp_diff": 0.0806736946105957,
+      "mean_tie": false,
+      "pair_id": "argument_structure_transitive:0695",
+      "total_correct": true,
+      "total_logp_diff": 0.8067398071289062,
+      "total_tie": false
+    },
+    {
+      "bad": {
+        "mean_logp": -3.729640007019043,
+        "n_tokens": 18,
+        "token_ids_sha256": "798e6ef6d11017df8d41a1ec51b376229a2aac621c00e70c518cf294c5463020",
+        "total_logp": -67.1335220336914
+      },
+      "category": "argument_structure_transitive",
+      "good": {
+        "mean_logp": -3.170456647872925,
+        "n_tokens": 19,
+        "token_ids_sha256": "3205e671fffb67019703e555c981522b31186949c070e22b632d25a5461cd04f",
+        "total_logp": -60.23867416381836
+      },
+      "in_baseline": false,
+      "mean_correct": true,
+      "mean_logp_diff": 0.5591833591461182,
+      "mean_tie": false,
+      "pair_id": "argument_structure_transitive:0696",
+      "total_correct": true,
+      "total_logp_diff": 6.894847869873047,
+      "total_tie": false
+    },
+    {
+      "bad": {
+        "mean_logp": -4.935965061187744,
+        "n_tokens": 11,
+        "token_ids_sha256": "ca1f289f49205d5eef3988983d9f9185385da5282908f7b1fbe596ba9ee5b8ea",
+        "total_logp": -54.295616149902344
+      },
+      "category": "argument_structure_transitive",
+      "good": {
+        "mean_logp": -4.799591064453125,
+        "n_tokens": 11,
+        "token_ids_sha256": "daf52b6f2390dbda4ad673396bbbaa63557efb31b3cf7cc0c675956ee9d44589",
+        "total_logp": -52.795501708984375
+      },
+      "in_baseline": false,
+      "mean_correct": true,
+      "mean_logp_diff": 0.13637399673461914,
+      "mean_tie": false,
+      "pair_id": "argument_structure_transitive:0697",
+      "total_correct": true,
+      "total_logp_diff": 1.5001144409179688,
+      "total_tie": false
+    },
+    {
+      "bad": {
+        "mean_logp": -4.804643154144287,
+        "n_tokens": 14,
+        "token_ids_sha256": "94912684982e7bb16871941217f13c0f2f7b9f9c8f2758f937df6cb5aa5be8bb",
+        "total_logp": -67.26500701904297
+      },
+      "category": "argument_structure_transitive",
+      "good": {
+        "mean_logp": -4.7082061767578125,
+        "n_tokens": 15,
+        "token_ids_sha256": "9fe5b43af05b517f2174e647dce75a5157e57282dfd87c8239f18503405d8f90",
+        "total_logp": -70.62309265136719
+      },
+      "in_baseline": false,
+      "mean_correct": true,
+      "mean_logp_diff": 0.09643697738647461,
+      "mean_tie": false,
+      "pair_id": "argument_structure_transitive:0698",
+      "total_correct": false,
+      "total_logp_diff": -3.3580856323242188,
+      "total_tie": false
+    },
+    {
+      "bad": {
+        "mean_logp": -5.6804399490356445,
+        "n_tokens": 11,
+        "token_ids_sha256": "6c75485c129e91dcecb19bd0ccf8cda0ee0b6eb56aebefeb819e1545a9f54b74",
+        "total_logp": -62.484840393066406
+      },
+      "category": "argument_structure_transitive",
+      "good": {
+        "mean_logp": -5.474647045135498,
+        "n_tokens": 11,
+        "token_ids_sha256": "e13697916ab1cd038f9032642ae612a2129a561903fa90e73ea551bfb7b3cc2b",
+        "total_logp": -60.22111511230469
+      },
+      "in_baseline": false,
+      "mean_correct": true,
+      "mean_logp_diff": 0.20579290390014648,
+      "mean_tie": false,
+      "pair_id": "argument_structure_transitive:0704",
+      "total_correct": true,
+      "total_logp_diff": 2.2637252807617188,
+      "total_tie": false
+    },
+    {
+      "bad": {
+        "mean_logp": -3.828650712966919,
+        "n_tokens": 14,
+        "token_ids_sha256": "75f32ac441a764666da55db33e70ddfe1b69d9ad7b23508d35d9fd0168368467",
+        "total_logp": -53.60110855102539
+      },
+      "category": "argument_structure_transitive",
+      "good": {
+        "mean_logp": -3.6829726696014404,
+        "n_tokens": 14,
+        "token_ids_sha256": "af0b10ab1e91874126d7e83eeb022b2440de6e743f48179eca1da2cb5c9e6a2f",
+        "total_logp": -51.56161880493164
+      },
+      "in_baseline": false,
+      "mean_correct": true,
+      "mean_logp_diff": 0.14567804336547852,
+      "mean_tie": false,
+      "pair_id": "argument_structure_transitive:0706",
+      "total_correct": true,
+      "total_logp_diff": 2.03948974609375,
+      "total_tie": false
+    }
+  ]
+}

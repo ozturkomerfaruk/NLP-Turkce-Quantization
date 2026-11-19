@@ -4,10 +4,7 @@ venv/
 __pycache__/
 *.py[cod]
 .pytest_cache/
-# Model ağırlıkları (veri ve model ayarları depoya dahildir)
-*.safetensors
-*.gguf
-*.bin
+
 # Yerel ayarlar
 .env
 .env.*
@@ -17,5 +14,17 @@ __pycache__/
 # İndirme önbelleği
 .cache/
 
-# Yerel makale/gönderim çıktıları ve yinelenen paketler
+# Yerel makale taslakları ve yeniden üretim çıktıları
 /outputs/
+
+# Model ağırlıkları ve tamamlanmamış indirmeler
+/models/**/*.safetensors
+/models/**/*.gguf
+/models/**/*.bin
+/models/**/*.part
+
+# Geçici model dönüşümleri
+/models/revision_v2/*/.conversion.*/
+
+# Çalışma kilitleri. Kayıtlı skorlar ve tablolar Git'te izlenir.
+/results/revision_v2/*/*/.lock
